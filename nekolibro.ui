@@ -14,108 +14,91 @@
    <string>NekoLibro</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="settings">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>430</y>
-      <width>111</width>
-      <height>101</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Cài đặt</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="reports">
-    <property name="geometry">
-     <rect>
-      <x>480</x>
-      <y>130</y>
-      <width>141</width>
-      <height>111</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Báo cáo doanh thu</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="import_export">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>130</y>
-      <width>151</width>
-      <height>111</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Xuất/Nhập Hàng</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="users">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>130</y>
-      <width>111</width>
-      <height>111</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Tài khoản</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="employees">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>280</y>
-      <width>111</width>
-      <height>111</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Nhân sự</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>290</y>
+      <x>170</x>
+      <y>330</y>
       <width>171</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Hôm nay là ngày</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>200</x>
-      <y>330</y>
-      <width>161</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Nhân viên bán hàng</string>
+     <string>HÔM NAY LÀ NGÀY</string>
     </property>
    </widget>
    <widget class="QPushButton" name="categories">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>130</y>
+      <x>150</x>
+      <y>180</y>
       <width>141</width>
       <height>111</height>
      </rect>
     </property>
     <property name="text">
-     <string>Danh mục sản phẩm</string>
+     <string>DANH MỤC
+SẢN PHẨM</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>420</y>
+      <width>161</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>NHÂN VIÊN BÁN HÀNG</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="employees">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>310</y>
+      <width>111</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>QUẢN LÝ
+NHÂN VIÊN</string>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="users">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>180</y>
+      <width>111</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TÀI KHOẢN
+NGƯỜI DÙNG</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="sales">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>180</y>
+      <width>141</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>BÁN HÀNG</string>
     </property>
    </widget>
    <widget class="QPushButton" name="logout">
@@ -128,59 +111,79 @@
      </rect>
     </property>
     <property name="text">
-     <string>Đăng xuất</string>
+     <string>ĐĂNG XUẤT</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QPushButton" name="reports">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>90</y>
-      <width>63</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>slogan</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>50</y>
-      <width>141</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>tên phần mềm</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="sales">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>130</y>
+      <x>490</x>
+      <y>180</y>
       <width>141</width>
       <height>111</height>
      </rect>
     </property>
     <property name="text">
-     <string>Bán hàng</string>
+     <string>BÁO CÁO 
+DOANH THU</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>60</y>
+      <x>170</x>
+      <y>380</y>
       <width>63</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>icon</string>
+     <string>ID User</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="settings">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>440</y>
+      <width>111</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>CÀI ĐẶT</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>321</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="galeries.qrc">:/image/nekoLibro-ver2.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="import_export">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>180</y>
+      <width>151</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>XUẤT/NHẬP HÀNG</string>
     </property>
    </widget>
   </widget>
@@ -196,6 +199,8 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="galeries.qrc"/>
+ </resources>
  <connections/>
 </ui>

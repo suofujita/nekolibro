@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Sql)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -26,6 +27,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         saleswindow.h saleswindow.cpp saleswindow.ui
         employeeswindow.h employeeswindow.cpp employeeswindow.ui
         categorieswindow.h categorieswindow.cpp categorieswindow.ui
+
+        login.h login.cpp login.ui
+        galeries.qrc
+        flashscreen.h flashscreen.cpp flashscreen.ui
+        database.h database.cpp
+        createaccount.h createaccount.cpp createaccount.ui
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET NekoLibro APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -46,6 +53,7 @@ else()
 endif()
 
 target_link_libraries(NekoLibro PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(NekoLibro PRIVATE Qt${QT_VERSION_MAJOR}::Sql)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
