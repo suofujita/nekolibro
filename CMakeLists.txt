@@ -33,6 +33,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         flashscreen.h flashscreen.cpp flashscreen.ui
         database.h database.cpp
         createaccount.h createaccount.cpp createaccount.ui
+        imexport.h imexport.cpp imexport.ui
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET NekoLibro APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

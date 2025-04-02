@@ -75,7 +75,7 @@ void login::clickedCreateAccount() {
             QMessageBox::warning(this, "Lỗi", "Bạn không có quyền tạo tài khoản!");    // người dùng có tài khoản nhưng không có quyền truy cập
         }
     } else {
-        QMessageBox::warning(this, "Lỗi", "Đăng nhập không hợp lệ!");    // người dùng chưa có tài khoản
+        QMessageBox::warning(this, "Lỗi", "Không hợp lệ vui lòng thử lại sau!");    // người dùng chưa có tài khoản
     }
 }
 

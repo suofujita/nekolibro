@@ -1,6 +1,8 @@
 #include "nekolibro.h"
 #include "./ui_nekolibro.h"
 
+#include "categorieswindow.h"
+#include "imexport.h"
 NekoLibro::NekoLibro(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::NekoLibro)
@@ -12,6 +14,7 @@ NekoLibro::NekoLibro(QWidget *parent)
     connect(ui->sales, &QPushButton::clicked,this,&NekoLibro::openSalesWindow);
     connect(ui->employees, &QPushButton::clicked,this,&NekoLibro::openEmployeesWindow);
     connect(ui->categories,&QPushButton::clicked,this,&NekoLibro::openCategoriesWindow);
+    connect(ui->import_export,&QPushButton::clicked,this,&NekoLibro::openImExportWindow);
 }
 
 NekoLibro::~NekoLibro()
@@ -53,6 +56,23 @@ void NekoLibro::openCategoriesWindow(){
     pCategoriesWindow = new CategoriesWindow;
     pCategoriesWindow->setAttribute(Qt::WA_DeleteOnClose); // cửa sổ đóng thì giải phóng vùng nhớ
     pCategoriesWindow->show();
+}
+
+QStringList NekoLibro::getCategoriesList(){
+    QStringList categoriesList;
+    QSqlQuery query("SELECT name FROM Categories");
+    while (query.next()) {
+        categoriesList << query.value(0).toString(); // Lấy cột đầu tiên là tên sản phẩm
+    }
+    return categoriesList;
+}
+
+void NekoLibro::openImExportWindow(){
+   // if(!pImExportWindow) {
+        pImExportWindow = new ImExport;
+   // }
+    pImExportWindow->setAttribute(Qt::WA_DeleteOnClose); // cửa sổ đóng thì giải phóng vùng nhớ
+    pImExportWindow->show();
 }
 
 

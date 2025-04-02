@@ -3,5 +3,6 @@
         <file>cat.png</file>
         <file>nekoLibro.png</file>
         <file>nekoLibro-ver2.png</file>
+        <file>search.png</file>
     </qresource>
 </RCC>
