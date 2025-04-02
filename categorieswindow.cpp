@@ -22,7 +22,7 @@ CategoriesWindow::CategoriesWindow(QWidget *parent)
     /* Thiết lập Qcompleter */
     setupCompleter();
     showData();
-
+    ui->stackedWidget->setCurrentIndex(0);
     //model1 = new QStandardItemModel(this);
 }
 
@@ -76,6 +76,9 @@ void CategoriesWindow::addBook(){
             /* Thêm thành công sau đó cập nhật CSDL */
            // model1->select();
             showData();
+            resetData();
+
+
             QMessageBox::information(this,"Thêm sản phẩm","Thêm sản phẩm thành công");
         }
         else {
@@ -254,5 +257,12 @@ void CategoriesWindow::showData() {
     ui->categories_table->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
     ui->categories_table->resizeColumnToContents(0);
     ui->categories_table->resizeColumnToContents(1);
+}
+void CategoriesWindow::resetData(){
+    ui->author_edit->clear();
+    ui->out_price_edit->clear();
+    ui->in_price_edit->clear();
+    ui->name_edit->clear();
+    ui->type->clear();
 }
 

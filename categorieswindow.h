@@ -30,6 +30,7 @@ private:
 
     QStandardItemModel *model1 = nullptr;
     void showData();
+    void resetData();
 
 
 };
