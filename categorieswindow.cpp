@@ -1,37 +1,71 @@
 #include "categorieswindow.h"
 #include "ui_categorieswindow.h"
 
-
-CategoriesWindow::CategoriesWindow(QWidget *parent)
-    : QDialog(parent)
-    , ui(new Ui::CategoriesWindow)
+#include "nekolibro.h"
+CategoriesWindow::CategoriesWindow(NekoLibro *parent)
+    : QDialog(static_cast<QWidget*>(parent)), ui(new Ui::CategoriesWindow), pNekoLibro(parent)
 {
     ui->setupUi(this);
-
+    qDebug() << "success";
+    //pNekoLibro = parent;
     connect(ui->to_add_book, &QPushButton::clicked,this, &CategoriesWindow::toAddBook);
     connect(ui->to_main_categories,&QPushButton::clicked,this,&CategoriesWindow::toMainCategories);
     connect(ui->save_book,&QPushButton::clicked,this,&CategoriesWindow::addBook);
     connect(ui->remove_book,&QPushButton::clicked,this,&CategoriesWindow::removeBook);
 
+    connect(ui->search,&QLineEdit::textChanged,this,&CategoriesWindow::searchByText);
     /* Kết nối với cơ sở dữ liệu */
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("nekolibro.db");
-    if (!db.open()) {
-        QMessageBox::critical(this, "Lỗi", "Không thể mở cơ sở dữ liệu!");
+    if (QSqlDatabase::contains("qt_sql_default_connection")) {
+        db = QSqlDatabase::database("qt_sql_default_connection");
+    } else {
+        db = QSqlDatabase::addDatabase("QSQLITE", "qt_sql_default_connection");
+        db.setDatabaseName("nekolibro.db");
+    }
+
+    if (!db.isOpen()) {
+        if (!db.open()) {
+            qDebug() << "Lỗi mở cơ sở dữ liệu:" << db.lastError().text();
+        } else {
+            qDebug() << "Mở cơ sở dữ liệu thành công!";
+        }
     }
     /* Thiết lập Qcompleter */
     setupCompleter();
+    /* Hiện thị bảng danh mục sản phẩm */
     showData();
-    ui->stackedWidget->setCurrentIndex(0);
-    //model1 = new QStandardItemModel(this);
+
 }
 
 CategoriesWindow::~CategoriesWindow()
 {
-    delete ui;
+        delete ui;
 }
 
-void CategoriesWindow::toAddBook(){
+void CategoriesWindow::toAddBook()
+{
+    if (!ui) {
+        qDebug() << "ERROR: ui is NULL!";
+        return;
+    }
+    if (!ui->stackedWidget) {
+        qDebug() << "ERROR: stackedWidget is NULL!";
+        return;
+    }
+
+    int pageCount = ui->stackedWidget->count();
+    qDebug() << "StackedWidget total pages: " << pageCount;
+
+    if (pageCount <= 1) {
+        qDebug() << "ERROR: Page index 1 does not exist!";
+        return;
+    }
+
+    // Kiểm tra cơ sở dữ liệu nếu cần
+    QSqlDatabase db = QSqlDatabase::database("qt_sql_default_connection");
+    if (!db.isOpen()) {
+        qDebug() << "ERROR: Database not open in toAddBook!";
+        return;
+    }
     ui->stackedWidget->setCurrentIndex(1);
 }
 
@@ -77,8 +111,6 @@ void CategoriesWindow::addBook(){
            // model1->select();
             showData();
             resetData();
-
-
             QMessageBox::information(this,"Thêm sản phẩm","Thêm sản phẩm thành công");
         }
         else {
@@ -97,12 +129,12 @@ void CategoriesWindow::removeBook() {
     QSqlQuery query;
 
     // Duyệt qua tất cả các dòng trong model
-    for (int row = 0; row < model1->rowCount(); ++row) {
-        QStandardItem *checkItem = model1->item(row, 0);
+    for (int row = 0; row < modelForData->rowCount(); ++row) {
+        QStandardItem *checkItem = modelForData->item(row, 0);
         if (checkItem && checkItem->checkState() == Qt::Checked) {
             found = true;
 
-            int id = model1->data(model1->index(row, 1)).toInt(); // Lấy ID của sản phẩm
+            int id = modelForData->data(modelForData->index(row, 1)).toInt(); // Lấy ID của sản phẩm
 
             query.prepare("DELETE FROM Categories WHERE ID = ?");
             query.addBindValue(id);
@@ -192,9 +224,9 @@ void CategoriesWindow::setupCompleter() {
 }
 
 void CategoriesWindow::showData() {
-    if (!model1) {
-        model1 = new QStandardItemModel(this);
-        model1->setHorizontalHeaderLabels(QStringList()
+    if (!modelForData) {
+        modelForData = new QStandardItemModel(this);
+        modelForData->setHorizontalHeaderLabels(QStringList()
                                           << " "
                                           << "ID"
                                           << "Tên sản phẩm"
@@ -203,7 +235,7 @@ void CategoriesWindow::showData() {
                                           << "Giá nhập"
                                           << "Phân loại");
     } else {
-        model1->removeRows(0, model1->rowCount());
+        modelForData->removeRows(0, modelForData->rowCount());  // xóa tất cả dữ liệu trong mô hình
     }
 
     QSqlQuery query;
@@ -222,42 +254,34 @@ void CategoriesWindow::showData() {
             checkItem->setCheckState(Qt::Unchecked);
             checkItem->setFlags(checkItem->flags() | Qt::ItemIsEditable);
 
-            model1->setItem(row, 0, checkItem);
-            model1->setItem(row, 1, idItem);
-            model1->setItem(row, 2, new QStandardItem(query.value(1).toString()));
-            model1->setItem(row, 3, new QStandardItem(query.value(2).toString()));
-            model1->setItem(row, 4, new QStandardItem(locale.toString(query.value(3).toDouble(), 'f', 0))); // Giá bán có dấu chấm
-            model1->setItem(row, 5, new QStandardItem(locale.toString(query.value(4).toDouble(), 'f', 0))); // Giá nhập có dấu chấm
-            model1->setItem(row, 6, new QStandardItem(query.value(5).toString()));
+            modelForData->setItem(row, 0, checkItem);
+            modelForData->setItem(row, 1, idItem);
+            modelForData->setItem(row, 2, new QStandardItem(query.value(1).toString()));
+            modelForData->setItem(row, 3, new QStandardItem(query.value(2).toString()));
+            modelForData->setItem(row, 4, new QStandardItem(locale.toString(query.value(3).toDouble(), 'f', 0))); // Giá bán có dấu chấm
+            modelForData->setItem(row, 5, new QStandardItem(locale.toString(query.value(4).toDouble(), 'f', 0))); // Giá nhập có dấu chấm
+            modelForData->setItem(row, 6, new QStandardItem(query.value(5).toString()));
 
             // Không cho phép chỉnh sửa các ô dữ liệu
             for (int col = 2; col <= 6; ++col) {
-                model1->item(row, col)->setFlags(model1->item(row, col)->flags() & ~Qt::ItemIsEditable);
+                modelForData->item(row, col)->setFlags(modelForData->item(row, col)->flags() & ~Qt::ItemIsEditable);
             }
-
             row++;
         }
     }
-
-
     // Kết nối model với bảng (nếu chưa kết nối)
-    if (ui->categories_table->model() != model1) {
-        ui->categories_table->setModel(model1);
+    if (ui->categories_table->model() != modelForData) {
+        ui->categories_table->setModel(modelForData);
     }
-
     // Cho phép sắp xếp theo cột
     ui->categories_table->setSortingEnabled(true);
-
-    // Chỉnh sửa ô checkbox
-   // ui->categories_table->setEditTriggers(QAbstractItemView::AllEditTriggers);
-
-
     /* Design */
     //Căn giữa tiêu đề cột
     ui->categories_table->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
     ui->categories_table->resizeColumnToContents(0);
     ui->categories_table->resizeColumnToContents(1);
 }
+
 void CategoriesWindow::resetData(){
     ui->author_edit->clear();
     ui->out_price_edit->clear();
@@ -265,4 +289,52 @@ void CategoriesWindow::resetData(){
     ui->name_edit->clear();
     ui->type->clear();
 }
+
+void CategoriesWindow::searchByText() {
+    QString searchText = ui->search->text();
+    /* case 1 */
+    if (searchText.isEmpty()) {
+        // Nếu không có từ khóa tìm kiếm, hiển thị toàn bộ dữ liệu
+        showData();
+    }
+    /* case 2 */
+    else {
+        modelForData->removeRows(0, modelForData->rowCount());  // Xóa tất cả dữ liệu trong mô hình trước
+
+        QSqlQuery query;
+        query.prepare("SELECT `ID`, `Tên sản phẩm`, `Tên tác giả`, `Giá bán`, `Giá nhập`, `Phân loại` FROM Categories WHERE `Tên sản phẩm` LIKE ? OR `Tên tác giả` LIKE ?");
+        query.addBindValue("%" + searchText + "%");
+        query.addBindValue("%" + searchText + "%");
+
+        if (query.exec()) {
+            int row = 0;
+            while (query.next()) {
+                int id = query.value(0).toInt();
+                QStandardItem *idItem = new QStandardItem(QString::number(id));
+                idItem->setData(id, Qt::UserRole);
+                idItem->setFlags(idItem->flags() & ~Qt::ItemIsEditable);
+
+                QStandardItem *checkItem = new QStandardItem();
+                checkItem->setCheckable(true);
+                checkItem->setCheckState(Qt::Unchecked);
+                checkItem->setFlags(checkItem->flags() | Qt::ItemIsEditable);
+
+                modelForData->setItem(row, 0, checkItem);
+                modelForData->setItem(row, 1, idItem);
+                modelForData->setItem(row, 2, new QStandardItem(query.value(1).toString()));
+                modelForData->setItem(row, 3, new QStandardItem(query.value(2).toString()));
+                modelForData->setItem(row, 4, new QStandardItem(query.value(3).toString()));
+                modelForData->setItem(row, 5, new QStandardItem(query.value(4).toString()));
+                modelForData->setItem(row, 6, new QStandardItem(query.value(5).toString()));
+
+                row++;
+            }
+        }
+
+        // Hiển thị dữ liệu đã lọc
+        ui->categories_table->setModel(modelForData);
+    }
+}
+
+
 

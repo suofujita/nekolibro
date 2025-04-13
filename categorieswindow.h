@@ -13,13 +13,14 @@ class CategoriesWindow : public QDialog
     Q_OBJECT
 
 public:
-    explicit CategoriesWindow(QWidget *parent = nullptr);
+    explicit CategoriesWindow(NekoLibro *parent = nullptr);
     ~CategoriesWindow();
-private slots:
+public slots:
     void toMainCategories();
     void toAddBook();
     void addBook();
     void removeBook();
+    void searchByText();
 private:
     Ui::CategoriesWindow *ui;
     QSqlDatabase db;
@@ -28,11 +29,9 @@ private:
     NekoLibro *pNekoLibro = nullptr;
     void setupCompleter();
 
-    QStandardItemModel *model1 = nullptr;
+    QStandardItemModel *modelForData = nullptr;
     void showData();
     void resetData();
-
-
 };
 
 #endif // CATEGORIESWINDOW_H

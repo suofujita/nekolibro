@@ -3,6 +3,7 @@
 
 #include <QDialog>
 
+class NekoLibro;
 namespace Ui {
 class EmployeesWindow;
 }

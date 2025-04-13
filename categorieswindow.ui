@@ -23,16 +23,16 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="main_categories">
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>49</y>
-       <width>151</width>
-       <height>31</height>
+       <y>70</y>
+       <width>481</width>
+       <height>51</height>
       </rect>
      </property>
      <property name="font">
@@ -41,7 +41,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Tìm kiếm</string>
+      <string>Tìm kiếm: Vui lòng nhập tên sách hoặc tác giả</string>
      </property>
     </widget>
     <widget class="QPushButton" name="remove_book">
@@ -74,7 +74,7 @@
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>100</y>
+       <y>120</y>
        <width>481</width>
        <height>51</height>
       </rect>

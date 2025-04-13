@@ -17,6 +17,12 @@
 #include <QSqlTableModel>
 #include <QSortFilterProxyModel>
 #include <QStandardItem>
+#include <QMenu>
+#include <QToolButton>
+#include <QAction>
+#include <QDate>
+#include <QLabel>
+#include <QTimer>
 QT_BEGIN_NAMESPACE
 
 class CategoriesWindow;
@@ -35,12 +41,17 @@ public:
     NekoLibro(QWidget *parent = nullptr);
     ~NekoLibro();
     QStringList getCategoriesList();
+    QString currentUser, currentFullName;
+    void setCurrentUser(QString username);
+    void showUserName();
+    void showFullName();
 private slots:
     void clickedLogOut();
     void openSalesWindow();
     void openEmployeesWindow();
     void openCategoriesWindow();
     void openImExportWindow();
+    void gotoAddBook();
 private:
     Ui::NekoLibro *ui;
     login *pLogin = nullptr;
@@ -48,6 +59,12 @@ private:
     EmployeesWindow *pEmployeesWindow = nullptr;
     CategoriesWindow *pCategoriesWindow = nullptr;
     ImExport *pImExportWindow = nullptr;
+    QSqlDatabase db;
+    QMenu *menuCategories = nullptr;
+    QTimer *time;
 
+    void showTime();
+
+    QString getCurrentUser();
 };
 #endif // NEKOLIBRO_H

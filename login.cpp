@@ -41,9 +41,14 @@ void login::clickedLogin()
         ui->status_label->setText("Đăng nhập thành công.....");
         ui->status_label->setStyleSheet("color: green;");
 
+
         // Đợi 1.5 giây rồi mở màn hình chính
         QTimer::singleShot(1500, this, [this]() {
             pNekoLibroWindow = new NekoLibro();
+            QString _user = ui->username_edit->text();
+            pNekoLibroWindow->setCurrentUser(_user);
+            pNekoLibroWindow->showUserName();
+            pNekoLibroWindow->showFullName();
             pNekoLibroWindow->show();
             close(); // đóng cửa sổ đăng nhập
         });
