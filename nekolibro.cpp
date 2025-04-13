@@ -3,6 +3,8 @@
 
 #include "categorieswindow.h"
 #include "imexport.h"
+#include "saleswindow.h"
+
 NekoLibro::NekoLibro(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::NekoLibro)

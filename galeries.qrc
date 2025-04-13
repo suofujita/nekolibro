@@ -4,5 +4,10 @@
         <file>nekoLibro.png</file>
         <file>nekoLibro-ver2.png</file>
         <file>search.png</file>
+        <file>account.png</file>
+        <file>add_account.png</file>
+        <file>shopping-cart.png</file>
+        <file>log-out_10027585.png</file>
+        <file>login.png</file>
     </qresource>
 </RCC>

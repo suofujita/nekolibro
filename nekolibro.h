@@ -9,7 +9,6 @@
 #include <QTimer>
 #include "database.h"
 #include "login.h"
-#include "saleswindow.h"
 #include "employeeswindow.h"
 #include <QStringList>
 #include <QStringListModel>
@@ -23,9 +22,12 @@
 #include <QDate>
 #include <QLabel>
 #include <QTimer>
+#include <QScreen>
+#include <QSpinBox>
 QT_BEGIN_NAMESPACE
 
 class CategoriesWindow;
+class SalesWindow;
 class ImExport;
 
 namespace Ui {

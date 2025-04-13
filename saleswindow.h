@@ -2,7 +2,7 @@
 #define SALESWINDOW_H
 
 #include <QDialog>
-
+#include "nekolibro.h"
 namespace Ui {
 class SalesWindow;
 }
@@ -14,9 +14,12 @@ class SalesWindow : public QDialog
 public:
     explicit SalesWindow(QWidget *parent = nullptr);
     ~SalesWindow();
-
+private slots:
+    void searchBooks(const QString &text);
+    void selectedBooks(QAction *action);
 private:
     Ui::SalesWindow *ui;
+    QMenu *searchMenu;
 };
 
 #endif // SALESWINDOW_H
