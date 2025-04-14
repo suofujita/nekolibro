@@ -5,6 +5,10 @@
 #include "imexport.h"
 #include "saleswindow.h"
 
+/* Phải khởi tạo biến stactic không chương trinh sẽ bị lỗi undefined */
+QString NekoLibro::currentUser = "";
+QString NekoLibro::currentFullName = "";
+
 NekoLibro::NekoLibro(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::NekoLibro)

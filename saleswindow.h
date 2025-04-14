@@ -19,7 +19,12 @@ private slots:
     void selectedBooks(QAction *action);
 private:
     Ui::SalesWindow *ui;
-    QMenu *searchMenu;
+    QTimer *time;
+    QString currentFullName;
+    void updateTotals();
+    void showTime();
+    void showFullName();
+    void moneyReturn();
 };
 
 #endif // SALESWINDOW_H

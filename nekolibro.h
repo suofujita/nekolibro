@@ -43,10 +43,12 @@ public:
     NekoLibro(QWidget *parent = nullptr);
     ~NekoLibro();
     QStringList getCategoriesList();
-    QString currentUser, currentFullName;
+    static QString currentUser, currentFullName;
     void setCurrentUser(QString username);
     void showUserName();
     void showFullName();
+    void showTime();
+    QString getCurrentUser();
 private slots:
     void clickedLogOut();
     void openSalesWindow();
@@ -63,10 +65,6 @@ private:
     ImExport *pImExportWindow = nullptr;
     QSqlDatabase db;
     QMenu *menuCategories = nullptr;
-    QTimer *time;
-
-    void showTime();
-
-    QString getCurrentUser();
+    QTimer *time;   
 };
 #endif // NEKOLIBRO_H
