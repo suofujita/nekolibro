@@ -20,11 +20,12 @@ private slots:
 private:
     Ui::SalesWindow *ui;
     QTimer *time;
+    double totalPrice = 0.0 ;
     QString currentFullName;
     void updateTotals();
     void showTime();
     void showFullName();
-    void moneyReturn();
+    void moneyReturn(const QString &text);
 };
 
 #endif // SALESWINDOW_H

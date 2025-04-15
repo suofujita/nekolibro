@@ -33,7 +33,7 @@ CategoriesWindow::CategoriesWindow(NekoLibro *parent)
     setupCompleter();
     /* Hiện thị bảng danh mục sản phẩm */
     showData();
-
+    ui->search->setPlaceholderText("Nhập tên sản phẩm hoặc tên tác giả...");
 }
 
 CategoriesWindow::~CategoriesWindow()
@@ -233,13 +233,14 @@ void CategoriesWindow::showData() {
                                           << "Tác giả"
                                           << "Giá bán"
                                           << "Giá nhập"
-                                          << "Phân loại");
+                                          << "Phân loại"
+                                        << "Tồn kho");
     } else {
         modelForData->removeRows(0, modelForData->rowCount());  // xóa tất cả dữ liệu trong mô hình
     }
 
     QSqlQuery query;
-    query.prepare("SELECT `ID`, `Tên sản phẩm`, `Tên tác giả`, `Giá bán`, `Giá nhập`, `Phân loại` FROM Categories");
+    query.prepare("SELECT `ID`, `Tên sản phẩm`, `Tên tác giả`, `Giá bán`, `Giá nhập`, `Phân loại`, `Tồn kho` FROM Categories");
     QLocale locale = QLocale(QLocale::Vietnamese);
     if (query.exec()) {
         int row = 0;
@@ -261,9 +262,10 @@ void CategoriesWindow::showData() {
             modelForData->setItem(row, 4, new QStandardItem(locale.toString(query.value(3).toDouble(), 'f', 0))); // Giá bán có dấu chấm
             modelForData->setItem(row, 5, new QStandardItem(locale.toString(query.value(4).toDouble(), 'f', 0))); // Giá nhập có dấu chấm
             modelForData->setItem(row, 6, new QStandardItem(query.value(5).toString()));
+            modelForData->setItem(row,7, new QStandardItem(query.value(6).toString()));
 
             // Không cho phép chỉnh sửa các ô dữ liệu
-            for (int col = 2; col <= 6; ++col) {
+            for (int col = 2; col <= 7; ++col) {
                 modelForData->item(row, col)->setFlags(modelForData->item(row, col)->flags() & ~Qt::ItemIsEditable);
             }
             row++;
@@ -280,6 +282,7 @@ void CategoriesWindow::showData() {
     ui->categories_table->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
     ui->categories_table->resizeColumnToContents(0);
     ui->categories_table->resizeColumnToContents(1);
+
 }
 
 void CategoriesWindow::resetData(){
@@ -302,7 +305,7 @@ void CategoriesWindow::searchByText() {
         modelForData->removeRows(0, modelForData->rowCount());  // Xóa tất cả dữ liệu trong mô hình trước
 
         QSqlQuery query;
-        query.prepare("SELECT `ID`, `Tên sản phẩm`, `Tên tác giả`, `Giá bán`, `Giá nhập`, `Phân loại` FROM Categories WHERE `Tên sản phẩm` LIKE ? OR `Tên tác giả` LIKE ?");
+        query.prepare("SELECT `ID`, `Tên sản phẩm`, `Tên tác giả`, `Giá bán`, `Giá nhập`, `Phân loại`,`Tồn kho` FROM Categories WHERE `Tên sản phẩm` LIKE ? OR `Tên tác giả` LIKE ?");
         query.addBindValue("%" + searchText + "%");
         query.addBindValue("%" + searchText + "%");
 
@@ -326,6 +329,7 @@ void CategoriesWindow::searchByText() {
                 modelForData->setItem(row, 4, new QStandardItem(query.value(3).toString()));
                 modelForData->setItem(row, 5, new QStandardItem(query.value(4).toString()));
                 modelForData->setItem(row, 6, new QStandardItem(query.value(5).toString()));
+                modelForData->setItem(row, 7, new QStandardItem(query.value(6).toString()));
 
                 row++;
             }

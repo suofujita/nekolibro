@@ -80,6 +80,34 @@ SalesWindow::SalesWindow(QWidget *parent)
     showFullName();
     ui->label->setFixedSize(30,30);
     ui->logo->setFixedSize(100,100);
+
+    /* Muốn khi nhập thì dữ liệu nhậo định dạng ví 10000 -> 10.000)*/
+    bool *formatting = new bool(false); // Cờ để tránh lặp vô hạn
+
+    connect(ui->money_customer, &QLineEdit::textChanged, this, [=](const QString &text) {
+        if (!*formatting) {
+            moneyReturn(text);  // Gọi lại tính tiền thối nếu đang không định dạng
+        }
+    });
+
+    connect(ui->money_customer, &QLineEdit::editingFinished, this, [=]() {
+        *formatting = true;  // Đánh dấu là đang định dạng
+
+        QString rawText = ui->money_customer->text();
+        rawText.remove('.'); // Bỏ dấu chấm
+        bool ok;
+        double number = rawText.toDouble(&ok);
+
+        if (ok) {
+            QLocale locale(QLocale::Vietnamese);
+            QString formatted = locale.toString(number, 'f', 0);
+            ui->money_customer->setText(formatted); // Định dạng lại
+            moneyReturn(QString::number(number));   // Gọi lại cập nhật tiền thối
+        }
+
+        *formatting = false; // Bỏ cờ định dạng
+    });
+
 }
 SalesWindow::~SalesWindow()
 {
@@ -169,7 +197,7 @@ void SalesWindow::selectedBooks(QAction *action)
 void SalesWindow::updateTotals()
 {
     int totalQuantity = 0;
-    double totalPrice = 0.0;
+    totalPrice = 0.0;
 
     for (int row = 0; row < ui->products->rowCount(); ++row) {
         QSpinBox *spinBox = qobject_cast<QSpinBox*>(ui->products->cellWidget(row, 2));
@@ -191,6 +219,10 @@ void SalesWindow::updateTotals()
 
     ui->num_book->setText(QString::number(totalQuantity));
     ui->total->setText(formattedTotal);
+
+    // Sau khi cập nhật tổng tiền → tính lại tiền thối
+    moneyReturn(ui->money_customer->text());
+
 }
 
 
@@ -211,6 +243,39 @@ void SalesWindow::showFullName(){
     }
     ui->name->setText(currentFullName);
 }
+
+void SalesWindow::moneyReturn(const QString &text)
+{
+    QString cleanedText = text;
+    cleanedText.remove('.'); // Xoá dấu chấm ngăn cách hàng nghìn
+
+    bool ok;
+    double paidAmount = cleanedText.toDouble(&ok);
+
+    if (!ok) {
+        ui->money_return->setText("<b>Không hợp lệ</b>");
+        ui->money_return->setStyleSheet("color: red;");
+        return;
+    }
+
+    double change = paidAmount - totalPrice;
+    QLocale locale = QLocale::Vietnamese;
+    QString formattedChange = locale.toString(change, 'f', 0);
+    QString result = QString("<b>%1</b>").arg(formattedChange);
+
+    if (change < 0) {
+        ui->money_return->setText(result);
+        ui->money_return->setStyleSheet("font-weight: bold; color: red;");
+    } else if (change > 0) {
+        ui->money_return->setText(result);
+        ui->money_return->setStyleSheet("font-weight: bold; color: green;");
+    } else {
+        ui->money_return->setText(result);
+        ui->money_return->setStyleSheet("font-weight: bold; color: black;");
+    }
+}
+
+
 
 
 
