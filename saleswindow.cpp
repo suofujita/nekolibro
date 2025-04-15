@@ -7,7 +7,8 @@ SalesWindow::SalesWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(":/image/cat.png"));
-    setWindowTitle("Neko Libro - Bán hàng");
+    setWindowTitle("Bán hàng - Neko Libro");
+
     /* Thêm phóng to/thu nhỏ cho dialog + wait */
     this->setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
 
@@ -102,7 +103,8 @@ SalesWindow::SalesWindow(QWidget *parent)
             QLocale locale(QLocale::Vietnamese);
             QString formatted = locale.toString(number, 'f', 0);
             ui->money_customer->setText(formatted); // Định dạng lại
-            moneyReturn(QString::number(number));   // Gọi lại cập nhật tiền thối
+            //moneyReturn(QString::number(number));   // Gọi lại cập nhật tiền thối
+            moneyReturn(rawText);
         }
 
         *formatting = false; // Bỏ cờ định dạng
@@ -165,7 +167,11 @@ void SalesWindow::selectedBooks(QAction *action)
         double priceValue = price.toDouble();
         QString formattedPrice = locale.toString(priceValue, 'f', 0);
         ui->products->setItem(row, 0, new QTableWidgetItem(nameWithAuthor)); // Sử dụng nameWithAuthor
-        ui->products->setItem(row, 1, new QTableWidgetItem(formattedPrice));
+       // ui->products->setItem(row, 1, new QTableWidgetItem(formattedPrice));
+        QTableWidgetItem *priceItem = new QTableWidgetItem(formattedPrice);
+        priceItem->setData(Qt::UserRole, priceValue); // Lưu giá trị thật dưới dạng double
+        ui->products->setItem(row, 1, priceItem);
+
 
         // Thêm QSpinBox để chỉnh số lượng
         QSpinBox *spinBox = new QSpinBox(this);
@@ -206,11 +212,13 @@ void SalesWindow::updateTotals()
         int quantity = spinBox->value();
         totalQuantity += quantity;
 
-        QString priceText = ui->products->item(row, 1)->text();
+        /*QString priceText = ui->products->item(row, 1)->text();
         QString cleaned = priceText;
         cleaned.remove('.');  // Xử lý dấu chấm ngăn cách hàng nghìn
 
-        double price = cleaned.toDouble();
+        double price = cleaned.toDouble();*/
+        QTableWidgetItem *priceItem = ui->products->item(row, 1);
+        double price = priceItem->data(Qt::UserRole).toDouble();
         totalPrice += price * quantity;
     }
 
@@ -247,10 +255,11 @@ void SalesWindow::showFullName(){
 void SalesWindow::moneyReturn(const QString &text)
 {
     QString cleanedText = text;
-    cleanedText.remove('.'); // Xoá dấu chấm ngăn cách hàng nghìn
+    cleanedText.remove('.');               // Xoá dấu chấm ngăn cách hàng nghìn
+    cleanedText = cleanedText.trimmed();   // Xoá khoảng trắng đầu/cuối
 
-    bool ok;
-    double paidAmount = cleanedText.toDouble(&ok);
+    bool ok = false;
+    double paidAmount = QLocale::c().toDouble(cleanedText, &ok);
 
     if (!ok) {
         ui->money_return->setText("<b>Không hợp lệ</b>");
@@ -274,6 +283,8 @@ void SalesWindow::moneyReturn(const QString &text)
         ui->money_return->setStyleSheet("font-weight: bold; color: black;");
     }
 }
+
+
 
 
 

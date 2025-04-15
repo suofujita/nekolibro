@@ -17,6 +17,7 @@ public:
 private slots:
     void searchBooks(const QString &text);
     void selectedBooks(QAction *action);
+    //void saveBill();
 private:
     Ui::SalesWindow *ui;
     QTimer *time;
@@ -26,6 +27,7 @@ private:
     void showTime();
     void showFullName();
     void moneyReturn(const QString &text);
+    void autoCreateNumBill();   // tạo mã số hóa đơn theo định dạng NekoLibro dd-mm-yyyy
 };
 
 #endif // SALESWINDOW_H

@@ -14,6 +14,8 @@ NekoLibro::NekoLibro(QWidget *parent)
     , ui(new Ui::NekoLibro)
 {
     ui->setupUi(this);
+    setWindowTitle("Trang chủ - Neko Libro");
+    setWindowIcon(QIcon(":/image/cat.png"));
 
     /* connect signals & slots */
     /* Dùng QToolButton tiện hơn */
@@ -21,11 +23,11 @@ NekoLibro::NekoLibro(QWidget *parent)
     connect(ui->sales, &QPushButton::clicked,this,&NekoLibro::openSalesWindow);
     connect(ui->employees, &QPushButton::clicked,this,&NekoLibro::openEmployeesWindow);
 
-    //connect(ui->categories,&QPushButton::clicked,this,&NekoLibro::openCategoriesWindow);
+    //connect(ui->categories,&QPushButton::clicked,this,&NekoLibro::openCategoriesWindow); old version using QPushButton but not comfortable
 
     connect(ui->import_export,&QPushButton::clicked,this,&NekoLibro::openImExportWindow);
 
-    connect(ui->categories, &QToolButton::clicked, this, &NekoLibro::openCategoriesWindow);       // success 12/4/25 7:51PM
+    connect(ui->categories, &QToolButton::clicked, this, &NekoLibro::openCategoriesWindow);       // success 12/4/25 7:51PM using QToolButton
 
     if (QSqlDatabase::contains("qt_sql_default_connection")) {
         db = QSqlDatabase::database("qt_sql_default_connection");
