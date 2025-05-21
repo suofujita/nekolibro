@@ -15,7 +15,8 @@ ImExport::ImExport(QWidget *parent)
     ui->export_logs_main->setFixedSize(200,200);
     ui->logo_import->setFixedSize(100,100);
     ui->logo_search->setFixedSize(50,50);
-
+    ui->logo_export->setFixedSize(100,100);
+    ui->logo_search_export->setFixedSize(50,50);
     /* Trang chủ nhập/ xuất hàng */
     connect(ui->import_main, &QPushButton::clicked,this,&ImExport::gotoImportInvoice);
     connect(ui->export_main, &QPushButton::clicked,this,&ImExport::gotoExportInvoice);

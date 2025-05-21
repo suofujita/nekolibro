@@ -41,24 +41,6 @@
         </property>
        </widget>
       </item>
-      <item row="12" column="5">
-       <widget class="QPushButton" name="cancel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Cancel</string>
-        </property>
-       </widget>
-      </item>
       <item row="9" column="2">
        <widget class="QLabel" name="label_6">
         <property name="sizePolicy">
@@ -229,6 +211,10 @@
         <property name="text">
          <string>Thêm SP</string>
         </property>
+        <property name="icon">
+         <iconset resource="galeries.qrc">
+          <normaloff>:/image/add.png</normaloff>:/image/add.png</iconset>
+        </property>
        </widget>
       </item>
       <item row="12" column="7">
@@ -246,6 +232,10 @@
         </property>
         <property name="text">
          <string>OK</string>
+        </property>
+        <property name="icon">
+         <iconset resource="galeries.qrc">
+          <normaloff>:/image/ok.png</normaloff>:/image/ok.png</iconset>
         </property>
        </widget>
       </item>
@@ -383,6 +373,10 @@
         <property name="text">
          <string>Xóa SP</string>
         </property>
+        <property name="icon">
+         <iconset resource="galeries.qrc">
+          <normaloff>:/image/remove_2.png</normaloff>:/image/remove_2.png</iconset>
+        </property>
        </widget>
       </item>
       <item row="4" column="0" rowspan="5" colspan="7">
@@ -425,6 +419,28 @@
         </property>
         <property name="text">
          <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="6">
+       <widget class="QPushButton" name="cancel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+        <property name="icon">
+         <iconset resource="galeries.qrc">
+          <normaloff>:/image/cancel.png</normaloff>:/image/cancel.png</iconset>
         </property>
        </widget>
       </item>
