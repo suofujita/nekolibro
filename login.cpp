@@ -3,7 +3,7 @@
 
 #include "createaccount.h"
 #include "nekolibro.h"
-
+#include "resetpassword.h"
 login::login(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::login)
@@ -14,6 +14,11 @@ login::login(QWidget *parent)
 
     connect(ui->login_button,&QPushButton::clicked,this,&login::clickedLogin);
     connect(ui->create_account_button, &QPushButton::clicked,this,&login::clickedCreateAccount);
+    connect(ui->username_edit,&QLineEdit::returnPressed,this,&login::clickedLogin);
+    connect(ui->password_edit,&QLineEdit::returnPressed,this,&login::clickedLogin);
+    connect(ui->eye,&QPushButton::clicked,this,&login::clickedTogglePassword);
+    connect(ui->reset_password_button,&QPushButton::clicked,this,&login::clickedForgetPassword);
+    ui->eye->setIcon(QIcon(":/image/close_eye.png"));
 }
 
 login::~login()
@@ -21,20 +26,61 @@ login::~login()
     delete ui;
 }
 
+void login::clickedCreateAccount() {
+    QString username = ui->username_edit->text();
+    QString plainPassword = ui->password_edit->text();
+    QString hashedPassword = NekoLibro::hashPassword(plainPassword);
+
+    QSqlQuery query;
+    query.prepare("SELECT role FROM AccountUsers WHERE username = ? AND password_hash = ?");
+    query.addBindValue(username);
+    query.addBindValue(hashedPassword);
+
+    if (query.exec() && query.next()) {
+        QString role = query.value("role").toString();
+
+        if (role == "admin") {
+            if (!pCreateWindow) {
+                pCreateWindow = new createAccount(this);
+            }
+            pCreateWindow->show();
+        } else {
+            QMessageBox::warning(this, "Lỗi", "Bạn không có quyền tạo tài khoản!");
+        }
+    } else {
+        QMessageBox::warning(this, "Lỗi", "Thông tin tài khoản không chính xác!");
+    }
+}
+
+/* Ẩn/Hiện mật khẩu */
+void login::clickedTogglePassword()
+{
+    passwordVisible = !passwordVisible;
+
+    if (passwordVisible) {
+        ui->password_edit->setEchoMode(QLineEdit::Normal);
+        ui->eye->setIcon(QIcon(":/image/eye.png"));
+    } else {
+        ui->password_edit->setEchoMode(QLineEdit::Password);
+        ui->eye->setIcon(QIcon(":/image/close_eye.png"));
+    }
+}
+
 void login::clickedLogin()
 {
     QString username = ui->username_edit->text();
-    QString password = ui->password_edit->text();
+    QString plainPassword = ui->password_edit->text();
+    QString hashedPassword = NekoLibro::hashPassword(plainPassword);
 
-    if (username.isEmpty() || password.isEmpty()) {
+    if (username.isEmpty() || plainPassword.isEmpty()) {
         QMessageBox::warning(this, "Lỗi", "Vui lòng điền đầy đủ thông tin!");
         return;
     }
 
     QSqlQuery query;
-    query.prepare("SELECT * FROM Users WHERE username = ? AND password = ?");
+    query.prepare("SELECT * FROM AccountUsers WHERE username = ? AND password_hash = ?");
     query.addBindValue(username);
-    query.addBindValue(password);
+    query.addBindValue(hashedPassword);
 
     if (query.exec() && query.next()) {
 
@@ -58,32 +104,11 @@ void login::clickedLogin()
     }
 }
 
-void login::clickedCreateAccount() {
-    if (!pCreateWindow) { // Kiểm tra xem cửa sổ đã tồn tại chưa
-        pCreateWindow = new createAccount(this);
+void login::clickedForgetPassword(){
+    if(!pResetPassWindow) {
+        pResetPassWindow = new resetPassword();
     }
-
-    QString username = ui->username_edit->text();
-    QString password = ui->password_edit->text();
-
-    QSqlQuery query;
-    query.prepare("SELECT isAdmin FROM Users WHERE username = ? AND password = ?");
-    query.addBindValue(username);
-    query.addBindValue(password);
-
-    if (query.exec() && query.next()) {
-        int isAdmin = query.value("isAdmin").toInt();
-        if (isAdmin == 1) {  // Người dùng là admin
-            pCreateWindow = new createAccount(this);
-            pCreateWindow->show();
-        } else {
-            QMessageBox::warning(this, "Lỗi", "Bạn không có quyền tạo tài khoản!");    // người dùng có tài khoản nhưng không có quyền truy cập
-        }
-    } else {
-        QMessageBox::warning(this, "Lỗi", "Không hợp lệ vui lòng thử lại sau!");    // người dùng chưa có tài khoản
-    }
+    pResetPassWindow->show();
 }
-
-
 
 

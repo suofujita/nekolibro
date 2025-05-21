@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>454</width>
-    <height>336</height>
+    <width>715</width>
+    <height>475</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,11 +16,16 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>90</y>
-     <width>63</width>
-     <height>20</height>
+     <x>30</x>
+     <y>270</y>
+     <width>151</width>
+     <height>41</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Email</string>
@@ -29,11 +34,16 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>190</y>
-     <width>63</width>
-     <height>20</height>
+     <x>30</x>
+     <y>130</y>
+     <width>111</width>
+     <height>31</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Usename</string>
@@ -42,90 +52,100 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>240</y>
-     <width>131</width>
-     <height>21</height>
+     <x>30</x>
+     <y>200</y>
+     <width>191</width>
+     <height>41</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
    </property>
    <property name="text">
-    <string>Tạo mật khẩu mới</string>
+    <string>Mật khẩu mới</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="new_gmail_edit">
+  <widget class="QLineEdit" name="new_email_edit">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>90</y>
-     <width>251</width>
-     <height>26</height>
+     <x>190</x>
+     <y>260</y>
+     <width>431</width>
+     <height>51</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
    </property>
   </widget>
   <widget class="QLineEdit" name="new_username_edit">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>190</y>
-     <width>251</width>
-     <height>26</height>
+     <x>190</x>
+     <y>120</y>
+     <width>431</width>
+     <height>41</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
    </property>
   </widget>
   <widget class="QLineEdit" name="new_password_edit">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>230</y>
-     <width>251</width>
-     <height>26</height>
+     <x>190</x>
+     <y>185</y>
+     <width>431</width>
+     <height>51</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="echoMode">
+    <enum>QLineEdit::EchoMode::Password</enum>
    </property>
   </widget>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>30</y>
+     <x>250</x>
+     <y>20</y>
      <width>261</width>
-     <height>31</height>
+     <height>61</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>TẠO TÀI KHOẢN MỚI</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="new_fullname_edit">
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>140</y>
-     <width>251</width>
-     <height>26</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_4">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>140</y>
-     <width>91</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Họ và tên</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="accept">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>290</y>
-     <width>93</width>
-     <height>29</height>
+     <x>572</x>
+     <y>410</y>
+     <width>121</width>
+     <height>51</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>OK</string>
@@ -134,17 +154,109 @@
   <widget class="QPushButton" name="cancel">
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>290</y>
-     <width>93</width>
-     <height>29</height>
+     <x>430</x>
+     <y>410</y>
+     <width>111</width>
+     <height>51</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Cancel</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="eye">
+   <property name="geometry">
+    <rect>
+     <x>630</x>
+     <y>190</y>
+     <width>51</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="galeries.qrc">
+     <normaloff>:/image/close_eye.png</normaloff>:/image/close_eye.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>51</width>
+     <height>51</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>340</y>
+     <width>121</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Cấp quyền</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="role_comboBox">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>340</y>
+     <width>141</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <item>
+    <property name="text">
+     <string>admin</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>user</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>10</y>
+     <width>91</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="galeries.qrc">:/image/register.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="galeries.qrc"/>
+ </resources>
  <connections/>
 </ui>

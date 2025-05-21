@@ -21,17 +21,19 @@ public slots:
     void addBook();
     void removeBook();
     void searchByText();
+    void addNewAuthor();
+    void addNewCategory();
 private:
     Ui::CategoriesWindow *ui;
     QSqlDatabase db;
     QCompleter *completer = nullptr;
     QStringListModel *model = nullptr;
     NekoLibro *pNekoLibro = nullptr;
-    void setupCompleter();
 
     QStandardItemModel *modelForData = nullptr;
     void showData();
     void resetData();
+    void loadComboBoxes();
 };
 
 #endif // CATEGORIESWINDOW_H

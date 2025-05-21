@@ -17,17 +17,24 @@ public:
 private slots:
     void searchBooks(const QString &text);
     void selectedBooks(QAction *action);
-    //void saveBill();
+    void cancelBill();
+    void saveBill();
+    void removeProductFromBill(int row);
 private:
     Ui::SalesWindow *ui;
     QTimer *time;
-    double totalPrice = 0.0 ;
+    int totalQuantity = 0;
+    double totalPrice = 0.0;
     QString currentFullName;
+    int currentUserId;
+
     void updateTotals();
     void showTime();
     void showFullName();
     void moneyReturn(const QString &text);
-    void autoCreateNumBill();   // tạo mã số hóa đơn theo định dạng NekoLibro dd-mm-yyyy
+    void autoCreateBillNum();   // tạo mã số hóa đơn theo định dạng NekoLibro-GDddmmyyyy-xxxx
+    void setCompleter();
+    int getInvoiceId(const QString &numBill);
 };
 
 #endif // SALESWINDOW_H

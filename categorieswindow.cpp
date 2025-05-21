@@ -14,6 +14,8 @@ CategoriesWindow::CategoriesWindow(NekoLibro *parent)
     connect(ui->remove_book,&QPushButton::clicked,this,&CategoriesWindow::removeBook);
 
     connect(ui->search,&QLineEdit::textChanged,this,&CategoriesWindow::searchByText);
+    connect(ui->add_new_author, &QPushButton::clicked,this, &CategoriesWindow::addNewAuthor);
+     connect(ui->add_new_type, &QPushButton::clicked,this, &CategoriesWindow::addNewCategory);
     /* Kết nối với cơ sở dữ liệu */
     if (QSqlDatabase::contains("qt_sql_default_connection")) {
         db = QSqlDatabase::database("qt_sql_default_connection");
@@ -29,11 +31,12 @@ CategoriesWindow::CategoriesWindow(NekoLibro *parent)
             qDebug() << "Mở cơ sở dữ liệu thành công!";
         }
     }
-    /* Thiết lập Qcompleter */
-    setupCompleter();
+
     /* Hiện thị bảng danh mục sản phẩm */
     showData();
     ui->search->setPlaceholderText("Nhập tên sản phẩm hoặc tên tác giả...");
+    loadComboBoxes();
+    resetData();
 }
 
 CategoriesWindow::~CategoriesWindow()
@@ -74,41 +77,42 @@ void CategoriesWindow::toMainCategories(){
 }
 
 void CategoriesWindow::addBook(){
+    QString isbn = ui->isbn_edit->text().trimmed();
+    QString title = ui->title_edit->text().trimmed();
+    QString author = ui->author_box->currentText().trimmed();
+    QString selling_price = ui->selling_price->text().trimmed();
+    QString purchase_price = ui->purchase_price->text().trimmed();
+    QString type = ui->type_box->currentText().trimmed();
 
-    QStringList categoriesList = pNekoLibro->getCategoriesList();
-
-    QString name = ui->name_edit->text();
-    QString author = ui->author_edit->text();
-    QString out_price = ui->out_price_edit->text();
-    QString in_price = ui->in_price_edit->text();
-    QString type = ui->type->text();
-
-    //out_price.replace(".", "");
-    //in_price.replace(".", "");
-
-    if(name.isEmpty() || author.isEmpty() || out_price.isEmpty() || in_price.isEmpty() || type.isEmpty()){
+    if(isbn.isEmpty()||title.isEmpty() || author.isEmpty() || selling_price.isEmpty() || purchase_price.isEmpty() || type.isEmpty()){
         QMessageBox::warning(this,"Lỗi","Vui lòng điền đầy đủ thông tin");
         return;
     }
+    int author_id = NekoLibro::getAuthorId(author);
+    int category_id = NekoLibro::getCategoryId(type);
+    if (author_id == -1 || category_id == -1) {
+        QMessageBox::critical(this, "Lỗi", "Không thể lấy author/category ID");
+        return;
+    }
+
     QSqlDatabase::database().transaction();
     QSqlQuery query;
-    query.prepare("SELECT * FROM Categories WHERE `Tên sản phẩm` = ? AND `Tên tác giả` = ?");
-    query.addBindValue(name);
-    query.addBindValue(author);
+    query.prepare("SELECT * FROM Products WHERE isbn = ? ");
+    query.addBindValue(isbn);
 
     if(query.exec() && !query.next()) {
-        query.prepare("INSERT INTO Categories(`Tên sản phẩm`,`Tên tác giả`,`Giá bán`,`Giá nhập`,`Phân loại`)"
-                      "VALUES( ? , ? , ?, ?, ?)");
-        query.addBindValue(name);
-        query.addBindValue(author);
-        query.addBindValue(out_price);
-        query.addBindValue(in_price);
-        query.addBindValue(type);
+        query.prepare("INSERT INTO Products (isbn,title,author_id,purchase_price,selling_price,category_id)"
+                      "VALUES( ? , ? , ?, ?, ?, ?)");
+        query.addBindValue(isbn);
+        query.addBindValue(title);
+        query.addBindValue(author_id);
+        query.addBindValue(purchase_price);
+        query.addBindValue(selling_price);
+        query.addBindValue(category_id);
 
         if(query.exec()) {
             QSqlDatabase::database().commit();
             /* Thêm thành công sau đó cập nhật CSDL */
-           // model1->select();
             showData();
             resetData();
             QMessageBox::information(this,"Thêm sản phẩm","Thêm sản phẩm thành công");
@@ -128,15 +132,13 @@ void CategoriesWindow::removeBook() {
     QSqlDatabase::database().transaction();
     QSqlQuery query;
 
-    // Duyệt qua tất cả các dòng trong model
     for (int row = 0; row < modelForData->rowCount(); ++row) {
         QStandardItem *checkItem = modelForData->item(row, 0);
         if (checkItem && checkItem->checkState() == Qt::Checked) {
             found = true;
+            int id = modelForData->item(row, 1)->data(Qt::UserRole).toInt();
 
-            int id = modelForData->data(modelForData->index(row, 1)).toInt(); // Lấy ID của sản phẩm
-
-            query.prepare("DELETE FROM Categories WHERE ID = ?");
+            query.prepare("DELETE FROM Products WHERE id = ?");
             query.addBindValue(id);
 
             if (!query.exec()) {
@@ -156,95 +158,142 @@ void CategoriesWindow::removeBook() {
     }
 }
 
-
-
-void CategoriesWindow::setupCompleter() {
-    /* Kiểm tra kết nối CSDL */
-    if (!db.isOpen()) {
-        QMessageBox::critical(this, "Lỗi", "Không thể kết nối với cơ sở dữ liệu!");
-        return;
-    }
-
-    QStringList nameList;    /* Lấy danh sách tên sản phẩm từ CSDL */
-    QStringList authorList;  /* Lấy danh sách tác giả từ CSDL */
-    QStringList typeList;     /* Lấy phân loại từ CSDL */
-
-    QSqlQuery query;
-
-    // Lấy danh sách tên sản phẩm
-    query.prepare("SELECT DISTINCT `Tên sản phẩm` FROM Categories");
-    if (query.exec()) {
-        while (query.next()) {
-            nameList << query.value(0).toString();
-        }
-    } else {
-        QMessageBox::critical(this, "Lỗi", "Không thể truy vấn cơ sở dữ liệu: " + query.lastError().text());
-    }
-
-    // Lấy danh sách tên tác giả
-    query.prepare("SELECT DISTINCT `Tên tác giả` FROM Categories");
-    if (query.exec()) {
-        while (query.next()) {
-            authorList << query.value(0).toString();
-        }
-    } else {
-        QMessageBox::critical(this, "Lỗi", "Không thể truy vấn cơ sở dữ liệu: " + query.lastError().text());
-    }
-
-    // Lấy danh sách phân loại
-    query.prepare("SELECT DISTINCT `Phân loại` FROM Categories");
-    if (query.exec()) {
-        while (query.next()) {
-            typeList << query.value(0).toString();
-        }
-    } else {
-        QMessageBox::critical(this, "Lỗi", "Không thể truy vấn cơ sở dữ liệu: " + query.lastError().text());
-    }
-
-    // ===> Thiết lập QCompleter cho tên sản phẩm
-    auto *nameModel = new QStringListModel(nameList, this);
-    auto *nameCompleter = new QCompleter(nameModel, this);
-    nameCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-    nameCompleter->setFilterMode(Qt::MatchContains);
-    ui->name_edit->setCompleter(nameCompleter);
-
-    // ===> Thiết lập QCompleter cho tên tác giả
-    auto *authorModel = new QStringListModel(authorList, this);
-    auto *authorCompleter = new QCompleter(authorModel, this);
-    authorCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-    authorCompleter->setFilterMode(Qt::MatchContains);
-    ui->author_edit->setCompleter(authorCompleter);
-
-    // ===> Thiết lập QCompleter cho phân loại
-    auto *typeModel = new QStringListModel(typeList, this);
-    auto *typeCompleter = new QCompleter(typeModel, this);
-    typeCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-    typeCompleter->setFilterMode(Qt::MatchContains);
-    ui->type->setCompleter(typeCompleter);
-}
-
 void CategoriesWindow::showData() {
     if (!modelForData) {
         modelForData = new QStandardItemModel(this);
         modelForData->setHorizontalHeaderLabels(QStringList()
-                                          << " "
-                                          << "ID"
-                                          << "Tên sản phẩm"
-                                          << "Tác giả"
-                                          << "Giá bán"
-                                          << "Giá nhập"
-                                          << "Phân loại"
-                                        << "Tồn kho");
+                                                << " "
+                                                << "ID"
+                                                << "Tên sản phẩm"
+                                                << "Tác giả"
+                                                << "Giá bán"
+                                                << "Giá nhập"
+                                                << "Phân loại"
+                                                << "Tồn kho");
     } else {
-        modelForData->removeRows(0, modelForData->rowCount());  // xóa tất cả dữ liệu trong mô hình
+        modelForData->removeRows(0, modelForData->rowCount());
     }
 
     QSqlQuery query;
-    query.prepare("SELECT `ID`, `Tên sản phẩm`, `Tên tác giả`, `Giá bán`, `Giá nhập`, `Phân loại`, `Tồn kho` FROM Categories");
-    QLocale locale = QLocale(QLocale::Vietnamese);
+    query.prepare(R"(
+        SELECT
+            Products.id,
+            Products.title,
+            Authors.name,
+            Products.selling_price,
+            Products.purchase_price,
+            Category.name,
+            Products.stock
+        FROM Products
+        LEFT JOIN Authors ON Products.author_id = Authors.id
+        LEFT JOIN Category ON Products.category_id = Category.id
+    )");
+
+    QLocale locale(QLocale::Vietnamese);
     if (query.exec()) {
         int row = 0;
-        while (query.next()) {  // Lặp qua tất cả các dòng kết quả
+        while (query.next()) {
+            int id = query.value(0).toInt();
+            QString title = query.value(1).toString();
+            QString author = query.value(2).toString();
+            double selling_price = query.value(3).toDouble();
+            double purchase_price = query.value(4).toDouble();
+            QString category = query.value(5).toString();
+            int stock = query.value(6).toInt();
+
+            QStandardItem *checkItem = new QStandardItem();
+            checkItem->setCheckable(true);
+            checkItem->setCheckState(Qt::Unchecked);
+            checkItem->setFlags(checkItem->flags() | Qt::ItemIsEditable);
+
+            QStandardItem *idItem = new QStandardItem(QString::number(id));
+            idItem->setData(id, Qt::UserRole);
+            idItem->setFlags(idItem->flags() & ~Qt::ItemIsEditable);
+
+            modelForData->setItem(row, 0, checkItem);
+            modelForData->setItem(row, 1, idItem);
+            modelForData->setItem(row, 2, new QStandardItem(title));
+            modelForData->setItem(row, 3, new QStandardItem(author));
+            modelForData->setItem(row, 4, new QStandardItem(locale.toString(selling_price, 'f', 0)));
+            modelForData->setItem(row, 5, new QStandardItem(locale.toString(purchase_price, 'f', 0)));
+            modelForData->setItem(row, 6, new QStandardItem(category));
+            modelForData->setItem(row, 7, new QStandardItem(QString::number(stock)));
+
+            // Không cho chỉnh sửa từ cột 2 đến 7
+            for (int col = 2; col <= 7; ++col) {
+                modelForData->item(row, col)->setFlags(modelForData->item(row, col)->flags() & ~Qt::ItemIsEditable);
+            }
+            row++;
+        }
+    } else {
+        QMessageBox::critical(this, "Lỗi", "Không thể lấy dữ liệu sản phẩm: " + query.lastError().text());
+    }
+
+    if (ui->categories_table->model() != modelForData) {
+        ui->categories_table->setModel(modelForData);
+    }
+
+    ui->categories_table->setSortingEnabled(true);
+    ui->categories_table->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
+    ui->categories_table->resizeColumnToContents(0);
+    ui->categories_table->resizeColumnToContents(1);
+
+    // Resize cột số thứ tự và ID theo nội dung
+    ui->categories_table->resizeColumnToContents(0); // checkbox
+    ui->categories_table->resizeColumnToContents(1); // ID
+
+    // Đặt cột "Tên sản phẩm" (index = 2) giãn hết phần còn lại
+    ui->categories_table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+
+    // Các cột còn lại resize theo nội dung
+    for (int col = 3; col < modelForData->columnCount(); ++col) {
+        ui->categories_table->horizontalHeader()->setSectionResizeMode(col, QHeaderView::ResizeToContents);
+    }
+}
+
+
+void CategoriesWindow::resetData(){
+    ui->isbn_edit->clear();
+    ui->title_edit->clear();
+    ui->author_edit->clear();
+    ui->selling_price->clear();
+    ui->purchase_price->clear();
+    ui->title_edit->clear();
+}
+
+void CategoriesWindow::searchByText() {
+    QString searchText = ui->search->text().trimmed();
+
+    if (searchText.isEmpty()) {
+        showData();  // Nếu không có từ khóa thì hiển thị toàn bộ
+        return;
+    }
+
+    modelForData->removeRows(0, modelForData->rowCount());  // Xoá dữ liệu cũ
+
+    QSqlQuery query;
+    query.prepare(R"(
+        SELECT
+            Products.id,
+            Products.title,
+            Authors.name,
+            Products.selling_price,
+            Products.purchase_price,
+            Category.name,
+            Products.stock
+        FROM Products
+        JOIN Authors ON Products.author_id = Authors.id
+        JOIN Category ON Products.category_id = Category.id
+        WHERE Products.title LIKE ? OR Authors.name LIKE ?
+    )");
+    QString keyword = "%" + searchText + "%";
+    query.addBindValue(keyword);
+    query.addBindValue(keyword);
+
+    QLocale locale(QLocale::Vietnamese);
+    if (query.exec()) {
+        int row = 0;
+        while (query.next()) {
             int id = query.value(0).toInt();
             QStandardItem *idItem = new QStandardItem(QString::number(id));
             idItem->setData(id, Qt::UserRole);
@@ -257,86 +306,97 @@ void CategoriesWindow::showData() {
 
             modelForData->setItem(row, 0, checkItem);
             modelForData->setItem(row, 1, idItem);
-            modelForData->setItem(row, 2, new QStandardItem(query.value(1).toString()));
-            modelForData->setItem(row, 3, new QStandardItem(query.value(2).toString()));
-            modelForData->setItem(row, 4, new QStandardItem(locale.toString(query.value(3).toDouble(), 'f', 0))); // Giá bán có dấu chấm
-            modelForData->setItem(row, 5, new QStandardItem(locale.toString(query.value(4).toDouble(), 'f', 0))); // Giá nhập có dấu chấm
-            modelForData->setItem(row, 6, new QStandardItem(query.value(5).toString()));
-            modelForData->setItem(row,7, new QStandardItem(query.value(6).toString()));
+            modelForData->setItem(row, 2, new QStandardItem(query.value(1).toString())); // Tên sản phẩm
+            modelForData->setItem(row, 3, new QStandardItem(query.value(2).toString())); // Tác giả
+            modelForData->setItem(row, 4, new QStandardItem(locale.toString(query.value(3).toDouble(), 'f', 0))); // Giá bán
+            modelForData->setItem(row, 5, new QStandardItem(locale.toString(query.value(4).toDouble(), 'f', 0))); // Giá nhập
+            modelForData->setItem(row, 6, new QStandardItem(query.value(5).toString())); // Phân loại
+            modelForData->setItem(row, 7, new QStandardItem(query.value(6).toString())); // Tồn kho
 
-            // Không cho phép chỉnh sửa các ô dữ liệu
             for (int col = 2; col <= 7; ++col) {
                 modelForData->item(row, col)->setFlags(modelForData->item(row, col)->flags() & ~Qt::ItemIsEditable);
             }
             row++;
         }
+    } else {
+        QMessageBox::critical(this, "Lỗi", "Không thể tìm kiếm: " + query.lastError().text());
     }
-    // Kết nối model với bảng (nếu chưa kết nối)
-    if (ui->categories_table->model() != modelForData) {
-        ui->categories_table->setModel(modelForData);
-    }
-    // Cho phép sắp xếp theo cột
+
+    ui->categories_table->setModel(modelForData);
     ui->categories_table->setSortingEnabled(true);
-    /* Design */
-    //Căn giữa tiêu đề cột
     ui->categories_table->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
     ui->categories_table->resizeColumnToContents(0);
     ui->categories_table->resizeColumnToContents(1);
-
 }
 
-void CategoriesWindow::resetData(){
-    ui->author_edit->clear();
-    ui->out_price_edit->clear();
-    ui->in_price_edit->clear();
-    ui->name_edit->clear();
-    ui->type->clear();
-}
 
-void CategoriesWindow::searchByText() {
-    QString searchText = ui->search->text();
-    /* case 1 */
-    if (searchText.isEmpty()) {
-        // Nếu không có từ khóa tìm kiếm, hiển thị toàn bộ dữ liệu
-        showData();
+void CategoriesWindow::addNewAuthor() {
+    QString authorName = ui->author_edit->text().trimmed();
+    if (authorName.isEmpty()) {
+        QMessageBox::warning(this, "Lỗi", "Vui lòng nhập tên tác giả!");
+        return;
     }
-    /* case 2 */
-    else {
-        modelForData->removeRows(0, modelForData->rowCount());  // Xóa tất cả dữ liệu trong mô hình trước
 
-        QSqlQuery query;
-        query.prepare("SELECT `ID`, `Tên sản phẩm`, `Tên tác giả`, `Giá bán`, `Giá nhập`, `Phân loại`,`Tồn kho` FROM Categories WHERE `Tên sản phẩm` LIKE ? OR `Tên tác giả` LIKE ?");
-        query.addBindValue("%" + searchText + "%");
-        query.addBindValue("%" + searchText + "%");
+    QSqlQuery query;
+    query.prepare("SELECT id FROM Authors WHERE name = ?");
+    query.addBindValue(authorName);
+    if (query.exec() && query.next()) {
+        QMessageBox::information(this, "Thông báo", "Tác giả đã tồn tại.");
+        return;
+    }
 
-        if (query.exec()) {
-            int row = 0;
-            while (query.next()) {
-                int id = query.value(0).toInt();
-                QStandardItem *idItem = new QStandardItem(QString::number(id));
-                idItem->setData(id, Qt::UserRole);
-                idItem->setFlags(idItem->flags() & ~Qt::ItemIsEditable);
+    query.prepare("INSERT INTO Authors(name) VALUES(?)");
+    query.addBindValue(authorName);
+    if (query.exec()) {
+        ui->author_box->addItem(authorName);  // Cập nhật ComboBox
+        ui->author_edit->clear();
+        QMessageBox::information(this, "Thành công", "Đã thêm tác giả mới.");
+    } else {
+        QMessageBox::critical(this, "Lỗi", "Không thể thêm tác giả: " + query.lastError().text());
+    }
+    loadComboBoxes();
+}
 
-                QStandardItem *checkItem = new QStandardItem();
-                checkItem->setCheckable(true);
-                checkItem->setCheckState(Qt::Unchecked);
-                checkItem->setFlags(checkItem->flags() | Qt::ItemIsEditable);
+void CategoriesWindow::addNewCategory() {
+    QString categoryName = ui->type_edit->text().trimmed();
+    if (categoryName.isEmpty()) {
+        QMessageBox::warning(this, "Lỗi", "Vui lòng nhập tên thể loại!");
+        return;
+    }
 
-                modelForData->setItem(row, 0, checkItem);
-                modelForData->setItem(row, 1, idItem);
-                modelForData->setItem(row, 2, new QStandardItem(query.value(1).toString()));
-                modelForData->setItem(row, 3, new QStandardItem(query.value(2).toString()));
-                modelForData->setItem(row, 4, new QStandardItem(query.value(3).toString()));
-                modelForData->setItem(row, 5, new QStandardItem(query.value(4).toString()));
-                modelForData->setItem(row, 6, new QStandardItem(query.value(5).toString()));
-                modelForData->setItem(row, 7, new QStandardItem(query.value(6).toString()));
+    QSqlQuery query;
+    query.prepare("SELECT id FROM Category WHERE name = ?");
+    query.addBindValue(categoryName);
+    if (query.exec() && query.next()) {
+        QMessageBox::information(this, "Thông báo", "Thể loại đã tồn tại.");
+        return;
+    }
 
-                row++;
-            }
-        }
+    query.prepare("INSERT INTO Category(name) VALUES(?)");
+    query.addBindValue(categoryName);
+    if (query.exec()) {
+        ui->type_box->addItem(categoryName);  // Cập nhật ComboBox
+        ui->type_edit->clear();
+        QMessageBox::information(this, "Thành công", "Đã thêm thể loại mới.");
+    } else {
+        QMessageBox::critical(this, "Lỗi", "Không thể thêm thể loại: " + query.lastError().text());
+    }
+    loadComboBoxes();
+}
 
-        // Hiển thị dữ liệu đã lọc
-        ui->categories_table->setModel(modelForData);
+void CategoriesWindow::loadComboBoxes() {
+    // ComboBox Tác giả
+    ui->author_box->clear();  // Xoá dữ liệu cũ
+    QSqlQuery authorQuery("SELECT name FROM Authors");
+    while (authorQuery.next()) {
+        ui->author_box->addItem(authorQuery.value(0).toString());
+    }
+
+    // ComboBox Phân loại
+    ui->type_box->clear();  // Xoá dữ liệu cũ
+    QSqlQuery categoryQuery("SELECT name FROM Category");
+    while (categoryQuery.next()) {
+        ui->type_box->addItem(categoryQuery.value(0).toString());
     }
 }
 

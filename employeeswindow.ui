@@ -165,7 +165,7 @@
    </property>
    <column>
     <property name="text">
-     <string>ID</string>
+     <string>Username</string>
     </property>
    </column>
    <column>

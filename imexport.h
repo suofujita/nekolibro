@@ -2,8 +2,9 @@
 #define IMEXPORT_H
 
 #include <QWidget>
-#include "nekolibro.h"
 
+#include "nekolibro.h"
+#include "categorieswindow.h"
 namespace Ui {
 class ImExport;
 }
@@ -15,20 +16,35 @@ class ImExport : public QWidget
 public:
     explicit ImExport(QWidget *parent = nullptr);
     ~ImExport();
-
+public slots:
+    void toMainImExport();
+    void gotoImportInvoice();
+    void gotoExportInvoice();
+    void gotoImportLogs();
+    void gotoExportLogs();
 private slots:
-    void toMainImExport();       // main
-    void toExportInfor();        // xem xác nhận thông tin trước khi ok
-    //void toExportDetail();      // xem lại chi tiết xuất hàng
-    void toImportInfor();        // xem xác nhận thông tin trước khi ok
-    //void toImportDetail();       // xem lại Chi tiết nhập hàng
-    void toImportHistories();    // lịch sử nhập hàng
-    void toExportHistories();   // lịch sử xuất hàng
+    void saveImportInvoices();
+    void viewImportLogs();
+    void toAddNewCategory();
+    void delayTabImport();
+    void searchBooks(const QString &text);
+    void removeBooksFromImportTable(int row);
+    //void viewEmportLogs();
+    //void saveExportInvoice();
 
 
 private:
     Ui::ImExport *ui;
+    CategoriesWindow *pCategoriesWindow = nullptr;
     QSqlDatabase db;
+    int totalQuantity = 0;
+    void showTime();                         // check 6.32
+    void autoCreateBillNum();                // check 6.32
+    void selectedBooks(QAction *action);
+    void setCompleter();
+    void updateTotals();
+    int getInvoiceId(const QString &numBill);
+    void updatedStock();
 };
 
 #endif // IMEXPORT_H

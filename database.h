@@ -5,15 +5,16 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
-
+#include "nekolibro.h"
 class database
 {
 public:
     database();
     bool connectDatabase();
-    void createUsersTable();
     void closeDatabase();
+    void createUserProfiles();
     void createAdminAccount();
+
 };
 
 #endif // DATABASE_H

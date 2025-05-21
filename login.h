@@ -10,6 +10,7 @@
 
 class createAccount;
 class NekoLibro;
+class resetPassword;
 namespace Ui {
 class login;
 }
@@ -24,10 +25,14 @@ public:
 private slots:
     void clickedLogin();
     void clickedCreateAccount();
+    void clickedTogglePassword();
+    void clickedForgetPassword();
 private:
     Ui::login *ui;
     createAccount *pCreateWindow = nullptr;
     NekoLibro *pNekoLibroWindow = nullptr;
+    resetPassword *pResetPassWindow = nullptr;
+    bool passwordVisible = false;
 };
 
 #endif // LOGIN_H

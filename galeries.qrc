@@ -9,5 +9,32 @@
         <file>shopping-cart.png</file>
         <file>log-out_10027585.png</file>
         <file>login.png</file>
+        <file>resetpass.png</file>
+        <file>gmail.png</file>
+        <file>welcome_17813107.png</file>
+        <file>ok.png</file>
+        <file>add.png</file>
+        <file>eye.png</file>
+        <file>close_eye.png</file>
+        <file>register.png</file>
+        <file>im_export.png</file>
+        <file>sales_icon.png</file>
+        <file>setting.png</file>
+        <file>report_2.png</file>
+        <file>category.png</file>
+        <file>report.png</file>
+        <file>export.png</file>
+        <file>import.png</file>
+        <file>save.png</file>
+        <file>staff.png</file>
+        <file>remove_2.png</file>
+        <file>remove.png</file>
+        <file>back.png</file>
+        <file>cancel.png</file>
+        <file>logs.png</file>
+        <file>import_2.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>import_2.png</file>
     </qresource>
 </RCC>

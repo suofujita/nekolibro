@@ -23,8 +23,10 @@ public:
 private slots:
     void clickedAccept();
     void clickedReject();
+    void clickedTogglePass();
 private:
     Ui::createAccount *ui;
+    bool passwordVisible = false;
 };
 
 #endif // CREATEACCOUNT_H

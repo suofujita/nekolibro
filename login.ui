@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>386</width>
-    <height>285</height>
+    <width>532</width>
+    <height>402</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,37 +16,62 @@
   <widget class="QPushButton" name="create_account_button">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>170</y>
-     <width>93</width>
-     <height>29</height>
+     <x>110</x>
+     <y>230</y>
+     <width>131</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
     <string>ĐĂNG KÝ</string>
    </property>
+   <property name="icon">
+    <iconset resource="galeries.qrc">
+     <normaloff>:/image/add_account.png</normaloff>:/image/add_account.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>40</width>
+     <height>40</height>
+    </size>
+   </property>
   </widget>
   <widget class="QPushButton" name="reset_password_button">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>210</y>
-     <width>181</width>
-     <height>29</height>
+     <x>190</x>
+     <y>300</y>
+     <width>231</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
     <string>QUÊN MẬT KHẨU?</string>
    </property>
+   <property name="icon">
+    <iconset resource="galeries.qrc">
+     <normaloff>:/image/resetpass.png</normaloff>:/image/resetpass.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>35</width>
+     <height>35</height>
+    </size>
+   </property>
   </widget>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>130</y>
+     <x>20</x>
+     <y>180</y>
      <width>81</width>
-     <height>20</height>
+     <height>31</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Mật khẩu</string>
@@ -55,24 +80,39 @@
   <widget class="QPushButton" name="login_button">
    <property name="geometry">
     <rect>
-     <x>230</x>
-     <y>170</y>
-     <width>101</width>
-     <height>29</height>
+     <x>350</x>
+     <y>230</y>
+     <width>141</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
     <string>ĐĂNG NHẬP</string>
    </property>
+   <property name="icon">
+    <iconset resource="galeries.qrc">
+     <normaloff>:/image/login.png</normaloff>:/image/login.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>35</width>
+     <height>35</height>
+    </size>
+   </property>
   </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>80</y>
-     <width>121</width>
-     <height>20</height>
+     <x>20</x>
+     <y>110</y>
+     <width>161</width>
+     <height>41</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Tên người dùng</string>
@@ -81,11 +121,16 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>30</y>
-     <width>111</width>
-     <height>20</height>
+     <x>220</x>
+     <y>40</y>
+     <width>141</width>
+     <height>31</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>ĐĂNG NHẬP </string>
@@ -94,37 +139,94 @@
   <widget class="QLineEdit" name="password_edit">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>120</y>
-     <width>231</width>
-     <height>26</height>
+     <x>170</x>
+     <y>170</y>
+     <width>301</width>
+     <height>41</height>
     </rect>
+   </property>
+   <property name="echoMode">
+    <enum>QLineEdit::EchoMode::Password</enum>
    </property>
   </widget>
   <widget class="QLineEdit" name="username_edit">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>80</y>
-     <width>231</width>
-     <height>26</height>
+     <x>170</x>
+     <y>105</y>
+     <width>301</width>
+     <height>41</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
   </widget>
-  <widget class="QLabel" name="status_label">
+  <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>250</y>
-     <width>281</width>
-     <height>20</height>
+     <x>40</x>
+     <y>10</y>
+     <width>91</width>
+     <height>81</height>
     </rect>
    </property>
    <property name="text">
     <string/>
    </property>
+   <property name="pixmap">
+    <pixmap resource="galeries.qrc">:/image/welcome_17813107.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="status_label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>360</y>
+     <width>461</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="eye">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>170</y>
+     <width>41</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>eye.png</normaloff>eye.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>41</width>
+     <height>41</height>
+    </size>
+   </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="galeries.qrc"/>
+ </resources>
  <connections/>
 </ui>

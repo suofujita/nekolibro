@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 
     database db;
     if (db.connectDatabase()) {
-        db.createUsersTable(); // Tạo bảng nếu chưa tồn tại
+        db.createUserProfiles();
         db.createAdminAccount();  // Tạo tài khoản admin mặc định nếu chưa tồn tại
     }
 

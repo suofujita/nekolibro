@@ -13,9 +13,14 @@ createAccount::createAccount(QWidget *parent)
         QMessageBox::critical(this, "Lỗi", "Không thể mở cơ sở dữ liệu!");
         return;
     }
+    QSqlQuery enableFK;
+    enableFK.exec("PRAGMA foreign_keys = ON");
 
     connect(ui->accept, &QPushButton::clicked,this,&createAccount::clickedAccept);
     connect(ui->cancel,&QPushButton::clicked,this,&createAccount::clickedReject);
+    connect(ui->eye,&QPushButton::clicked,this,&createAccount::clickedTogglePass);
+
+    ui->eye->setIcon(QIcon(":/image/close_eye.png"));
 }
 
 createAccount::~createAccount()
@@ -27,38 +32,74 @@ void createAccount::clickedReject(){
     showMinimized();// thu nhỏ không đóng
 }
 
-void createAccount::clickedAccept(){
-    QString new_username = ui->new_username_edit->text();
-    QString new_password = ui->new_password_edit->text();
-    QString new_email = ui->new_gmail_edit->text();
-    QString new_fullname = ui->new_fullname_edit->text();
 
-    /* Không bỏ trống thông tin */
-    if(new_username.isEmpty() || new_password.isEmpty() || new_email.isEmpty() || new_fullname.isEmpty()) {
+void createAccount::clickedAccept() {
+    QString new_username = ui->new_username_edit->text();
+    QString plain_new_password = ui->new_password_edit->text();
+    QString new_email = ui->new_email_edit->text();
+    QString hashed_new_password = NekoLibro::hashPassword(plain_new_password);
+    QString selected_role = ui->role_comboBox->currentText();
+
+    // Kiểm tra thông tin không được bỏ trống
+    if (new_username.isEmpty() || plain_new_password.isEmpty() || new_email.isEmpty()) {
         QMessageBox::warning(this, "Lỗi", "Vui lòng không bỏ trống thông tin!");
         return;
     }
 
     QSqlQuery query;
-    query.prepare("SELECT * FROM Users WHERE username = ?");
-    query.addBindValue(new_username);
 
-    /* Kiểm tra tên tài khoản đã tồn tại chưa */
-    if(query.exec() && query.next()) {
+    // Kiểm tra tên tài khoản đã tồn tại chưa
+    query.prepare("SELECT * FROM AccountUsers WHERE username = ?");
+    query.addBindValue(new_username);
+    if (query.exec() && query.next()) {
         QMessageBox::warning(this, "Lỗi", "Tên người dùng đã tồn tại!");
         return;
     }
-    /* Tài khoản hợp lệ */
-    query.prepare("INSERT INTO Users(username,password,email,fullname)"
-                  "VALUES( ? , ? , ?, ?)");
-    query.addBindValue(new_username);
-    query.addBindValue(new_password);
+
+    // Kiểm tra email đã tồn tại chưa
+    query.prepare("SELECT * FROM UserProfiles WHERE email = ?");
     query.addBindValue(new_email);
-    query.addBindValue(new_fullname);
-    /* Thông báo thành công */
-    if(query.exec()) {
-        QMessageBox::information(this,"Tạo tài khoản mới","Tạo tài khoản mới thành công!");
-        close();   // đóng hộp thoại
+    if (query.exec() && query.next()) {
+        QMessageBox::warning(this, "Lỗi", "Email đã được sử dụng đăng ký!");
+        return;
     }
 
+    query.prepare("INSERT INTO AccountUsers (username, password_hash, role) "
+                  "VALUES (?, ?, ?)");
+    query.addBindValue(new_username);
+    query.addBindValue(hashed_new_password);
+    query.addBindValue(selected_role);
+
+    // Thêm thông tin người dùng vào bảng UserProfiles
+    if (query.exec()) {
+        // Lấy user_id (id của tài khoản mới) từ bảng AccountUsers
+        qint64 new_user_id = query.lastInsertId().toLongLong();
+
+        // Thêm thông tin chi tiết người dùng vào bảng UserProfiles
+        query.prepare("INSERT INTO UserProfiles (user_id, email) "
+                      "VALUES (?,?)");
+        query.addBindValue(new_user_id);
+        query.addBindValue(new_email);
+
+        if (query.exec()) {
+            QMessageBox::information(this, "Tạo tài khoản mới", "Tạo tài khoản mới thành công!");
+            close();
+        } else {
+            QMessageBox::warning(this, "Lỗi", "Không thể thêm thông tin chi tiết người dùng vào UserProfiles!");
+        }
+    } else {
+        QMessageBox::warning(this, "Lỗi", "Không thể tạo tài khoản mới!");
+    }
 }
+
+void createAccount::clickedTogglePass(){
+    passwordVisible = !passwordVisible;
+    if (passwordVisible) {
+        ui->new_password_edit->setEchoMode(QLineEdit::Normal);
+        ui->eye->setIcon(QIcon(":/image/eye.png"));
+    } else {
+        ui->new_password_edit->setEchoMode(QLineEdit::Password);
+        ui->eye->setIcon(QIcon(":/image/close_eye.png"));
+    }
+}
+

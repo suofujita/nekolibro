@@ -24,11 +24,13 @@
 #include <QTimer>
 #include <QScreen>
 #include <QSpinBox>
+#include <QCryptographicHash>
 QT_BEGIN_NAMESPACE
 
 class CategoriesWindow;
 class SalesWindow;
 class ImExport;
+
 
 namespace Ui {
 class NekoLibro;
@@ -49,6 +51,9 @@ public:
     void showFullName();
     void showTime();
     QString getCurrentUser();
+    static QString hashPassword(const QString &password);
+    static int getAuthorId(const QString &authorName);
+    static int getCategoryId(const QString &categoryName);
 private slots:
     void clickedLogOut();
     void openSalesWindow();
@@ -56,6 +61,10 @@ private slots:
     void openCategoriesWindow();
     void openImExportWindow();
     void gotoAddBook();
+    void gotoImportInvoice();
+    void gotoExportInvoice();
+    void gotoImportLogs();
+    void gotoExportLogs();
 private:
     Ui::NekoLibro *ui;
     login *pLogin = nullptr;
@@ -65,6 +74,10 @@ private:
     ImExport *pImExportWindow = nullptr;
     QSqlDatabase db;
     QMenu *menuCategories = nullptr;
-    QTimer *time;   
+    QMenu *menuImExport = nullptr;
+    QTimer *time;
+
+    void updateStock();
+
 };
 #endif // NEKOLIBRO_H

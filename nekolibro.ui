@@ -6,25 +6,34 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>881</width>
+    <height>624</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>NekoLibro</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="galeries.qrc">
+    <normaloff>:/image/category.png</normaloff>:/image/category.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>330</y>
-      <width>171</width>
+      <y>370</y>
+      <width>191</width>
       <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
     <property name="text">
-     <string>HÔM NAY LÀ NGÀY</string>
+     <string>HÔM NAY LÀ NGÀY:</string>
     </property>
     <property name="textFormat">
      <enum>Qt::TextFormat::MarkdownText</enum>
@@ -34,122 +43,73 @@
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>420</y>
-      <width>161</width>
+      <y>470</y>
+      <width>211</width>
       <height>20</height>
      </rect>
     </property>
-    <property name="text">
-     <string>NHÂN VIÊN BÁN HÀNG</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="employees">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>310</y>
-      <width>111</width>
-      <height>111</height>
-     </rect>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
     </property>
     <property name="text">
-     <string>QUẢN LÝ
-NHÂN VIÊN</string>
-    </property>
-    <property name="autoDefault">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="users">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>190</y>
-      <width>111</width>
-      <height>91</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TÀI KHOẢN
-NGƯỜI DÙNG</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="sales">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>190</y>
-      <width>141</width>
-      <height>91</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>BÁN HÀNG</string>
+     <string>NHÂN VIÊN BÁN HÀNG:</string>
     </property>
    </widget>
    <widget class="QPushButton" name="logout">
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>500</y>
-      <width>121</width>
-      <height>41</height>
+      <y>510</y>
+      <width>201</width>
+      <height>61</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>ĐĂNG XUẤT</string>
     </property>
-   </widget>
-   <widget class="QPushButton" name="reports">
-    <property name="geometry">
-     <rect>
-      <x>480</x>
-      <y>190</y>
-      <width>141</width>
-      <height>91</height>
-     </rect>
+    <property name="icon">
+     <iconset resource="galeries.qrc">
+      <normaloff>:/image/log-out_10027585.png</normaloff>:/image/log-out_10027585.png</iconset>
     </property>
-    <property name="text">
-     <string>BÁO CÁO 
-DOANH THU</string>
+    <property name="iconSize">
+     <size>
+      <width>50</width>
+      <height>50</height>
+     </size>
     </property>
    </widget>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>380</y>
-      <width>161</width>
+      <y>420</y>
+      <width>191</width>
       <height>20</height>
      </rect>
     </property>
-    <property name="text">
-     <string>TÊN NGƯỜI DÙNG</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="settings">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>440</y>
-      <width>111</width>
-      <height>101</height>
-     </rect>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
     </property>
     <property name="text">
-     <string>CÀI ĐẶT</string>
+     <string>TÊN NGƯỜI DÙNG:</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>321</width>
-      <height>161</height>
+      <x>20</x>
+      <y>30</y>
+      <width>311</width>
+      <height>141</height>
      </rect>
     </property>
     <property name="text">
@@ -162,31 +122,18 @@ DOANH THU</string>
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="import_export">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>190</y>
-      <width>151</width>
-      <height>91</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>XUẤT/NHẬP HÀNG</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="time">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>330</y>
+      <x>410</x>
+      <y>360</y>
       <width>421</width>
-      <height>20</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>10</pointsize>
+      <pointsize>12</pointsize>
       <bold>true</bold>
      </font>
     </property>
@@ -197,15 +144,15 @@ DOANH THU</string>
    <widget class="QLabel" name="username">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>380</y>
-      <width>431</width>
-      <height>20</height>
+      <x>410</x>
+      <y>410</y>
+      <width>401</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>10</pointsize>
+      <pointsize>12</pointsize>
       <bold>true</bold>
      </font>
     </property>
@@ -216,15 +163,15 @@ DOANH THU</string>
    <widget class="QLabel" name="fullname">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>420</y>
+      <x>410</x>
+      <y>460</y>
       <width>431</width>
-      <height>20</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>10</pointsize>
+      <pointsize>12</pointsize>
       <bold>true</bold>
      </font>
     </property>
@@ -237,16 +184,216 @@ DOANH THU</string>
      <rect>
       <x>150</x>
       <y>190</y>
-      <width>131</width>
-      <height>91</height>
+      <width>171</width>
+      <height>111</height>
      </rect>
     </property>
     <property name="text">
      <string>DANH MỤC 
 SẢN PHẨM</string>
     </property>
+    <property name="icon">
+     <iconset resource="galeries.qrc">
+      <normaloff>:/image/category.png</normaloff>:/image/category.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>50</width>
+      <height>50</height>
+     </size>
+    </property>
     <property name="popupMode">
      <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
+    </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="im_export">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>190</y>
+      <width>171</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>XUẤT/NHẬP HÀNG</string>
+    </property>
+    <property name="icon">
+     <iconset resource="galeries.qrc">
+      <normaloff>:/image/im_export.png</normaloff>:/image/im_export.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>50</width>
+      <height>50</height>
+     </size>
+    </property>
+    <property name="popupMode">
+     <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
+    </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>70</y>
+      <width>441</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Welcome to Neko Libro!</string>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="reports">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>190</y>
+      <width>181</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>BÁO CÁO - THỐNG KÊ</string>
+    </property>
+    <property name="icon">
+     <iconset resource="galeries.qrc">
+      <normaloff>:/image/report_2.png</normaloff>:/image/report_2.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>50</width>
+      <height>50</height>
+     </size>
+    </property>
+    <property name="popupMode">
+     <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
+    </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="sales">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>190</y>
+      <width>141</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>BÁN HÀNG</string>
+    </property>
+    <property name="icon">
+     <iconset resource="galeries.qrc">
+      <normaloff>:/image/sales_icon.png</normaloff>:/image/sales_icon.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>50</width>
+      <height>50</height>
+     </size>
+    </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="users">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>190</y>
+      <width>131</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TÀI KHOẢN</string>
+    </property>
+    <property name="icon">
+     <iconset resource="galeries.qrc">
+      <normaloff>:/image/account.png</normaloff>:/image/account.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>50</width>
+      <height>50</height>
+     </size>
+    </property>
+    <property name="popupMode">
+     <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
+    </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="employees">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>320</y>
+      <width>131</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>QUẢN LÝ
+ NHÂN VIÊN</string>
+    </property>
+    <property name="icon">
+     <iconset resource="galeries.qrc">
+      <normaloff>:/image/staff.png</normaloff>:/image/staff.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>50</width>
+      <height>50</height>
+     </size>
+    </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="settings">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>450</y>
+      <width>131</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>CÀI ĐẶT</string>
+    </property>
+    <property name="icon">
+     <iconset resource="galeries.qrc">
+      <normaloff>:/image/setting.png</normaloff>:/image/setting.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>50</width>
+      <height>50</height>
+     </size>
+    </property>
+    <property name="popupMode">
+     <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
+    </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
     </property>
    </widget>
   </widget>
@@ -255,7 +402,7 @@ SẢN PHẨM</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>881</width>
      <height>26</height>
     </rect>
    </property>
