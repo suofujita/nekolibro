@@ -23,7 +23,7 @@
       <enum>QFrame::Shape::NoFrame</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="main">
       <layout class="QGridLayout" name="gridLayout_4">

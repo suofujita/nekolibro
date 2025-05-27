@@ -77,31 +77,27 @@ ImExport::ImExport(QWidget *parent)
     ui->export_books->horizontalHeader()->setStretchLastSection(false);
 
     /* Bảng chứa lịch sử nhập hàng */
-    ui->search_import_logs_result->setColumnCount(4);
-    ui->search_import_logs_result->setHorizontalHeaderLabels({"Ngày", "Mã đơn hàng", "Số lượng", ""});
+    ui->search_import_logs_result->setColumnCount(3);
+    ui->search_import_logs_result->setHorizontalHeaderLabels({"Ngày", "Mã đơn hàng", "Số lượng"});
     ui->search_import_logs_result->horizontalHeader()->setStretchLastSection(true);
     QHeaderView *headerImportLogs = ui->search_import_logs_result->horizontalHeader();
     headerImportLogs->setSectionResizeMode(1, QHeaderView::Stretch);
     headerImportLogs->setSectionResizeMode(0, QHeaderView::Fixed);
     headerImportLogs->setSectionResizeMode(2, QHeaderView::Fixed);
-    headerImportLogs->setSectionResizeMode(3, QHeaderView::Fixed);
     ui->search_import_logs_result->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->search_import_logs_result->setColumnWidth(2, 100);
-    ui->search_import_logs_result->setColumnWidth(3, 300);
     ui->search_import_logs_result->horizontalHeader()->setStretchLastSection(false);
 
     /* Bảng chứa lịch sử xuất hàng */
-    ui->search_export_logs_result->setColumnCount(4);
-    ui->search_export_logs_result->setHorizontalHeaderLabels({"Ngày", "Mã đơn hàng", "Số lượng", ""});
+    ui->search_export_logs_result->setColumnCount(3);
+    ui->search_export_logs_result->setHorizontalHeaderLabels({"Ngày", "Mã đơn hàng", "Số lượng"});
     ui->search_export_logs_result->horizontalHeader()->setStretchLastSection(true);
     QHeaderView *headerExportLogs = ui->search_export_logs_result->horizontalHeader();
     headerExportLogs->setSectionResizeMode(1, QHeaderView::Stretch);
     headerExportLogs->setSectionResizeMode(0, QHeaderView::Fixed);
     headerExportLogs->setSectionResizeMode(2, QHeaderView::Fixed);
-    headerExportLogs->setSectionResizeMode(3, QHeaderView::Fixed);
     ui->search_export_logs_result->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->search_export_logs_result->setColumnWidth(2, 100);
-    ui->search_export_logs_result->setColumnWidth(3, 300);
     ui->search_export_logs_result->horizontalHeader()->setStretchLastSection(false);
 
     /* Kết nối với cơ sở dữ liệu */
