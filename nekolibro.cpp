@@ -326,9 +326,53 @@ void NekoLibro::gotoExportInvoice(){
 }
 
 void NekoLibro::gotoImportLogs(){
+    if (!pImExportWindow) {
+        pImExportWindow = new ImExport();
 
+        connect(pImExportWindow, &QObject::destroyed, [this]() {
+            pImExportWindow = nullptr;
+        });
+
+        // Chỉ gọi sau khi show xong
+        QTimer::singleShot(100, this, [this]() {
+            if (pImExportWindow) {
+                QMetaObject::invokeMethod(pImExportWindow, "gotoExportInvoice", Qt::QueuedConnection);
+            }
+        });
+
+        pImExportWindow->show();
+    } else {
+        pImExportWindow->show();
+        pImExportWindow->raise();
+        pImExportWindow->activateWindow();
+
+        // Không cần delay nếu cửa sổ đã khởi tạo đầy đủ
+        pImExportWindow->gotoImportLogs();
+    }
 }
 
 void NekoLibro::gotoExportLogs(){
+    if (!pImExportWindow) {
+        pImExportWindow = new ImExport();
 
+        connect(pImExportWindow, &QObject::destroyed, [this]() {
+            pImExportWindow = nullptr;
+        });
+
+        // Chỉ gọi sau khi show xong
+        QTimer::singleShot(100, this, [this]() {
+            if (pImExportWindow) {
+                QMetaObject::invokeMethod(pImExportWindow, "gotoExportInvoice", Qt::QueuedConnection);
+            }
+        });
+
+        pImExportWindow->show();
+    } else {
+        pImExportWindow->show();
+        pImExportWindow->raise();
+        pImExportWindow->activateWindow();
+
+        // Không cần delay nếu cửa sổ đã khởi tạo đầy đủ
+        pImExportWindow->gotoExportLogs();
+    }
 }

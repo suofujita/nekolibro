@@ -26,25 +26,41 @@ private slots:
     void saveImportInvoices();
     void viewImportLogs();
     void toAddNewCategory();
-    void delayTabImport();
-    void searchBooks(const QString &text);
+    void delayTab();
+    void closeTab();
+    void searchBooksForImport(const QString &text);
     void removeBooksFromImportTable(int row);
-    //void viewEmportLogs();
-    //void saveExportInvoice();
 
+    void viewExportLogs();
+    void saveExportInvoice();
+    void searchBooksForExport(const QString &text);
+    void removeBooksFromExportTable(int row);
 
+    /* Xem lại lịch sử nhập hàng*/
+    void resultsImportLogs();
+    void loadAllImportInvoices();
+    /* Xem lại lịch sử xuất hàng */
+    void resultsExportLogs();
+    void loadAllExportInvoices();
 private:
     Ui::ImExport *ui;
     CategoriesWindow *pCategoriesWindow = nullptr;
     QSqlDatabase db;
-    int totalQuantity = 0;
+    QTimer *time;
+    int totalQuantityImport = 0, totalQuantityExport = 0;
     void showTime();                         // check 6.32
-    void autoCreateBillNum();                // check 6.32
-    void selectedBooks(QAction *action);
-    void setCompleter();
+    void autoCreateImportBillNum();                // check 6.32
+    void autoCreateExportBillNum();
+    void selectedBooksForImport(QAction *action);
+    void selectedBooksForExport(QAction *action);
+    void setCompleterForImport();
+    void setCompleterForExport(); // gộp lại không chạy do setCompleter chỉ làm việc với 1 widget
     void updateTotals();
-    int getInvoiceId(const QString &numBill);
-    void updatedStock();
+    int  getImportInvoiceId(const QString &numBill);
+    int  getExportInvoiceId(const QString &numBill);
+    void updatedStockDueImport();
+    void updatedStockDueExport();
+
 };
 
 #endif // IMEXPORT_H

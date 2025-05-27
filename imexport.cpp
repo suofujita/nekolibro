@@ -17,6 +17,10 @@ ImExport::ImExport(QWidget *parent)
     ui->logo_search->setFixedSize(50,50);
     ui->logo_export->setFixedSize(100,100);
     ui->logo_search_export->setFixedSize(50,50);
+    ui->logo_import_logs->setFixedSize(150,150);
+    ui->logo_export_logs->setFixedSize(150,150);
+
+    // Signals & slots
     /* Trang chủ nhập/ xuất hàng */
     connect(ui->import_main, &QPushButton::clicked,this,&ImExport::gotoImportInvoice);
     connect(ui->export_main, &QPushButton::clicked,this,&ImExport::gotoExportInvoice);
@@ -25,15 +29,29 @@ ImExport::ImExport(QWidget *parent)
     /* Phiếu nhập hàng */
     connect(ui->save_invoice_import,&QPushButton::clicked,this,&ImExport::saveImportInvoices);
     connect(ui->add_new_category_from_import, &QPushButton::clicked,this, &ImExport::toAddNewCategory);
-    connect(ui->minimum_import,&QPushButton::clicked,this,&ImExport::delayTabImport);
+    connect(ui->minimum_import,&QPushButton::clicked,this,&ImExport::delayTab);
     connect(ui->back_to_main_from_import,&QPushButton::clicked,this,&ImExport::toMainImExport);
     connect(ui->import_logs_from_import,&QPushButton::clicked,this,&ImExport::viewImportLogs);
+    connect(ui->remove_from_table_import,&QPushButton::clicked,this,&ImExport::removeBooksFromImportTable);
     /* Phiếu xuất hàng */
-
+    connect(ui->save_export_invoice,&QPushButton::clicked,this,&ImExport::saveExportInvoice);
+    connect(ui->minimum_export,&QPushButton::clicked,this,&ImExport::delayTab);
+    connect(ui->back_to_main_from_export,&QPushButton::clicked,this,&ImExport::toMainImExport);
+    connect(ui->export_logs_from_export,&QPushButton::clicked,this,&ImExport::viewExportLogs);
+    connect(ui->remove_from_table_export,&QPushButton::clicked,this,&ImExport::removeBooksFromExportTable);
     /* Lịch sử nhập hàng */
-
+    connect(ui->back_to_main_from_import_logs,&QPushButton::clicked,this,&ImExport::toMainImExport);
+    connect(ui->minimum_import_logs,&QPushButton::clicked,this,&ImExport::delayTab);
+    connect(ui->search_import_logs, &QPushButton::clicked, this, &ImExport::resultsImportLogs);
+    connect(ui->all_import_logs, &QPushButton::clicked, this, &ImExport::loadAllImportInvoices);
+    connect(ui->close_import_logs_window, &QPushButton::clicked,this,&ImExport::closeTab);
     /* Lịch sử xuất hàng */
-
+    connect(ui->back_to_main_from_export_logs,&QPushButton::clicked,this,&ImExport::toMainImExport);
+    connect(ui->minimum_export_logs,&QPushButton::clicked,this,&ImExport::delayTab);
+    connect(ui->search_export_logs, &QPushButton::clicked, this, &ImExport::resultsExportLogs);
+    connect(ui->all_export_logs, &QPushButton::clicked, this, &ImExport::loadAllExportInvoices);
+    connect(ui->close_export_logs_window, &QPushButton::clicked,this, &ImExport::closeTab);
+    /* Lịch sử xuất hàng */
     /* Bảng chứa sản phẩm nhập */
     ui->import_books->setColumnCount(3);
     ui->import_books->setHorizontalHeaderLabels({"Mã sản phẩm", "Tên sản phẩm","Số lượng"});
@@ -45,17 +63,69 @@ ImExport::ImExport(QWidget *parent)
     ui->import_books->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->import_books->setColumnWidth(2, 100);
     ui->import_books->horizontalHeader()->setStretchLastSection(false);
+
     /* Bảng chứa sản phẩm xuất */
+    ui->export_books->setColumnCount(3);
+    ui->export_books->setHorizontalHeaderLabels({"Mã sản phẩm", "Tên sản phẩm","Số lượng"});
+    ui->export_books->horizontalHeader()->setStretchLastSection(true);   // truy cập phần tiêu đề, cột cuối cùng tự động giãn để lấp đầy khoảng trống
+    QHeaderView *headerExport = ui->export_books->horizontalHeader();
+    headerExport->setSectionResizeMode(1, QHeaderView::Stretch);  // kích thước ô tự động giãn theo nội dung
+    headerExport->setSectionResizeMode(0, QHeaderView::Fixed);    // cố định fixed
+    headerExport->setSectionResizeMode(2, QHeaderView::Fixed);    // cố định fixed
+    ui->export_books->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->export_books->setColumnWidth(2, 100);
+    ui->export_books->horizontalHeader()->setStretchLastSection(false);
+
+    /* Bảng chứa lịch sử nhập hàng */
+    ui->search_import_logs_result->setColumnCount(4);
+    ui->search_import_logs_result->setHorizontalHeaderLabels({"Ngày", "Mã đơn hàng", "Số lượng", ""});
+    ui->search_import_logs_result->horizontalHeader()->setStretchLastSection(true);
+    QHeaderView *headerImportLogs = ui->search_import_logs_result->horizontalHeader();
+    headerImportLogs->setSectionResizeMode(1, QHeaderView::Stretch);
+    headerImportLogs->setSectionResizeMode(0, QHeaderView::Fixed);
+    headerImportLogs->setSectionResizeMode(2, QHeaderView::Fixed);
+    headerImportLogs->setSectionResizeMode(3, QHeaderView::Fixed);
+    ui->search_import_logs_result->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->search_import_logs_result->setColumnWidth(2, 100);
+    ui->search_import_logs_result->setColumnWidth(3, 300);
+    ui->search_import_logs_result->horizontalHeader()->setStretchLastSection(false);
+
+    /* Bảng chứa lịch sử xuất hàng */
+    ui->search_export_logs_result->setColumnCount(4);
+    ui->search_export_logs_result->setHorizontalHeaderLabels({"Ngày", "Mã đơn hàng", "Số lượng", ""});
+    ui->search_export_logs_result->horizontalHeader()->setStretchLastSection(true);
+    QHeaderView *headerExportLogs = ui->search_export_logs_result->horizontalHeader();
+    headerExportLogs->setSectionResizeMode(1, QHeaderView::Stretch);
+    headerExportLogs->setSectionResizeMode(0, QHeaderView::Fixed);
+    headerExportLogs->setSectionResizeMode(2, QHeaderView::Fixed);
+    headerExportLogs->setSectionResizeMode(3, QHeaderView::Fixed);
+    ui->search_export_logs_result->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->search_export_logs_result->setColumnWidth(2, 100);
+    ui->search_export_logs_result->setColumnWidth(3, 300);
+    ui->search_export_logs_result->horizontalHeader()->setStretchLastSection(false);
+
     /* Kết nối với cơ sở dữ liệu */
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("nekolibro.db");
     if (!db.open()) {
         QMessageBox::critical(this, "Lỗi", "Không thể mở cơ sở dữ liệu!");
     }
-    ui->stackedWidget->setCurrentIndex(0);
-    ui->search_product->setPlaceholderText("Vui lòng nhập mã ISBN, tên sản phẩm hoặc tên tác giả ...");
-    connect(ui->search_product, &QLineEdit::textChanged,this,&ImExport::searchBooks);
-    setCompleter();
+
+    ui->search_product_import->setPlaceholderText("Vui lòng nhập mã ISBN, tên sản phẩm hoặc tên tác giả ...");
+    connect(ui->search_product_import, &QLineEdit::textChanged,this,&ImExport::searchBooksForImport);
+    ui->search_product_export->setPlaceholderText("Vui lòng nhập mã ISBN, tên sản phẩm hoặc tên tác giả ...");
+    connect(ui->search_product_export, &QLineEdit::textChanged,this,&ImExport::searchBooksForExport);
+    setCompleterForImport();
+    setCompleterForExport();
+
+
+    loadAllImportInvoices();
+    loadAllExportInvoices();
+
+    /* Thời gian thay đổi từng giây */
+    time = new QTimer(this);
+    connect(time, &QTimer::timeout, this, &ImExport::showTime);
+    time->start(1000);
 }
 
 ImExport::~ImExport()
@@ -65,20 +135,30 @@ ImExport::~ImExport()
 
 void ImExport::gotoExportInvoice(){
     ui->stackedWidget->setCurrentIndex(2);
+    showTime();
+    autoCreateExportBillNum();
 }
 
 void ImExport::gotoImportInvoice(){
     ui->stackedWidget->setCurrentIndex(1);
     showTime();
-    autoCreateBillNum();
+    autoCreateImportBillNum();
 }
 
 void ImExport::gotoImportLogs(){
     ui->stackedWidget->setCurrentIndex(3);
+    ui->start_date_import_ref->setDate(QDate::currentDate());
+    ui->end_date_import_ref->setDate(QDate::currentDate());
+    ui->start_date_import_ref->setCalendarPopup(true);
+    ui->end_date_import_ref->setCalendarPopup(true);
 }
 
 void ImExport::gotoExportLogs(){
     ui->stackedWidget->setCurrentIndex(4);
+    ui->start_date_export_ref->setDate(QDate::currentDate());
+    ui->end_date_export_ref->setDate(QDate::currentDate());
+    ui->start_date_export_ref->setCalendarPopup(true);
+    ui->end_date_export_ref->setCalendarPopup(true);
 }
 
 void ImExport::toMainImExport(){
@@ -110,21 +190,29 @@ void ImExport::toAddNewCategory(){
         pCategoriesWindow->toAddBook();
     }
 }
-void ImExport::delayTabImport(){
+
+void ImExport::delayTab(){
     showMinimized();
 }
+
+void ImExport::closeTab(){
+    this->close();
+}
+
 void ImExport::showTime() {
     QDateTime currentDateTime = QDateTime::currentDateTime();  // Lấy ngày và giờ hiện tại
     QString dateTimeString = currentDateTime.toString("dd-MM-yyyy hh:mm:ss");  // Định dạng ngày và giờ
     ui->date_import->setText(dateTimeString);  // Hiển thị ngày và giờ trong QLabel
+    ui->date_export->setText(dateTimeString);
 }
 
-void ImExport::autoCreateBillNum(){
+void ImExport::autoCreateImportBillNum(){
     QSqlDatabase db = QSqlDatabase::database();
     if (!db.open()) {
         QMessageBox::critical(this, "Lỗi", "Không thể mở cơ sở dữ liệu!");
         return;
     }
+    /* Tạo cho phiếu nhập hàng */
     QString prefix = "NekoLibro-NH";
     QString dateStr = QDate::currentDate().toString("ddMMyyyy");
     QString base = prefix+dateStr+"-";
@@ -140,11 +228,37 @@ void ImExport::autoCreateBillNum(){
     ui->bill_num_import->setText(billNum);
 }
 
-void ImExport::viewImportLogs(){
-    ui->stackedWidget->setCurrentIndex(2);
+void ImExport::autoCreateExportBillNum(){
+    QSqlDatabase db = QSqlDatabase::database();
+    if (!db.open()) {
+        QMessageBox::critical(this, "Lỗi", "Không thể mở cơ sở dữ liệu!");
+        return;
+    }
+    /* Tạo cho phiếu xuất hàng */
+    QString prefix_ = "NekoLibro-XH";
+    QString dateStr_ = QDate::currentDate().toString("ddMMyyyy");
+    QString base_ = prefix_+ dateStr_+ "-";
+    QSqlQuery query;
+    query.prepare("SELECT COUNT(*) FROM ExportInvoices WHERE bill_num LIKE ?");
+    query.addBindValue(base_ + "%");
+    query.exec();
+    int count_ = 0;
+    if (query.next()){
+        count_ = query.value(0).toInt();
+    }
+    QString billNum_ = QString("%1%2-%3").arg(prefix_).arg(dateStr_).arg(count_+1,4,10,QChar('0'));
+    ui->bill_num_export->setText(billNum_);
 }
 
-void ImExport::selectedBooks(QAction *action){
+void ImExport::viewImportLogs(){
+    ui->stackedWidget->setCurrentIndex(3);
+}
+
+void ImExport::viewExportLogs(){
+    ui->stackedWidget->setCurrentIndex(4);
+}
+
+void ImExport::selectedBooksForImport(QAction *action){
     QString productId = action->data().toString();
 
     QSqlQuery query;
@@ -182,11 +296,11 @@ void ImExport::selectedBooks(QAction *action){
             updateTotals();
         });
     }
-    ui->search_product->clear(); // Clear sau khi chọn
+    ui->search_product_import->clear(); // Clear sau khi chọn
     updateTotals();
 }
 
-void ImExport::setCompleter()
+void ImExport::setCompleterForImport()
 {
     QStringList suggestions;
     QMap<QString, QString> suggestionToIdMap;
@@ -222,7 +336,7 @@ void ImExport::setCompleter()
     QCompleter *completer = new QCompleter(suggestions, this);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     completer->setFilterMode(Qt::MatchContains);
-    ui->search_product->setCompleter(completer);
+    ui->search_product_import->setCompleter(completer);
 
     connect(completer, QOverload<const QString &>::of(&QCompleter::activated),
             this, [this, suggestionToIdMap](const QString &selectedText) {
@@ -230,28 +344,89 @@ void ImExport::setCompleter()
                 if (!id.isEmpty()) {
                     QAction *fakeAction = new QAction(this);
                     fakeAction->setData(id);
-                    selectedBooks(fakeAction);
+                    selectedBooksForImport(fakeAction);
                     QTimer::singleShot(0, this, [this]() {
-                        ui->search_product->clear();
+                        ui->search_product_import->clear();
+                    });
+                }
+            });
+}
+
+void ImExport::setCompleterForExport()
+{
+    QStringList suggestions;
+    QMap<QString, QString> suggestionToIdMap;
+
+    QSqlQuery query;
+    QString sql = R"(
+        SELECT Products.id, Products.title, Authors.name, Products.isbn
+        FROM Products
+        JOIN Authors ON Products.author_id = Authors.id
+    )";
+
+    if (!query.exec(sql)) {
+        QMessageBox::warning(this, "Lỗi", "Không thể tải dữ liệu để tạo gợi ý: " + query.lastError().text());
+        return;
+    }
+
+    while (query.next()) {
+        QString id = query.value(0).toString();
+        QString title = query.value(1).toString();
+        QString author = query.value(2).toString();
+        QString isbn = query.value(3).toString();
+
+        // Chuỗi hiển thị gợi ý: "Mã ISBN - Tên sản phẩm - Tên tác giả"
+        QString displayText = isbn + " - " + title + " - " + author;
+
+        // Thêm gợi ý chỉ khi chưa có để tránh trùng lặp
+        if (!suggestions.contains(displayText)) {
+            suggestions << displayText;
+            suggestionToIdMap[displayText] = id;
+        }
+    }
+
+    QCompleter *completer = new QCompleter(suggestions, this);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setFilterMode(Qt::MatchContains);
+    ui->search_product_export->setCompleter(completer);
+
+    connect(completer, QOverload<const QString &>::of(&QCompleter::activated),
+            this, [this, suggestionToIdMap](const QString &selectedText) {
+                QString id = suggestionToIdMap.value(selectedText);
+                if (!id.isEmpty()) {
+                    QAction *fakeAction = new QAction(this);
+                    fakeAction->setData(id);
+                    selectedBooksForExport(fakeAction);
+                    QTimer::singleShot(0, this, [this]() {
+                        ui->search_product_export->clear();
                     });
                 }
             });
 }
 
 void ImExport::updateTotals(){
-    totalQuantity = 0;
-
+    totalQuantityImport = 0;
+    totalQuantityExport = 0;
+    /* Cập nhật số lượng nhập hàng */
     for (int row = 0; row < ui->import_books->rowCount(); ++row) {
         QSpinBox *spinBox = qobject_cast<QSpinBox*>(ui->import_books->cellWidget(row, 2));
         if (!spinBox) continue;
-
         int quantity = spinBox->value();
-        totalQuantity += quantity;
+        totalQuantityImport += quantity;
     }
-  ui->quantity->setText(QString::number(totalQuantity));  // cập nhật lại số lượng sản phẩm
+    ui->quantity_import->setText(QString::number(totalQuantityImport));  // cập nhật lại số lượng sản phẩm
+
+    /* Cập nhật số lượng xuất hàng */
+    for (int row = 0; row < ui->export_books->rowCount(); ++row) {
+        QSpinBox *spinBox = qobject_cast<QSpinBox*>(ui->export_books->cellWidget(row, 2));  // nếu ô đó không phải là spinbox kết quả trả về nullptr
+        if (!spinBox) continue;  // nếu là nullptr thì bỏ qua cộng
+        int quantity = spinBox->value();
+        totalQuantityExport += quantity;
+    }
+    ui->quantity_export->setText(QString::number(totalQuantityExport));  // cập nhật lại số lượng sản phẩm
 }
 
-void ImExport::searchBooks(const QString &text)
+void ImExport::searchBooksForImport(const QString &text)
 {
     if (text.trimmed().isEmpty())
         return;
@@ -281,7 +456,7 @@ void ImExport::searchBooks(const QString &text)
             QAction *action = new QAction(displayText, this);
             action->setData(id);
             connect(action, &QAction::triggered, [this, action]() {
-                selectedBooks(action);
+                selectedBooksForImport(action);
             });
         }
     } else {
@@ -299,6 +474,10 @@ void ImExport::removeBooksFromImportTable(int row){
 
 void ImExport::saveImportInvoices()
 {
+    if(totalQuantityImport==0){
+        QMessageBox::critical(this, "Lỗi", "Vui lòng chọn ít nhất 1 sản phẩm!");
+        return;
+    }
     QSqlDatabase db = QSqlDatabase::database();
     if (!db.open()) {
         QMessageBox::critical(this, "Lỗi", "Không thể mở cơ sở dữ liệu!");
@@ -313,7 +492,7 @@ void ImExport::saveImportInvoices()
                   "VALUES (?, ?, ?)");
     query.addBindValue(ui->bill_num_import->text());
     query.addBindValue(QDate::currentDate().toString("dd-MM-yyyy"));
-    query.addBindValue(totalQuantity);
+    query.addBindValue(totalQuantityImport);
 
     if (!query.exec()) {
         qDebug() << "Error inserting invoice:" << query.lastError();
@@ -325,7 +504,7 @@ void ImExport::saveImportInvoices()
     for(int row=0;row < ui->import_books->rowCount();row++){
         QString product_id = ui->import_books->item(row, 0)->text();
         int productId = product_id.toInt();
-        int invoiceId = getInvoiceId(billNum);
+        int invoiceId = getImportInvoiceId(billNum);
         QSpinBox *spinBox = qobject_cast<QSpinBox*>(ui->import_books->cellWidget(row, 2));
         int quantity = spinBox ? spinBox->value() : 1;
 
@@ -346,13 +525,13 @@ void ImExport::saveImportInvoices()
     }
 
     // 3. Cập nhật tồn kho
-    updatedStock();
+    updatedStockDueImport();
     db.commit();  // lưu thành công
     QMessageBox::information(this, "Thành công", "Đã lưu hóa đơn!");
     this->close();
 }
 
-int ImExport::getInvoiceId(const QString &numBill){
+int ImExport::getImportInvoiceId(const QString &numBill){
     QSqlQuery query;
     query.prepare("SELECT id FROM ImportInvoices WHERE bill_num = ?");
     query.addBindValue(numBill);
@@ -370,7 +549,25 @@ int ImExport::getInvoiceId(const QString &numBill){
     }
 }
 
-void ImExport::updatedStock() {
+int ImExport::getExportInvoiceId(const QString &numBill){
+    QSqlQuery query;
+    query.prepare("SELECT id FROM ExportInvoices WHERE bill_num = ?");
+    query.addBindValue(numBill);
+
+    if (!query.exec()) {
+        qWarning() << "Lỗi truy vấn lấy invoice_id:" << query.lastError().text();
+        return -1;
+    }
+
+    if (query.next()) {
+        return query.value(0).toInt();
+    } else {
+        qWarning() << "Không tìm thấy hóa đơn với bill_num =" << numBill;
+        return -1;
+    }
+}
+
+void ImExport::updatedStockDueImport() {
     QSqlQuery query;
 
     for (int row = 0; row < ui->import_books->rowCount(); ++row) {
@@ -391,6 +588,278 @@ void ImExport::updatedStock() {
             qDebug() << "Lỗi cập nhật tồn kho cho sách ID:" << productId << "->" << query.lastError().text();
         }
     }
+}
+
+void ImExport::updatedStockDueExport() {
+    QSqlQuery query;
+
+    for (int row = 0; row < ui->export_books->rowCount(); ++row) {
+        // 1. Lấy id sản phẩm cột 0
+        QTableWidgetItem *item = ui->export_books->item(row, 0);
+        if (!item) continue;
+        QString productId = item->text();
+
+        // 2. Lấy số lượng từ QSpinBox trong cột 2
+        QSpinBox *spinBox = qobject_cast<QSpinBox*>(ui->export_books->cellWidget(row, 2));
+        if (!spinBox) continue;
+        int quantity = spinBox->value();
+
+        // 3. Cập nhật tồn kho
+        query.prepare("UPDATE Products SET stock = stock - :qty WHERE id = :id");
+        query.bindValue(":qty", quantity);
+        query.bindValue(":id", productId);
+
+        if (!query.exec()) {
+            qDebug() << "Lỗi cập nhật tồn kho cho sách ID:" << productId << "->" << query.lastError().text();
+        }
+    }
+}
+
+void ImExport::resultsImportLogs() {
+    QDate start_date = ui->start_date_import_ref->date();
+    QDate end_date = ui->end_date_import_ref->date();
+
+
+    QSqlQuery query;
+    query.prepare("SELECT date, bill_num, total_products FROM ImportInvoices WHERE date >= ? AND date <= ?");
+    query.addBindValue(start_date.toString("dd-MM-yyyy"));
+    query.addBindValue(end_date.toString("dd-MM-yyyy"));
+
+    if (!query.exec()) {
+        qDebug() << "Lỗi truy vấn ImportInvoices:" << query.lastError().text();
+        return;
+    }
+
+    ui->search_import_logs_result->setRowCount(0); // Xóa dữ liệu cũ
+    int row = 0;
+
+    while (query.next()) {
+        ui->search_import_logs_result->insertRow(row);
+
+        QString date = query.value(0).toString();
+        QString billNum = query.value(1).toString();
+        int totalProduct = query.value(2).toInt();
+
+        ui->search_import_logs_result->setItem(row, 0, new QTableWidgetItem(date));
+        ui->search_import_logs_result->setItem(row, 1, new QTableWidgetItem(billNum));
+        ui->search_import_logs_result->setItem(row, 2, new QTableWidgetItem(QString::number(totalProduct)));
+
+        row++;
+    }
+}
+
+void ImExport::resultsExportLogs() {
+    QDate start_date = ui->start_date_export_ref->date();
+    QDate end_date = ui->end_date_export_ref->date();
+
+    QSqlQuery query;
+    query.prepare("SELECT date, bill_num, total_products FROM ExportInvoices WHERE date >= ? AND date <= ?");
+    query.addBindValue(start_date.toString("dd-MM-yyyy"));
+    query.addBindValue(end_date.toString("dd-MM-yyyy"));
+
+    if (!query.exec()) {
+        qDebug() << "Lỗi truy vấn ExportInvoices:" << query.lastError().text();
+        return;
+    }
+
+    ui->search_export_logs_result->setRowCount(0); // Xóa dữ liệu cũ
+    int row = 0;
+
+    while (query.next()) {
+        ui->search_export_logs_result->insertRow(row);
+
+        QString date = query.value(0).toString();
+        QString billNum = query.value(1).toString();
+        int totalProduct = query.value(2).toInt();
+
+        ui->search_export_logs_result->setItem(row, 0, new QTableWidgetItem(date));
+        ui->search_export_logs_result->setItem(row, 1, new QTableWidgetItem(billNum));
+        ui->search_export_logs_result->setItem(row, 2, new QTableWidgetItem(QString::number(totalProduct)));
+
+        row++;
+    }
+}
+
+void ImExport::loadAllImportInvoices() {
+    QSqlQuery query("SELECT date, bill_num, total_products FROM ImportInvoices");
+
+    ui->search_import_logs_result->setRowCount(0); // Xóa bảng cũ nếu có
+
+    int row = 0;
+    while (query.next()) {
+        ui->search_import_logs_result->insertRow(row);
+
+        ui->search_import_logs_result->setItem(row, 0, new QTableWidgetItem(query.value(0).toString())); // Ngày
+        ui->search_import_logs_result->setItem(row, 1, new QTableWidgetItem(query.value(1).toString())); // Mã đơn
+        ui->search_import_logs_result->setItem(row, 2, new QTableWidgetItem(query.value(2).toString())); // Tổng sản phẩm
+
+        row++;
+    }
+}
+
+void ImExport::loadAllExportInvoices() {
+    QSqlQuery query("SELECT date, bill_num, total_products FROM ExportInvoices");
+
+    ui->search_export_logs_result->setRowCount(0); // Xóa bảng cũ nếu có
+
+    int row = 0;
+    while (query.next()) {
+        ui->search_export_logs_result->insertRow(row);
+
+        ui->search_export_logs_result->setItem(row, 0, new QTableWidgetItem(query.value(0).toString())); // Ngày
+        ui->search_export_logs_result->setItem(row, 1, new QTableWidgetItem(query.value(1).toString())); // Mã đơn
+        ui->search_export_logs_result->setItem(row, 2, new QTableWidgetItem(query.value(2).toString())); // Tổng sản phẩm
+
+        row++;
+    }
+}
+
+void ImExport::selectedBooksForExport(QAction *action){
+    QString productId = action->data().toString();
+
+    QSqlQuery query;
+    query.prepare(R"(
+        SELECT Products.id, Products.title, Authors.name
+        FROM Products
+        JOIN Authors ON Products.author_id = Authors.id
+        WHERE Products.id = ?
+    )");
+    query.addBindValue(productId);
+
+    if (query.exec() && query.next()) {
+        QString name = query.value(1).toString();
+        QString author = query.value(2).toString();
+
+        int row = ui->export_books->rowCount();
+        ui->export_books->insertRow(row);
+
+        // Kết hợp "Tên sản phẩm" và "Tên tác giả" thành một chuỗi
+        QString nameWithAuthor = name + " - " + author;
+
+        // Thêm dữ liệu vào bảng
+        ui->export_books->setItem(row, 0, new QTableWidgetItem(productId));
+        ui->export_books->setItem(row, 1, new QTableWidgetItem(nameWithAuthor)); // Sử dụng nameWithAuthor
+
+        // Thêm QSpinBox để chỉnh số lượng
+        QSpinBox *spinBox = new QSpinBox(this);
+        spinBox->setMinimum(1);
+        spinBox->setMaximum(9999);
+        spinBox->setValue(1);
+        ui->export_books->setCellWidget(row, 2, spinBox);
+
+        // Khi người dùng thay đổi số lượng
+        connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=]() {
+            updateTotals();
+        });
+    }
+    ui->search_product_export->clear(); // Clear sau khi chọn
+    updateTotals();
+}
+
+void ImExport::removeBooksFromExportTable(int row){
+    if(row<0 || row > ui->export_books->rowCount()) {
+        return ;
+    }
+    ui->export_books->removeRow(row);
+    updateTotals();
+}
+
+void ImExport::searchBooksForExport(const QString &text)
+{
+    if (text.trimmed().isEmpty())
+        return;
+
+    QSqlQuery query;
+    query.prepare(R"(
+        SELECT Products.id, Products.title, Authors.name
+        FROM Products
+        JOIN Authors ON Products.author_id = Authors.id
+        WHERE Products.title LIKE ?
+              OR Authors.name LIKE ?
+              OR Products.isbn LIKE ?
+    )");
+    QString likeText = "%" + text + "%";
+    query.addBindValue(likeText);
+    query.addBindValue(likeText);
+    query.addBindValue(likeText);
+
+    if (query.exec()) {
+        while (query.next()) {
+            QString id = query.value(0).toString();
+            QString title = query.value(1).toString();
+            QString author = query.value(2).toString();
+
+            QString displayText = title + " - " + author;
+
+            QAction *action = new QAction(displayText, this);
+            action->setData(id);
+            connect(action, &QAction::triggered, [this, action]() {
+                selectedBooksForExport(action);
+            });
+        }
+    } else {
+        qDebug() << "Lỗi truy vấn:" << query.lastError().text();
+    }
+}
+
+void ImExport::saveExportInvoice()
+{
+    if(totalQuantityExport==0){
+        QMessageBox::critical(this, "Lỗi", "Vui lòng chọn ít nhất 1 sản phẩm!");
+        return;
+    }
+
+    QSqlDatabase db = QSqlDatabase::database();
+    if (!db.open()) {
+        QMessageBox::critical(this, "Lỗi", "Không thể mở cơ sở dữ liệu!");
+        return;
+    }
+    QSqlQuery query(db);
+
+    db.transaction(); // bắt đầu transaction
+
+    // 1. Lưu vào bảng ExportInvoices
+    query.prepare("INSERT INTO ExportInvoices (bill_num, date, total_products) "
+                  "VALUES (?, ?, ?)");
+    query.addBindValue(ui->bill_num_export->text());
+    query.addBindValue(QDate::currentDate().toString("dd-MM-yyyy"));
+    query.addBindValue(totalQuantityExport);
+
+    if (!query.exec()) {
+        qDebug() << "Error inserting invoice:" << query.lastError();
+        db.rollback();
+        return;
+    }
+    QString billNum = ui->bill_num_export->text();
+    // 2. Lưu chi tiết thông tin sản phẩm trong đơn hàng
+    for(int row=0;row < ui->export_books->rowCount();row++){
+        QString product_id = ui->export_books->item(row, 0)->text();
+        int productId = product_id.toInt();
+        int invoiceId = getExportInvoiceId(billNum);
+        QSpinBox *spinBox = qobject_cast<QSpinBox*>(ui->export_books->cellWidget(row, 2));
+        int quantity = spinBox ? spinBox->value() : 1;
+
+        QSqlQuery insertItem;
+        insertItem.prepare(R"(
+            INSERT INTO ExportInvoicesItems (invoice_id, product_id, quantity)
+            VALUES (?, ?, ?)
+        )");
+        insertItem.addBindValue(invoiceId);
+        insertItem.addBindValue(productId);
+        insertItem.addBindValue(quantity);
+
+        if (!insertItem.exec()) {
+            db.rollback();
+            QMessageBox::critical(this, "Lỗi", "Không thể lưu chi tiết hóa đơn: " + insertItem.lastError().text());
+            return;
+        }
+    }
+
+    // 3. Cập nhật tồn kho
+    updatedStockDueExport();
+    db.commit();  // lưu thành công
+    QMessageBox::information(this, "Thành công", "Đã lưu hóa đơn!");
+    this->close();
 }
 
 

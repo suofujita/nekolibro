@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>893</width>
+    <width>1053</width>
     <height>603</height>
    </rect>
   </property>
@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <item row="0" column="3">
+   <item row="1" column="2">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="autoFillBackground">
       <bool>false</bool>
@@ -193,6 +193,9 @@ NHẬP HÀNG</string>
          <property name="text">
           <string>Số lượng</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item row="17" column="5" colspan="2">
@@ -221,7 +224,8 @@ NHẬP HÀNG</string>
         <widget class="QLabel" name="bill_num_import">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>14</pointsize>
+           <bold>true</bold>
           </font>
          </property>
          <property name="text">
@@ -264,7 +268,7 @@ NHẬP HÀNG</string>
         </widget>
        </item>
        <item row="16" column="11">
-        <widget class="QLabel" name="quantity">
+        <widget class="QLabel" name="quantity_import">
          <property name="font">
           <font>
            <pointsize>18</pointsize>
@@ -273,6 +277,9 @@ NHẬP HÀNG</string>
          </property>
          <property name="text">
           <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -302,7 +309,8 @@ NHẬP HÀNG</string>
         <widget class="QLabel" name="date_import">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>14</pointsize>
+           <bold>true</bold>
           </font>
          </property>
          <property name="text">
@@ -336,7 +344,7 @@ NHẬP HÀNG</string>
         <widget class="QTableWidget" name="import_books">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>16</pointsize>
           </font>
          </property>
         </widget>
@@ -445,25 +453,11 @@ NHẬP HÀNG</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="1" colspan="10">
-        <widget class="QLineEdit" name="search_product">
+       <item row="5" column="1" rowspan="2" colspan="10">
+        <widget class="QLineEdit" name="search_product_import">
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="export_window">
-      <layout class="QGridLayout" name="gridLayout_6">
-       <item row="17" column="8">
-        <widget class="QLabel" name="num_books_export">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-           <bold>true</bold>
+           <pointsize>16</pointsize>
           </font>
          </property>
          <property name="text">
@@ -471,21 +465,43 @@ NHẬP HÀNG</string>
          </property>
         </widget>
        </item>
-       <item row="11" column="8" rowspan="2">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Orientation::Vertical</enum>
+       <item row="5" column="11">
+        <widget class="QLabel" name="label_15">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
+         <property name="text">
+          <string>Tồn kho</string>
          </property>
-        </spacer>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
        </item>
-       <item row="19" column="6">
-        <widget class="QPushButton" name="pushButton">
+       <item row="7" column="11">
+        <widget class="QLabel" name="import_product_stock">
+         <property name="font">
+          <font>
+           <pointsize>18</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="export_window">
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="19" column="7">
+        <widget class="QPushButton" name="back_to_main_from_export">
          <property name="font">
           <font>
            <pointsize>12</pointsize>
@@ -506,28 +522,29 @@ NHẬP HÀNG</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="4">
-        <widget class="QLabel" name="label_4">
+       <item row="14" column="9">
+        <widget class="QPushButton" name="remove_from_table_export">
          <property name="font">
           <font>
            <pointsize>12</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Ngày</string>
+          <string>Xóa</string>
+         </property>
+         <property name="icon">
+          <iconset resource="galeries.qrc">
+           <normaloff>:/image/remove_2.png</normaloff>:/image/remove_2.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
          </property>
         </widget>
        </item>
-       <item row="9" column="0" rowspan="9" colspan="8">
-        <widget class="QTableWidget" name="export_books">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-        </widget>
-       </item>
-       <item row="15" column="8">
+       <item row="15" column="9">
         <widget class="QLabel" name="label_13">
          <property name="font">
           <font>
@@ -537,18 +554,33 @@ NHẬP HÀNG</string>
          <property name="text">
           <string>Số lượng</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
         </widget>
        </item>
-       <item row="2" column="6" colspan="2">
-        <widget class="QLabel" name="date_export">
+       <item row="0" column="6" colspan="2">
+        <widget class="QLabel" name="label_3">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
-           <bold>true</bold>
+           <pointsize>16</pointsize>
           </font>
          </property>
          <property name="text">
+          <string>PHIẾU XUẤT HÀNG</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QLabel" name="logo_export">
+         <property name="text">
           <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="galeries.qrc">:/image/export.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -565,7 +597,44 @@ NHẬP HÀNG</string>
          </property>
         </widget>
        </item>
-       <item row="19" column="7">
+       <item row="19" column="2" colspan="2">
+        <widget class="QPushButton" name="export_logs_from_export">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Lịch sử xuất hàng</string>
+         </property>
+         <property name="icon">
+          <iconset resource="galeries.qrc">
+           <normaloff>:/image/logs.png</normaloff>:/image/logs.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="9">
+        <widget class="QLabel" name="label_2">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Tồn kho</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="19" column="8">
         <widget class="QPushButton" name="minimum_export">
          <property name="font">
           <font>
@@ -587,20 +656,20 @@ NHẬP HÀNG</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="4">
-        <widget class="QLabel" name="logo_export">
-         <property name="text">
-          <string/>
+       <item row="11" column="9" rowspan="2">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
-         <property name="pixmap">
-          <pixmap resource="galeries.qrc">:/image/export.png</pixmap>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
          </property>
-         <property name="scaledContents">
-          <bool>true</bool>
-         </property>
-        </widget>
+        </spacer>
        </item>
-       <item row="19" column="8">
+       <item row="19" column="9">
         <widget class="QPushButton" name="save_export_invoice">
          <property name="font">
           <font>
@@ -608,11 +677,11 @@ NHẬP HÀNG</string>
           </font>
          </property>
          <property name="text">
-          <string>OK</string>
+          <string>Lưu phiếu</string>
          </property>
          <property name="icon">
           <iconset resource="galeries.qrc">
-           <normaloff>:/image/ok.png</normaloff>:/image/ok.png</iconset>
+           <normaloff>:/image/save.png</normaloff>:/image/save.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -622,12 +691,19 @@ NHẬP HÀNG</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="1" colspan="7">
-        <widget class="QLineEdit" name="search_product_export">
+       <item row="17" column="9">
+        <widget class="QLabel" name="quantity_export">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>18</pointsize>
+           <bold>true</bold>
           </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -643,42 +719,44 @@ NHẬP HÀNG</string>
          </property>
         </widget>
        </item>
-       <item row="14" column="8">
-        <widget class="QPushButton" name="remove_product_export">
+       <item row="7" column="9">
+        <widget class="QLabel" name="export_product_stock">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Xóa</string>
-         </property>
-         <property name="icon">
-          <iconset resource="galeries.qrc">
-           <normaloff>:/image/remove_2.png</normaloff>:/image/remove_2.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>25</width>
-           <height>25</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="6" colspan="2">
-        <widget class="QLabel" name="bill_num_export">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
+           <pointsize>18</pointsize>
            <bold>true</bold>
           </font>
          </property>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
         </widget>
        </item>
-       <item row="13" column="8">
+       <item row="7" column="0" rowspan="11" colspan="9">
+        <widget class="QTableWidget" name="export_books">
+         <property name="font">
+          <font>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <widget class="QLabel" name="label_4">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Ngày</string>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="9">
         <widget class="QPushButton" name="add_product_export">
          <property name="font">
           <font>
@@ -700,19 +778,58 @@ NHẬP HÀNG</string>
          </property>
         </widget>
        </item>
-       <item row="19" column="2" colspan="2">
-        <widget class="QPushButton" name="export_logs_export">
+       <item row="6" column="1" colspan="8">
+        <widget class="QLineEdit" name="search_product_export">
+         <property name="font">
+          <font>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="6" colspan="4">
+        <widget class="QLabel" name="date_export">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="6" colspan="3">
+        <widget class="QLabel" name="bill_num_export">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="import_logs_window">
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="1" column="6">
+        <widget class="QPushButton" name="search_import_logs">
          <property name="font">
           <font>
            <pointsize>12</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Lịch sử xuất hàng</string>
+          <string>Tìm kiếm</string>
          </property>
          <property name="icon">
           <iconset resource="galeries.qrc">
-           <normaloff>:/image/logs.png</normaloff>:/image/logs.png</iconset>
+           <normaloff>:/image/search.png</normaloff>:/image/search.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -722,291 +839,384 @@ NHẬP HÀNG</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="5" colspan="2">
-        <widget class="QLabel" name="label_3">
+       <item row="22" column="7">
+        <widget class="QPushButton" name="close_import_logs_window">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>OK</string>
+         </property>
+         <property name="icon">
+          <iconset resource="galeries.qrc">
+           <normaloff>:/image/ok.png</normaloff>:/image/ok.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4" colspan="2">
+        <widget class="QLabel" name="label_6">
          <property name="font">
           <font>
            <pointsize>16</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>PHIẾU XUẤT HÀNG</string>
+          <string>LỊCH SỬ NHẬP HÀNG</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="3">
+        <widget class="QLabel" name="logo_import_logs">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="galeries.qrc">:/image/logs.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="22" column="2">
+        <widget class="QLabel" name="label_18">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QDateEdit" name="start_date_import_ref">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QDateEdit" name="end_date_import_ref">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QLabel" name="label_8">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Đến ngày</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="5">
+        <widget class="QPushButton" name="all_import_logs">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Tất cả lịch sử</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="label_9">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Kết quả tra cứu:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="16" column="0" rowspan="6" colspan="9">
+        <widget class="QTableWidget" name="search_import_logs_result">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="22" column="6">
+        <widget class="QPushButton" name="minimum_import_logs">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+         <property name="icon">
+          <iconset resource="galeries.qrc">
+           <normaloff>:/image/cancel.png</normaloff>:/image/cancel.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="label_7">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Từ ngày</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="22" column="5">
+        <widget class="QPushButton" name="back_to_main_from_import_logs">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Quay lại</string>
+         </property>
+         <property name="icon">
+          <iconset resource="galeries.qrc">
+           <normaloff>:/image/back.png</normaloff>:/image/back.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="import_logs_window">
-      <widget class="QTableView" name="results_table">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>160</y>
-         <width>771</width>
-         <height>261</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QDateEdit" name="start_date">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>80</y>
-         <width>110</width>
-         <height>26</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_6">
-       <property name="geometry">
-        <rect>
-         <x>310</x>
-         <y>10</y>
-         <width>281</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>TRA CỨU LỊCH SỬ NHẬP HÀNG</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_7">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>80</y>
-         <width>63</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Từ ngày</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_8">
-       <property name="geometry">
-        <rect>
-         <x>220</x>
-         <y>80</y>
-         <width>63</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Đến ngày</string>
-       </property>
-      </widget>
-      <widget class="QDateEdit" name="end_date">
-       <property name="geometry">
-        <rect>
-         <x>290</x>
-         <y>80</y>
-         <width>111</width>
-         <height>26</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="to_main">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>460</y>
-         <width>93</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Quay lại</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_9">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>130</y>
-         <width>151</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Kết quả tra cứu</string>
-       </property>
-      </widget>
-      <widget class="QDialogButtonBox" name="to_main_2">
-       <property name="geometry">
-        <rect>
-         <x>610</x>
-         <y>460</y>
-         <width>193</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="search">
-       <property name="geometry">
-        <rect>
-         <x>420</x>
-         <y>80</y>
-         <width>93</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Tìm kiếm</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="all_histories">
-       <property name="geometry">
-        <rect>
-         <x>150</x>
-         <y>120</y>
-         <width>121</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Tất cả lịch sử</string>
-       </property>
-      </widget>
-     </widget>
      <widget class="QWidget" name="export_logs_window">
-      <widget class="QLabel" name="label_33">
-       <property name="geometry">
-        <rect>
-         <x>300</x>
-         <y>10</y>
-         <width>271</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>TRA CỨU LỊCH SỬ XUẤT HÀNG</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_34">
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>80</y>
-         <width>63</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Từ ngày</string>
-       </property>
-      </widget>
-      <widget class="QDateEdit" name="dateEdit_5">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>80</y>
-         <width>110</width>
-         <height>26</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_35">
-       <property name="geometry">
-        <rect>
-         <x>270</x>
-         <y>80</y>
-         <width>63</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Đến ngày</string>
-       </property>
-      </widget>
-      <widget class="QDateEdit" name="dateEdit_6">
-       <property name="geometry">
-        <rect>
-         <x>350</x>
-         <y>80</y>
-         <width>110</width>
-         <height>26</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushButton_25">
-       <property name="geometry">
-        <rect>
-         <x>490</x>
-         <y>80</y>
-         <width>93</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Tìm kiếm</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushButton_26">
-       <property name="geometry">
-        <rect>
-         <x>600</x>
-         <y>80</y>
-         <width>101</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Tất cả lịch sử</string>
-       </property>
-      </widget>
-      <widget class="QTableView" name="tableView_7">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>150</y>
-         <width>711</width>
-         <height>281</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QDialogButtonBox" name="to_main_6">
-       <property name="geometry">
-        <rect>
-         <x>610</x>
-         <y>450</y>
-         <width>193</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_37">
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>120</y>
-         <width>161</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Kết quả tìm kiếm</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="to_main_4">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>460</y>
-         <width>93</width>
-         <height>29</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Quay lại</string>
-       </property>
-      </widget>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="5" column="0" colspan="9">
+        <widget class="QTableWidget" name="search_export_logs_result">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="6">
+        <widget class="QPushButton" name="back_to_main_from_export_logs">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Quay lại</string>
+         </property>
+         <property name="icon">
+          <iconset resource="galeries.qrc">
+           <normaloff>:/image/back.png</normaloff>:/image/back.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="7">
+        <widget class="QPushButton" name="minimum_export_logs">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+         <property name="icon">
+          <iconset resource="galeries.qrc">
+           <normaloff>:/image/cancel.png</normaloff>:/image/cancel.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="8">
+        <widget class="QPushButton" name="close_export_logs_window">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>OK</string>
+         </property>
+         <property name="icon">
+          <iconset resource="galeries.qrc">
+           <normaloff>:/image/ok.png</normaloff>:/image/ok.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <widget class="QDateEdit" name="end_date_export_ref">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="4">
+        <widget class="QLabel" name="logo_export_logs">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="galeries.qrc">:/image/logs.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4" colspan="5">
+        <widget class="QLabel" name="label_33">
+         <property name="font">
+          <font>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>LỊCH SỬ XUẤT HÀNG </string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QLabel" name="label_35">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Đến ngày</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QDateEdit" name="start_date_export_ref">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="label_34">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Từ ngày</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QLabel" name="label_37">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Kết quả tra cứu:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="7">
+        <widget class="QPushButton" name="search_export_logs">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Tìm kiếm</string>
+         </property>
+         <property name="icon">
+          <iconset resource="galeries.qrc">
+           <normaloff>:/image/search.png</normaloff>:/image/search.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="6">
+        <widget class="QPushButton" name="all_export_logs">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Tất cả lịch sử</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
