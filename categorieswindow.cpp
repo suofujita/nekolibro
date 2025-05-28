@@ -37,6 +37,9 @@ CategoriesWindow::CategoriesWindow(NekoLibro *parent)
     ui->search->setPlaceholderText("Nhập tên sản phẩm hoặc tên tác giả...");
     loadComboBoxes();
     resetData();
+
+    ui->author_edit->setPlaceholderText("Nhập tên tác giả mới...");
+    ui->type_edit->setPlaceholderText("Nhập danh mục mới...");
 }
 
 CategoriesWindow::~CategoriesWindow()

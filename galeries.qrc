@@ -37,5 +37,7 @@
         <file>pdf.png</file>
         <file>edit.png</file>
         <file>infor.png</file>
+        <file>new.png</file>
+        <file>excel.png</file>
     </qresource>
 </RCC>
