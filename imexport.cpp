@@ -122,6 +122,10 @@ ImExport::ImExport(QWidget *parent)
     time = new QTimer(this);
     connect(time, &QTimer::timeout, this, &ImExport::showTime);
     time->start(1000);
+
+    /* Cài đặt xem chi tiết hóa đơn */
+    connect(ui->search_import_logs_result,&QTableWidget::cellPressed, this, &ImExport::clickedImportBillNum);
+    connect(ui->search_export_logs_result,&QTableWidget::cellPressed, this, &ImExport::clickedExportBillNum);
 }
 
 ImExport::~ImExport()
@@ -858,4 +862,49 @@ void ImExport::saveExportInvoice()
     this->close();
 }
 
+void ImExport::clickedImportBillNum(int row, int col){
+    if(col == 1) {
+        ImportInvoiceDetails(row);
+    }
+}
+
+void ImExport::ImportInvoiceDetails(int row)
+{
+    QString invoiceId ;
+    QString billNum = ui->search_import_logs_result->item(row,1)->text();
+    QSqlQuery query;
+    query.prepare("SELECT id FROM ImportInvoices WHERE bill_num = ?");
+    query.addBindValue(billNum);
+    query.exec();
+    if(query.next()){
+        invoiceId = query.value(0).toString();
+    }
+    pViewInvoicesDetails = new ViewInvoicesDetails(invoiceId, InvoiceType::Import, this);
+    pViewInvoicesDetails->exec();
+    delete pViewInvoicesDetails;
+    pViewInvoicesDetails = nullptr;
+}
+
+void ImExport::clickedExportBillNum(int row, int col){
+    if(col == 1) {
+        ExportInvoiceDetails(row);
+    }
+}
+
+void ImExport::ExportInvoiceDetails(int row)
+{
+    QString invoiceId ;
+    QString billNum = ui->search_export_logs_result->item(row,1)->text();
+    QSqlQuery query;
+    query.prepare("SELECT id FROM ExportInvoices WHERE bill_num = ?");
+    query.addBindValue(billNum);
+    query.exec();
+    if(query.next()){
+        invoiceId = query.value(0).toString();
+    }
+    pViewInvoicesDetails = new ViewInvoicesDetails(invoiceId, InvoiceType::Export, this);
+    pViewInvoicesDetails->exec();
+    delete pViewInvoicesDetails;
+    pViewInvoicesDetails = nullptr;
+}
 

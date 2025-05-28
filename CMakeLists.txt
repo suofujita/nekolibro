@@ -39,6 +39,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         createaccount.h createaccount.cpp createaccount.ui
         imexport.h imexport.cpp imexport.ui
         resetpassword.h resetpassword.cpp resetpassword.ui
+        viewinvoicesdetails.h viewinvoicesdetails.cpp viewinvoicesdetails.ui
         ${SMTPCLIENT_SRC}
     )
 # Define target properties for Android with Qt 6 as:

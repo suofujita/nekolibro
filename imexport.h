@@ -2,7 +2,7 @@
 #define IMEXPORT_H
 
 #include <QWidget>
-
+#include "viewinvoicesdetails.h"
 #include "nekolibro.h"
 #include "categorieswindow.h"
 namespace Ui {
@@ -42,9 +42,13 @@ private slots:
     /* Xem lại lịch sử xuất hàng */
     void resultsExportLogs();
     void loadAllExportInvoices();
+    /* xem chi tiết đơn hàng */
+    void clickedImportBillNum(int row, int col);
+    void clickedExportBillNum(int row, int col);
 private:
     Ui::ImExport *ui;
     CategoriesWindow *pCategoriesWindow = nullptr;
+    ViewInvoicesDetails *pViewInvoicesDetails = nullptr;
     QSqlDatabase db;
     QTimer *time;
     int totalQuantityImport = 0, totalQuantityExport = 0;
@@ -60,6 +64,9 @@ private:
     int  getExportInvoiceId(const QString &numBill);
     void updatedStockDueImport();
     void updatedStockDueExport();
+
+    void ImportInvoiceDetails(int row);
+    void ExportInvoiceDetails(int row);
 
 };
 

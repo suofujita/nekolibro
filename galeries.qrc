@@ -33,8 +33,9 @@
         <file>cancel.png</file>
         <file>logs.png</file>
         <file>import_2.png</file>
-    </qresource>
-    <qresource prefix="/">
-        <file>import_2.png</file>
+        <file>vision_14014688.png</file>
+        <file>pdf.png</file>
+        <file>edit.png</file>
+        <file>infor.png</file>
     </qresource>
 </RCC>
