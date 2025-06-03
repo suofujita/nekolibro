@@ -12,7 +12,6 @@ public:
     database();
     bool connectDatabase();
     void closeDatabase();
-    void createUserProfiles();
     void createAdminAccount();
 
 };

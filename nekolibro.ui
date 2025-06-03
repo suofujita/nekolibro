@@ -311,7 +311,7 @@ SẢN PHẨM</string>
      <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
     </property>
    </widget>
-   <widget class="QToolButton" name="users">
+   <widget class="QToolButton" name="accounts">
     <property name="geometry">
      <rect>
       <x>10</x>

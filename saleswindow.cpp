@@ -233,7 +233,7 @@ void SalesWindow::showFullName(){
         currentUserId = query.value(0).toInt();
     }
 
-    query.prepare("SELECT full_name FROM UserProfiles WHERE user_id = ?");
+    query.prepare("SELECT fullname FROM AccountUsers WHERE id = ?");
     query.addBindValue(currentUserId);
     if(query.exec() && query.next()){
         currentFullName = query.value(0).toString();
@@ -315,7 +315,7 @@ void SalesWindow::saveBill()
     query.prepare("INSERT INTO RetailInvoices (bill_num, date, total_quanties, total_bill, user_id) "
                   "VALUES (?, ?, ?, ?, ?)");
     query.addBindValue(ui->bill_num->text());
-    query.addBindValue(QDate::currentDate().toString("dd-MM-yyyy"));
+    query.addBindValue(QDate::currentDate().toString("yyyy-MM-dd"));
     query.addBindValue(totalQuantity);
     query.addBindValue(totalPrice);
     query.addBindValue(currentUserId);

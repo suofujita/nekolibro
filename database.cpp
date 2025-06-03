@@ -16,23 +16,6 @@ bool database::connectDatabase() {
     return true;
 }
 
-void database::createUserProfiles(){
-    QSqlQuery query;
-    if(!query.exec(R"(
-    CREATE TABLE IF NOT EXISTS UserProfiles (
-        user_id INTEGER PRIMARY KEY,
-        full_name TEXT,
-        email TEXT NOT NULL,
-        date_of_birth TEXT,
-        hometown TEXT,
-        phone TEXT,
-        FOREIGN KEY(user_id) REFERENCES AccountUsers(id)
-    )
-)")) {
-        qDebug() << "Lỗi tạo bảng UserProfiles:" << query.lastError().text();
-    }
-}
-
 void database::createAdminAccount() {
     if (db.isOpen()) {
         QString defaultPassword = "123";

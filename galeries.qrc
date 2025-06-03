@@ -39,5 +39,8 @@
         <file>infor.png</file>
         <file>new.png</file>
         <file>excel.png</file>
+        <file>all.png</file>
+        <file>increasing_decreasing.png</file>
+        <file>png.png</file>
     </qresource>
 </RCC>

@@ -491,7 +491,7 @@ void ImExport::saveImportInvoices()
     query.prepare("INSERT INTO ImportInvoices (bill_num, date, total_products) "
                   "VALUES (?, ?, ?)");
     query.addBindValue(ui->bill_num_import->text());
-    query.addBindValue(QDate::currentDate().toString("dd-MM-yyyy"));
+    query.addBindValue(QDate::currentDate().toString("yyyy-MM-dd"));
     query.addBindValue(totalQuantityImport);
 
     if (!query.exec()) {
@@ -622,8 +622,8 @@ void ImExport::resultsImportLogs() {
 
     QSqlQuery query;
     query.prepare("SELECT date, bill_num, total_products FROM ImportInvoices WHERE date >= ? AND date <= ?");
-    query.addBindValue(start_date.toString("dd-MM-yyyy"));
-    query.addBindValue(end_date.toString("dd-MM-yyyy"));
+    query.addBindValue(start_date.toString("yyyy-MM-dd"));
+    query.addBindValue(end_date.toString("yyyy-MM-dd"));
 
     if (!query.exec()) {
         qDebug() << "Lỗi truy vấn ImportInvoices:" << query.lastError().text();
@@ -654,8 +654,8 @@ void ImExport::resultsExportLogs() {
 
     QSqlQuery query;
     query.prepare("SELECT date, bill_num, total_products FROM ExportInvoices WHERE date >= ? AND date <= ?");
-    query.addBindValue(start_date.toString("dd-MM-yyyy"));
-    query.addBindValue(end_date.toString("dd-MM-yyyy"));
+    query.addBindValue(start_date.toString("yyyy-MM-dd"));
+    query.addBindValue(end_date.toString("yyyy-MM-dd"));
 
     if (!query.exec()) {
         qDebug() << "Lỗi truy vấn ExportInvoices:" << query.lastError().text();
@@ -822,7 +822,7 @@ void ImExport::saveExportInvoice()
     query.prepare("INSERT INTO ExportInvoices (bill_num, date, total_products) "
                   "VALUES (?, ?, ?)");
     query.addBindValue(ui->bill_num_export->text());
-    query.addBindValue(QDate::currentDate().toString("dd-MM-yyyy"));
+    query.addBindValue(QDate::currentDate().toString("yyyy-MM-dd"));
     query.addBindValue(totalQuantityExport);
 
     if (!query.exec()) {

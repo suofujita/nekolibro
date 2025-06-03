@@ -9,7 +9,6 @@
 #include <QTimer>
 #include "database.h"
 #include "login.h"
-#include "employeeswindow.h"
 #include <QStringList>
 #include <QStringListModel>
 #include <QCompleter>
@@ -25,12 +24,16 @@
 #include <QScreen>
 #include <QSpinBox>
 #include <QCryptographicHash>
+#include <QtCharts>
 QT_BEGIN_NAMESPACE
 
 class CategoriesWindow;
 class SalesWindow;
 class ImExport;
-
+class reports;
+class Settings;
+class AccountsWindow;
+class EmployeesWindow;
 
 namespace Ui {
 class NekoLibro;
@@ -56,28 +59,41 @@ public:
     static int getCategoryId(const QString &categoryName);
 private slots:
     void clickedLogOut();
+
     void openSalesWindow();
     void openEmployeesWindow();
     void openCategoriesWindow();
     void openImExportWindow();
+    void openReportWindow();
+    void openSettingsWindow();
+    void openAccountsWindow();
+
     void gotoAddBook();
     void gotoImportInvoice();
     void gotoExportInvoice();
     void gotoImportLogs();
     void gotoExportLogs();
+
 private:
     Ui::NekoLibro *ui;
     login *pLogin = nullptr;
+
     SalesWindow *pSaleWindow = nullptr;
     EmployeesWindow *pEmployeesWindow = nullptr;
     CategoriesWindow *pCategoriesWindow = nullptr;
     ImExport *pImExportWindow = nullptr;
+    reports *pReportWindow = nullptr;
+    Settings *pSettingWindow = nullptr;
+    AccountsWindow *pAccountsWindow = nullptr;
+    QList<QWidget*> childWindows;  // lưu tất cả các cửa sổ con của trang chủ để thuận lợi
+                                   // cho việc giải phóng vùng nhớ đăng xuất
     QSqlDatabase db;
     QMenu *menuCategories = nullptr;
     QMenu *menuImExport = nullptr;
     QTimer *time;
 
     void updateStock();
+    void clearChildWindows();  // Xóa các cửa sổ con
 
 };
 #endif // NEKOLIBRO_H
