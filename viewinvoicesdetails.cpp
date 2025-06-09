@@ -117,7 +117,7 @@ void ViewInvoicesDetails::loadInvoiceDetails() {
 
 
         if (!query.exec()) {
-            QMessageBox::warning(this, "Lỗi", "Không thể tải chi tiết hóa đơn nhập:\n" + query.lastError().text());
+            QMessageBox::warning(this, "Lỗi", "c" + query.lastError().text());
             return;
         }
 
@@ -149,7 +149,7 @@ void ViewInvoicesDetails::loadInvoiceDetails() {
             RetailInvoicesItems.quantity,
             RetailInvoices.bill_num,
             RetailInvoices.date,
-            RetailInvoices.total_products
+            RetailInvoices.total_quanties
         FROM RetailInvoicesItems
         JOIN Products ON RetailInvoicesItems.product_id = Products.id
         JOIN Authors ON Products.author_id = Authors.id

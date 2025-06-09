@@ -58,6 +58,12 @@ NekoLibro::NekoLibro(QWidget *parent)
     menuImExport->addAction("Lịch sử xuất hàng", this, &NekoLibro::gotoExportLogs);
     ui->im_export->setMenu(menuImExport);
 
+    menuAccount = new QMenu();
+    menuAccount->addAction("Thay đổi mật khẩu", this, &NekoLibro::gotoChangePassword);
+    menuAccount->addAction("Cập nhật thông tin", this, &NekoLibro::gotoUpdateUserProfiles);
+    ui->accounts->setMenu(menuAccount);
+    ui->accounts->setPopupMode(QToolButton::MenuButtonPopup);
+
     time = new QTimer(this);
     connect(time, &QTimer::timeout, this, &NekoLibro::showTime);
     time->start(1000);
@@ -431,3 +437,59 @@ void NekoLibro::clickedLogOut() {
 
     this->close();  // Đóng cửa sổ chính,...  ở đây mình đóng
 }
+
+void NekoLibro::gotoChangePassword(){
+    if (!pAccountsWindow) {
+        pAccountsWindow = new AccountsWindow();
+
+        connect(pAccountsWindow, &QObject::destroyed, [this]() {
+            pAccountsWindow = nullptr;
+        });
+
+        // Chỉ gọi sau khi show xong
+        QTimer::singleShot(100, this, [this]() {
+            if (pAccountsWindow) {
+                QMetaObject::invokeMethod(pAccountsWindow, "tabChangePassword", Qt::QueuedConnection);
+            }
+        });
+
+        pAccountsWindow->show();
+    } else {
+        pAccountsWindow->show();
+        pAccountsWindow->raise();
+        pAccountsWindow->activateWindow();
+
+        // Không cần delay nếu cửa sổ đã khởi tạo đầy đủ
+        pAccountsWindow->tabChangePassword();
+    }
+}
+
+void NekoLibro::gotoUpdateUserProfiles(){
+    if (!pAccountsWindow) {
+        pAccountsWindow = new AccountsWindow();
+
+        connect(pAccountsWindow, &QObject::destroyed, [this]() {
+            pAccountsWindow = nullptr;
+        });
+
+        // Chỉ gọi sau khi show xong
+        QTimer::singleShot(100, this, [this]() {
+            if (pAccountsWindow) {
+                QMetaObject::invokeMethod(pAccountsWindow, "tabUpdateUserProfile", Qt::QueuedConnection);
+            }
+        });
+
+        pAccountsWindow->show();
+    } else {
+        pAccountsWindow->show();
+        pAccountsWindow->raise();
+        pAccountsWindow->activateWindow();
+
+        // Không cần delay nếu cửa sổ đã khởi tạo đầy đủ
+        pAccountsWindow->tabUpdateUserProfile();
+    }
+}
+
+
+
+

@@ -24,8 +24,12 @@ reports::reports(QWidget *parent)
 
     connect(ui->tabWidget, &QTabWidget::currentChanged,this,&reports::onTabChanged);
     connect(ui->png_daily, &QPushButton::clicked,this,&reports::saveChartAsPNG);
-    connect(ui->select_time_for_sum, &QComboBox::currentTextChanged,this,&reports::selectDuarationTimeForSum);
-    connect(ui->search_bill, &QPushButton::clicked,this, &reports::searchBillsByCustomRange);
+    connect(ui->search_bill, &QPushButton::clicked,this, &reports::searchBillsByCustomRange);  // tìm hóa đơn thời gian tùy chỉnh
+    connect(ui->search_sum, &QPushButton::clicked,this,&reports::RevenueChartByCustomRange);  // vẽ biểu đồ thời gian tùy chỉnh
+    connect(ui->excel_bill,&QPushButton::clicked,this,&reports::exportBillsToExcel);
+    connect(ui->view_bills,&QTableWidget::cellPressed, this, &reports::clickedRetailBillNum);
+    connect(ui->png_sum,&QPushButton::clicked,this,&reports::saveChartAsPNG);
+
     /* cần ánh xạ chuỗi thành Kiểu TimeRange */
     connect(ui->select_time_bill, &QComboBox::currentTextChanged, this, [=](const QString &text) {
         TimeRange range;
@@ -56,9 +60,30 @@ reports::reports(QWidget *parent)
         loadBillsByRange(range);
     });
 
-    /* truyền 1 tham số hàm */
-    connect(ui->daily_bills, &QPushButton::clicked, this, [=]() {
-        loadBillsByRange(TimeRange::Today);
+    /* cần ánh xạ chuỗi thành Kiểu RevenueRange */
+    connect(ui->select_time_for_sum, &QComboBox::currentTextChanged, this, [=](const QString &text) {
+        RevenueRange range;
+
+        if (text == "7 ngày qua")
+            range = RevenueRange::Last7Days;
+        else if (text == "14 ngày qua")
+            range = RevenueRange::Last14Days;
+        else if (text == "Tháng này")
+            range = RevenueRange::ThisMonth;
+        else if (text == "Tháng trước")
+            range = RevenueRange::LastMonth;
+        else if (text == "3 tháng gần đây")
+            range = RevenueRange::Last3Months;
+        else if (text == "6 tháng gần đây")
+            range = RevenueRange::Last6Months;
+        else if (text == "Năm nay")
+            range = RevenueRange::ThisYear;
+        else if (text == "Năm trước")
+            range = RevenueRange::LastYear;
+        else
+            return; // không làm gì nếu không khớp
+
+        createRevenueChart(range);
     });
 
     /* Hiện thị dữ liệu */
@@ -79,13 +104,12 @@ reports::reports(QWidget *parent)
     ui->view_bills->horizontalHeader()->setStretchLastSection(false);
 
     loadDataForDailyReports();
-    loadDataForRetailSum();
-    loadDataForRetailBills();
-    loadDataForEmployees();
-    loadDataForStocks();
+    createRevenueChart(RevenueRange::Last7Days);
     loadBillsByRange(TimeRange::Today);
     ui->start_date_bill->setDate(QDate::currentDate());
     ui->end_date_bill->setDate(QDate::currentDate());
+    ui->start_date_sum->setDate(QDate::currentDate());
+    ui->end_date_sum->setDate(QDate::currentDate());
 }
 
 reports::~reports()
@@ -96,11 +120,11 @@ reports::~reports()
 void reports::onTabChanged(int currIndex){
     switch(currIndex){
         case 0:
-                loadDataForDailyReports(); break;
+            loadDataForDailyReports(); break;
         case 1:
-            loadDataForRetailSum(); break;
+            createRevenueChart(RevenueRange::Last7Days); break;
         case 2:
-            loadDataForRetailBills(); break;
+            loadBillsByRange(TimeRange::Today); break;
         case 3:
             loadDataForEmployees(); break;
         case 4:
@@ -186,14 +210,6 @@ void reports::loadDataForDailyReports() {
     ui->view_daily_report->setRenderHint(QPainter::Antialiasing);
 }
 
-void reports::loadDataForRetailSum(){
-
-}
-
-void reports::loadDataForRetailBills(){
-
-}
-
 void reports::loadDataForEmployees(){
 
 }
@@ -266,31 +282,10 @@ void reports::loadBillsByRange(TimeRange range) {
         endDate = QDate(today.year() - 1, 12, 31).toString("yyyy-MM-dd");
         break;
     }
-    insertDataIntoBillsTable(startDate,endDate);
-}
 
-void reports::selectDuarationTimeForSum(const QString &text) {
-    if (text == "Hôm nay") {
-        loadBillsByRange(TimeRange::Today);
-    } else if (text == "Hôm qua") {
-        loadBillsByRange(TimeRange::Yesterday);
-    } else if (text == "Tuần này") {
-        loadBillsByRange(TimeRange::ThisWeek);
-    } else if (text == "Tuần trước") {
-        loadBillsByRange(TimeRange::LastWeek);
-    } else if (text == "Tháng này") {
-        loadBillsByRange(TimeRange::ThisMonth);
-    } else if (text == "Tháng trước") {
-        loadBillsByRange(TimeRange::LastMonth);
-    } else if (text == "3 tháng gần đây") {
-        loadBillsByRange(TimeRange::Recent3Months);
-    } else if (text == "6 tháng gần đây") {
-        loadBillsByRange(TimeRange::Recent6Months);
-    } else if (text == "Năm nay") {
-        loadBillsByRange(TimeRange::ThisYear);
-    } else if (text == "Năm trước") {
-        loadBillsByRange(TimeRange::LastYear);
-    }
+    QString seller = ui->seller_1->currentText();
+
+    insertDataIntoBillsTable(startDate,endDate,seller);
 }
 
 void reports::searchBillsByCustomRange(){
@@ -303,18 +298,33 @@ void reports::searchBillsByCustomRange(){
         return;
     }
 
-    insertDataIntoBillsTable(startDate,endDate);
+    QString seller = ui->seller_2->currentText();
+
+    insertDataIntoBillsTable(startDate,endDate,seller);
 }
 
-void reports::insertDataIntoBillsTable(QString startDate, QString endDate){
-    /* Lấy dữ liệu từ CSDL chèn vào bảng */
+void reports::insertDataIntoBillsTable(QString startDate, QString endDate, QString seller){
     QSqlQuery query;
-    query.prepare("SELECT R.date, R.bill_num, R.total_quanties, R.total_bill, AccountUsers.username "
-                  "FROM RetailInvoices R "
-                  "JOIN AccountUsers ON AccountUsers.id = R.user_id"
-                  " WHERE date BETWEEN :start AND :end");
-    query.bindValue(":start", startDate);
-    query.bindValue(":end", endDate);
+    /* Lấy dữ liệu từ CSDL chèn vào bảng */
+    if (seller == "Tất cả")
+    {
+        query.prepare("SELECT R.date, R.bill_num, R.total_quanties, R.total_bill, AccountUsers.username "
+                      "FROM RetailInvoices R "
+                      "JOIN AccountUsers ON AccountUsers.id = R.user_id "
+                      "WHERE date BETWEEN :start AND :end");
+        query.bindValue(":start", startDate);
+        query.bindValue(":end", endDate);
+    }
+    else
+    {
+        query.prepare("SELECT R.date, R.bill_num, R.total_quanties, R.total_bill, AccountUsers.username "
+                      "FROM RetailInvoices R "
+                      "JOIN AccountUsers ON AccountUsers.id = R.user_id "
+                      "WHERE date BETWEEN :start AND :end AND AccountUsers.username = :seller");
+        query.bindValue(":start", startDate);
+        query.bindValue(":end", endDate);
+        query.bindValue(":seller",seller);
+    }
 
     if (!query.exec()) {
         QMessageBox::critical(nullptr, "Lỗi truy vấn", query.lastError().text());
@@ -341,5 +351,283 @@ void reports::insertDataIntoBillsTable(QString startDate, QString endDate){
 
         row++;
     }
+}
+
+void reports::exportBillsToExcel() {
+    QString startDate = ui->start_date_bill->date().toString("yyyy-MM-dd");
+    QString endDate = ui->end_date_bill->date().toString("yyyy-MM-dd");
+    QString seller = ui->seller_2->currentText();
+
+    QSqlQuery query;
+    /* Lấy dữ liệu từ CSDL chèn vào bảng */
+    if (seller == "Tất cả")
+    {
+        query.prepare("SELECT R.date, R.bill_num, P.title, P.selling_price, I.quantity, (P.selling_price*I.quantity), AccountUsers.username "
+                      "FROM RetailInvoices R "
+                      "JOIN AccountUsers ON AccountUsers.id = R.user_id "
+                      "JOIN RetailInvoicesItems I ON I.invoice_id = R.id "
+                      "JOIN Products P ON P.id = I.product_id "
+                      "WHERE date BETWEEN :start AND :end");
+        query.bindValue(":start", startDate);
+        query.bindValue(":end", endDate);
+    }
+    else
+    {
+        query.prepare("SELECT R.date, R.bill_num, P.title, P.selling_price, I.quantity, (P.selling_price*I.quantity), AccountUsers.username "
+                      "FROM RetailInvoices R "
+                      "JOIN AccountUsers ON AccountUsers.id = R.user_id "
+                      "JOIN RetailInvoicesItems I ON I.invoice_id = R.id "
+                      "JOIN Products P ON P.id = I.product_id "
+                      "WHERE date BETWEEN :start AND :end AND AccountUsers.username = :seller");
+        query.bindValue(":start", startDate);
+        query.bindValue(":end", endDate);
+        query.bindValue(":seller",seller);
+    }
+
+    if ( query.exec() && !query.next()) {
+        QMessageBox::warning(this, "Lỗi", "Không có sản phẩm nào trong khoảng thời gian này để xuất.");
+        return;
+    }
+
+    QXlsx::Document xlsx;
+     /* hàng 1 là hàng tiêu đề */
+    // Tiêu đề cột
+    QStringList headers = { "Ngày", "Mã hóa đơn", "Tên sản phẩm", "Giá bán", "Số lượng", "Thành tiền", "Người bán"};
+    for (int col = 0; col < headers.size(); ++col) {
+        xlsx.write(1, col + 1, headers[col]);
+    }
+    /* chèn bắt đầu từ hàng 2 */
+    int row = 2;
+    do {
+        xlsx.write(row, 1, query.value(0).toString());
+        xlsx.write(row, 2, query.value(1).toString());
+        xlsx.write(row, 3, query.value(2).toString());
+        xlsx.write(row, 4, query.value(3).toDouble());
+        xlsx.write(row, 5, query.value(4).toInt());
+        xlsx.write(row, 6, query.value(5).toDouble());
+        xlsx.write(row, 7, query.value(6).toString());
+        row++;
+    } while (query.next());
+
+    QString filePath = QFileDialog::getSaveFileName(this, "Lưu file Excel", "", "Excel Files (*.xlsx)");
+    if (!filePath.isEmpty()) {
+        if (xlsx.saveAs(filePath)) {
+            QMessageBox::information(this, "Thành công", "Đã xuất dữ liệu thành công.");
+        } else {
+            QMessageBox::critical(this, "Thất bại", "Không thể lưu file Excel.");
+        }
+    }
+}
+
+void reports::clickedRetailBillNum(int row, int col){
+    if(col == 1) {
+        RetailInvoiceDetails(row);
+    }
+}
+
+void reports::RetailInvoiceDetails(int row)
+{
+    QString invoiceId ;
+    QString billNum = ui->view_bills->item(row,1)->text();
+    QSqlQuery query;
+    query.prepare("SELECT id FROM RetailInvoices WHERE bill_num = ?");
+    query.addBindValue(billNum);
+    query.exec();
+    if(query.next()){
+        invoiceId = query.value(0).toString();
+    }
+    pViewInvoicesDetails = new ViewInvoicesDetails(invoiceId, InvoiceType::Retail, this);
+    pViewInvoicesDetails->exec();
+    delete pViewInvoicesDetails;
+    pViewInvoicesDetails = nullptr;
+}
+
+void reports::createRevenueChart(RevenueRange range) {
+    QDate today = QDate::currentDate();
+    QDate startDate, endDate = today;
+    QString title;
+
+    /* Chia trường hợp lấy range ánh xạ từ combox */
+    switch (range) {
+    case RevenueRange::Last7Days:
+        startDate = today.addDays(-6);
+        title = "Doanh thu 7 ngày qua";
+        break;
+    case RevenueRange::Last14Days:
+        startDate = today.addDays(-13);
+        title = "Doanh thu 14 ngày qua";
+        break;
+    case RevenueRange::ThisMonth:
+        startDate = QDate(today.year(), today.month(), 1);
+        title = "Doanh thu tháng này";
+        break;
+    case RevenueRange::LastMonth: {
+        QDate firstThisMonth(today.year(), today.month(), 1);
+        QDate lastMonthDate = firstThisMonth.addMonths(-1);
+        startDate = QDate(lastMonthDate.year(), lastMonthDate.month(), 1);
+        endDate = firstThisMonth.addDays(-1);
+        title = "Doanh thu tháng trước";
+        break;
+    }
+    case RevenueRange::Last3Months:
+        startDate = today.addMonths(-2);  // bao gồm tháng này
+        startDate = QDate(startDate.year(), startDate.month(), 1);
+        title = "Doanh thu 3 tháng gần đây";
+        break;
+    case RevenueRange::Last6Months:
+        startDate = today.addMonths(-5);
+        startDate = QDate(startDate.year(), startDate.month(), 1);
+        title = "Doanh thu 6 tháng gần đây";
+        break;
+    case RevenueRange::ThisYear:
+        startDate = QDate(today.year(), 1, 1);
+        title = "Doanh thu năm nay";
+        break;
+    case RevenueRange::LastYear:
+        startDate = QDate(today.year() - 1, 1, 1);
+        endDate = QDate(today.year() - 1, 12, 31);
+        title = "Doanh thu năm trước";
+        break;
+    }
+
+    // Xác định group theo ngày hoặc theo tháng
+    QString groupFormat;
+    if (range == RevenueRange::Last7Days || range == RevenueRange::Last14Days)
+        groupFormat = "%Y-%m-%d";
+    else
+        groupFormat = "%Y-%m";
+
+    QMap<QString, double> revenues;
+
+    QSqlQuery query;
+    query.prepare(QString(R"(
+        SELECT strftime('%1', date) AS time_group, SUM(total_bill)
+        FROM RetailInvoices
+        WHERE date BETWEEN ? AND ?
+        GROUP BY time_group
+        ORDER BY time_group
+    )").arg(groupFormat));
+
+    query.addBindValue(startDate.toString("yyyy-MM-dd"));
+    query.addBindValue(endDate.toString("yyyy-MM-dd"));
+
+    if (!query.exec()) {
+        qDebug() << "Lỗi truy vấn doanh thu:" << query.lastError().text();
+        return;
+    }
+
+    while (query.next()) {
+        QString time = query.value(0).toString();
+        double sum = query.value(1).toDouble();
+        revenues[time] = sum;
+    }
+
+    // Chuẩn bị biểu đồ
+    QBarSet *set = new QBarSet("Doanh thu");
+    QStringList labels;
+
+    if (groupFormat == "%Y-%m-%d") {
+        for (QDate d = startDate; d <= endDate; d = d.addDays(1)) {
+            QString key = d.toString("yyyy-MM-dd");
+            labels << d.toString("dd/MM");
+            set->append(revenues.value(key, 0));
+        }
+    } else {
+        QDate d = startDate;
+        while (d <= endDate) {
+            QString key = d.toString("yyyy-MM");
+            labels << d.toString("MM/yyyy");
+            set->append(revenues.value(key, 0));
+            d = d.addMonths(1);
+        }
+    }
+
+    QBarSeries *series = new QBarSeries();
+    series->append(set);
+
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle(title);
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+    QBarCategoryAxis *axisX = new QBarCategoryAxis();
+    axisX->append(labels);
+    chart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+
+    QValueAxis *axisY = new QValueAxis();
+    chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
+
+    ui->view_sum_report->setChart(chart);
+    ui->view_sum_report->setRenderHint(QPainter::Antialiasing);
+}
+
+void reports::RevenueChartByCustomRange() {
+    QDate startDate = ui->start_date_sum->date(); // so sánh đc nếu thuộc kiểu QDate
+    QDate endDate = ui->end_date_sum->date();
+
+    // Kiểm tra nếu ngày bắt đầu > ngày kết thúc
+    if (startDate > endDate) {
+        QMessageBox::warning(this, "Lỗi", "Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.");
+        return;
+    }
+
+    QSqlQuery query;
+    query.prepare("SELECT date, SUM(total_bill) FROM RetailInvoices "
+                  "WHERE date BETWEEN :start AND :end "
+                  "GROUP BY date "
+                  "ORDER BY date");
+    query.bindValue(":start", startDate);
+    query.bindValue(":end", endDate);
+
+    if (!query.exec()) {
+        QMessageBox::warning(this, "Lỗi", "Không truy vấn được dữ liệu:\n" + query.lastError().text());
+        return;
+    }
+
+    QBarSet *barSet = new QBarSet("Doanh thu");
+    QStringList categories; // ngày dưới dạng chuỗi
+    double totalRevenue = 0;
+
+    while (query.next()) {
+        QDate date = QDate::fromString(query.value(0).toString(), "yyyy-MM-dd");
+        double revenue = query.value(1).toDouble();
+
+        *barSet << revenue;
+        categories << date.toString("dd/MM");
+        totalRevenue += revenue;
+    }
+
+    if (barSet->count() == 0) {
+        QMessageBox::information(this, "Thông báo", "Không có dữ liệu trong khoảng thời gian đã chọn.");
+        return;
+    }
+
+    QBarSeries *series = new QBarSeries;
+    series->append(barSet);
+
+    QChart *chart = new QChart;
+    chart->addSeries(series);
+    chart->setTitle("Doanh thu từ " + startDate.toString("dd/MM/yyyy") + " đến " + endDate.toString("dd/MM/yyyy"));
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+    // Trục X - Ngày
+    QBarCategoryAxis *axisX = new QBarCategoryAxis;
+    axisX->append(categories);
+    axisX->setTitleText("Ngày");
+
+    // Trục Y - Doanh thu
+    QValueAxis *axisY = new QValueAxis;
+    axisY->setTitleText("Doanh thu (VNĐ)");
+    axisY->applyNiceNumbers();
+
+    chart->addAxis(axisX, Qt::AlignBottom);
+    chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisX);
+    series->attachAxis(axisY);
+
+    ui->view_sum_report->setChart(chart);
+    ui->custom_sum->setText("Tổng doanh thu: " + QLocale().toString(totalRevenue, 'f', 0) + " đ");
 }
 

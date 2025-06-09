@@ -42,5 +42,11 @@
         <file>all.png</file>
         <file>increasing_decreasing.png</file>
         <file>png.png</file>
+        <file>phone.png</file>
+        <file>hometown.png</file>
+        <file>name.png</file>
+        <file>email.png</file>
+        <file>update.png</file>
+        <file>dob.png</file>
     </qresource>
 </RCC>

@@ -2,7 +2,7 @@
 #define ACCOUNTSWINDOW_H
 
 #include <QWidget>
-
+#include "nekolibro.h"
 namespace Ui {
 class AccountsWindow;
 }
@@ -15,8 +15,24 @@ public:
     explicit AccountsWindow(QWidget *parent = nullptr);
     ~AccountsWindow();
 
+public slots:
+    void tabChangePassword();
+    void tabUpdateUserProfile();
+
+private slots:
+    void visibleOldPassword();
+    void visibleNewPassword();
+    void visibleVeryfiedNewPassword();
+    void changePassword();
+    void updateUserProfiles();
+    void tabMinimized();
 private:
     Ui::AccountsWindow *ui;
+    QSqlDatabase db;
+    bool passwordVisible = false;
+    void loadHometownList();
+    void fillEmail();
+
 };
 
 #endif // ACCOUNTSWINDOW_H

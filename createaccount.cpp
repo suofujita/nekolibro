@@ -56,40 +56,34 @@ void createAccount::clickedAccept() {
         return;
     }
 
+    if (!new_email.contains("@")) {
+        QMessageBox::warning(this, "Lỗi", "Email không hợp lệ!");
+        return;
+    }
+
     // Kiểm tra email đã tồn tại chưa
-    query.prepare("SELECT * FROM UserProfiles WHERE email = ?");
+    query.prepare("SELECT * FROM AccountUsers WHERE email = ?");
     query.addBindValue(new_email);
     if (query.exec() && query.next()) {
         QMessageBox::warning(this, "Lỗi", "Email đã được sử dụng đăng ký!");
         return;
     }
 
-    query.prepare("INSERT INTO AccountUsers (username, password_hash, role) "
-                  "VALUES (?, ?, ?)");
+    query.prepare("INSERT INTO AccountUsers (username, password_hash, role, email) "
+                  "VALUES (?, ?, ?, ?)");
     query.addBindValue(new_username);
     query.addBindValue(hashed_new_password);
     query.addBindValue(selected_role);
+    query.addBindValue(new_email);
 
     // Thêm thông tin người dùng vào bảng UserProfiles
     if (query.exec()) {
-        // Lấy user_id (id của tài khoản mới) từ bảng AccountUsers
-        qint64 new_user_id = query.lastInsertId().toLongLong();
-
-        // Thêm thông tin chi tiết người dùng vào bảng UserProfiles
-        query.prepare("INSERT INTO UserProfiles (user_id, email) "
-                      "VALUES (?,?)");
-        query.addBindValue(new_user_id);
-        query.addBindValue(new_email);
-
-        if (query.exec()) {
             QMessageBox::information(this, "Tạo tài khoản mới", "Tạo tài khoản mới thành công!");
             close();
-        } else {
-            QMessageBox::warning(this, "Lỗi", "Không thể thêm thông tin chi tiết người dùng vào UserProfiles!");
         }
-    } else {
-        QMessageBox::warning(this, "Lỗi", "Không thể tạo tài khoản mới!");
-    }
+        else {
+            QMessageBox::warning(this, "Lỗi", "Không thể tạo tài khoản mới!");
+        }
 }
 
 void createAccount::clickedTogglePass(){

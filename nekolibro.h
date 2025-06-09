@@ -25,6 +25,8 @@
 #include <QSpinBox>
 #include <QCryptographicHash>
 #include <QtCharts>
+#include <QDateTime>
+#include <QtCharts/QDateTimeAxis>
 QT_BEGIN_NAMESPACE
 
 class CategoriesWindow;
@@ -74,6 +76,9 @@ private slots:
     void gotoImportLogs();
     void gotoExportLogs();
 
+    void gotoUpdateUserProfiles();
+    void gotoChangePassword();
+
 private:
     Ui::NekoLibro *ui;
     login *pLogin = nullptr;
@@ -90,6 +95,7 @@ private:
     QSqlDatabase db;
     QMenu *menuCategories = nullptr;
     QMenu *menuImExport = nullptr;
+    QMenu *menuAccount = nullptr;
     QTimer *time;
 
     void updateStock();

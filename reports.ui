@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>931</width>
+    <width>1034</width>
     <height>611</height>
    </rect>
   </property>
@@ -14,18 +14,18 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <item row="0" column="0">
+   <item row="0" column="1">
     <widget class="QTabWidget" name="tabWidget">
      <property name="font">
       <font>
-       <pointsize>13</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="autoFillBackground">
       <bool>false</bool>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="daily_reports">
       <attribute name="title">
@@ -137,22 +137,12 @@
         <widget class="QComboBox" name="select_time_for_sum">
          <item>
           <property name="text">
-           <string>Hôm nay</string>
+           <string>7 ngày qua</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Hôm qua</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Tuần này</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Tuần trước</string>
+           <string>14 ngày qua</string>
           </property>
          </item>
          <item>
@@ -245,10 +235,16 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="6" colspan="2">
-        <widget class="QPushButton" name="daily_bills">
+       <item row="3" column="1">
+        <widget class="QLabel" name="custom_sum">
+         <property name="font">
+          <font>
+           <pointsize>13</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
-          <string>Doanh thu theo ngày</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -259,8 +255,13 @@
        <string>Hóa đơn bán lẻ</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_6">
-       <item row="2" column="3">
+       <item row="3" column="2">
         <widget class="QLabel" name="label_11">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Đến</string>
          </property>
@@ -269,8 +270,13 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="6" colspan="3">
-        <widget class="QComboBox" name="seller">
+       <item row="3" column="6" colspan="4">
+        <widget class="QComboBox" name="seller_2">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <item>
           <property name="text">
            <string>Tất cả</string>
@@ -293,24 +299,15 @@
          </item>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Lựa chọn:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="5">
-        <widget class="QLabel" name="label_13">
-         <property name="text">
-          <string>NVBH</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="9">
+       <item row="3" column="10">
         <widget class="QPushButton" name="search_bill">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <property name="text">
-          <string/>
+          <string>Tìm kiếm</string>
          </property>
          <property name="icon">
           <iconset resource="galeries.qrc">
@@ -324,82 +321,13 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>Từ</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="4">
-        <widget class="QDateEdit" name="end_date_bill"/>
-       </item>
-       <item row="3" column="0" colspan="10">
-        <widget class="QTableWidget" name="view_bills"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Tùy chỉnh:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" colspan="2">
-        <widget class="QDateEdit" name="start_date_bill"/>
-       </item>
-       <item row="0" column="3">
-        <widget class="QLabel" name="label_12">
-         <property name="text">
-          <string>NVBH</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="4">
-        <widget class="QComboBox" name="seller_1">
-         <item>
-          <property name="text">
-           <string>Tất cả</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>admin</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>hoa.vuthinhu</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>duy</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="4" column="5" colspan="4">
-        <widget class="QPushButton" name="excel_bill">
-         <property name="text">
-          <string>Xuất file excel</string>
-         </property>
-         <property name="icon">
-          <iconset resource="galeries.qrc">
-           <normaloff>:/image/excel.png</normaloff>:/image/excel.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" colspan="2">
+       <item row="1" column="3" colspan="3">
         <widget class="QComboBox" name="select_time_bill">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <item>
           <property name="text">
            <string>Hôm nay</string>
@@ -452,79 +380,139 @@
          </item>
         </widget>
        </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="employees">
-      <attribute name="title">
-       <string>Nhân viên</string>
-      </attribute>
-      <widget class="QLabel" name="label_14">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>20</y>
-         <width>63</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QWidget" name="stocks">
-      <attribute name="title">
-       <string>Tồn kho</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_7">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_2">
+       <item row="0" column="0" colspan="4">
+        <widget class="QLabel" name="label_16">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Tìm kiếm nhanh theo tên người bán...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QDateEdit" name="start_date_bill">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="calendarPopup">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="seller_1">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <item>
+          <property name="text">
+           <string>Tất cả</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>admin</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>hoa.vuthinhu</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>duy</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QDateEdit" name="end_date_bill">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="calendarPopup">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="5">
+        <widget class="QLabel" name="label_13">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>NVBH</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="11">
+        <widget class="QTableWidget" name="view_bills">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Từ</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLabel" name="label">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Lựa chọn:</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="5">
-        <widget class="QTableWidget" name="tableWidget_2"/>
-       </item>
-       <item row="4" column="1">
-        <widget class="QPushButton" name="pushButton_4">
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_12">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <property name="text">
-          <string>Hiện thị toàn bộ sản phẩm</string>
-         </property>
-         <property name="icon">
-          <iconset resource="galeries.qrc">
-           <normaloff>:/image/all.png</normaloff>:/image/all.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
+          <string>NVBH</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" colspan="2">
-        <widget class="QComboBox" name="comboBox_3">
-         <item>
-          <property name="text">
-           <string>Sản phẩm đang bán chạy </string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Sản phẩm sắp hết hàng</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Sản phẩm tồn kho nhiều</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="8" column="3" colspan="2">
-        <widget class="QPushButton" name="pushButton_5">
+       <item row="5" column="10">
+        <widget class="QPushButton" name="excel_bill">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Xuất file excel</string>
          </property>
@@ -540,8 +528,152 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="2" colspan="2">
-        <widget class="QPushButton" name="pushButton_7">
+       <item row="2" column="0" colspan="6">
+        <widget class="QLabel" name="label_9">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Tùy chỉnh (có thể xuất file excel kết quả tìm kiếm):</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="employees">
+      <attribute name="title">
+       <string>Nhân viên</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="4" column="3">
+        <widget class="QLabel" name="label_17">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="8">
+        <widget class="QTableWidget" name="view_employee"/>
+       </item>
+       <item row="4" column="0" rowspan="3">
+        <widget class="QLabel" name="label_14">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_20">
+         <property name="text">
+          <string>Thời gian</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_18">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Tùy chọn:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="7">
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>Giảm/Tăng dần</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="6">
+        <widget class="QPushButton" name="search_employee">
+         <property name="text">
+          <string>Tìm kiếm</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="4" colspan="2">
+        <widget class="QComboBox" name="select_employee">
+         <item>
+          <property name="text">
+           <string>Tất cả</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>admin</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>hoa.vuthinhu</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>duy</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QLabel" name="label_19">
+         <property name="text">
+          <string>NVBH</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" colspan="2">
+        <widget class="QComboBox" name="select_time_employee">
+         <item>
+          <property name="text">
+           <string>Tất cả</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Theo ngày</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Theo tháng</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Theo quý</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Theo năm</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="stocks">
+      <attribute name="title">
+       <string>Tồn kho</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="5" column="3">
+        <widget class="QPushButton" name="sort">
          <property name="text">
           <string>Tồn kho giảm/tăng dần</string>
          </property>
@@ -557,14 +689,17 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
-        <widget class="QPushButton" name="pushButton_6">
+       <item row="7" column="0" colspan="5">
+        <widget class="QTableWidget" name="view_stocks"/>
+       </item>
+       <item row="8" column="3" colspan="2">
+        <widget class="QPushButton" name="excel_category">
          <property name="text">
-          <string>Tìm kiếm</string>
+          <string>Xuất file excel</string>
          </property>
          <property name="icon">
           <iconset resource="galeries.qrc">
-           <normaloff>:/image/search.png</normaloff>:/image/search.png</iconset>
+           <normaloff>:/image/excel.png</normaloff>:/image/excel.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -572,6 +707,49 @@
            <height>30</height>
           </size>
          </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Lựa chọn:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QPushButton" name="all_stocks">
+         <property name="text">
+          <string>Hiện thị toàn bộ sản phẩm</string>
+         </property>
+         <property name="icon">
+          <iconset resource="galeries.qrc">
+           <normaloff>:/image/all.png</normaloff>:/image/all.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1" colspan="2">
+        <widget class="QComboBox" name="comboBox_3">
+         <item>
+          <property name="text">
+           <string>Top 10 sản phẩm đang bán chạy</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Sản phẩm sắp hết hàng</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Sản phẩm tồn kho nhiều</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
