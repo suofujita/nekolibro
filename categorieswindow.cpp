@@ -40,6 +40,8 @@ CategoriesWindow::CategoriesWindow(NekoLibro *parent)
 
     ui->author_edit->setPlaceholderText("Nhập tên tác giả mới...");
     ui->type_edit->setPlaceholderText("Nhập danh mục mới...");
+
+    pSalesWindow = new SalesWindow();
 }
 
 CategoriesWindow::~CategoriesWindow()
@@ -119,6 +121,7 @@ void CategoriesWindow::addBook(){
             showData();
             resetData();
             QMessageBox::information(this,"Thêm sản phẩm","Thêm sản phẩm thành công");
+            pSalesWindow->setCompleter();
         }
         else {
             QSqlDatabase::database().rollback();

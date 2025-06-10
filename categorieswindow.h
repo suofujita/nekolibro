@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "nekolibro.h"
+#include "saleswindow.h"
 
 namespace Ui {
 class CategoriesWindow;
@@ -29,7 +30,7 @@ private:
     QCompleter *completer = nullptr;
     QStringListModel *model = nullptr;
     NekoLibro *pNekoLibro = nullptr;
-
+    SalesWindow *pSalesWindow=nullptr;
     QStandardItemModel *modelForData = nullptr;
     void showData();
     void resetData();

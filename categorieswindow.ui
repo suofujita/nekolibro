@@ -28,14 +28,14 @@
     </font>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="main_categories">
     <widget class="QPushButton" name="remove_book">
      <property name="geometry">
       <rect>
        <x>570</x>
-       <y>90</y>
+       <y>130</y>
        <width>261</width>
        <height>51</height>
       </rect>
@@ -63,7 +63,7 @@
      <property name="geometry">
       <rect>
        <x>570</x>
-       <y>30</y>
+       <y>60</y>
        <width>261</width>
        <height>51</height>
       </rect>
@@ -100,34 +100,6 @@
       <font>
        <pointsize>12</pointsize>
       </font>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="infor_edit">
-     <property name="geometry">
-      <rect>
-       <x>570</x>
-       <y>150</y>
-       <width>261</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Sửa thông tin sản phẩm</string>
-     </property>
-     <property name="icon">
-      <iconset resource="galeries.qrc">
-       <normaloff>:/image/edit.png</normaloff>:/image/edit.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>30</width>
-       <height>30</height>
-      </size>
      </property>
     </widget>
     <widget class="QLabel" name="label_8">

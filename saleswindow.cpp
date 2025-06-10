@@ -81,6 +81,7 @@ SalesWindow::SalesWindow(QWidget *parent)
     connect(ui->cancel, &QPushButton::clicked,this, &SalesWindow::cancelBill);
     connect(ui->save_bill, &QPushButton::clicked,this,&SalesWindow::saveBill);
     connect(ui->remove, &QPushButton::clicked,this, &SalesWindow::removeProductFromBill);
+    connect(ui->products, &QTableWidget::cellPressed,this, &SalesWindow::loadStock);
     autoCreateBillNum();
 }
 SalesWindow::~SalesWindow()
@@ -132,7 +133,7 @@ void SalesWindow::selectedBooks(QAction *action)
 
     QSqlQuery query;
     query.prepare(R"(
-        SELECT Products.id, Products.title, Authors.name, Products.selling_price
+        SELECT Products.id, Products.title, Authors.name, Products.selling_price, Products.stock
         FROM Products
         JOIN Authors ON Products.author_id = Authors.id
         WHERE Products.id = ?
@@ -143,6 +144,33 @@ void SalesWindow::selectedBooks(QAction *action)
         QString name = query.value(1).toString();
         QString author = query.value(2).toString();
         QString price = query.value(3).toString();
+        int stock = query.value(4).toInt();
+
+        if (stock <= 0) {
+            QMessageBox::warning(this, "Hết hàng", "Sản phẩm này đã hết hàng.");
+            return;
+        }
+
+        // Kiểm tra nếu sản phẩm đã có trong bảng
+        for (int r = 0; r < ui->products->rowCount(); ++r) {
+            QTableWidgetItem *item = ui->products->item(r, 0);
+            if (item && item->text() == productId) {
+                QSpinBox *spinBox = qobject_cast<QSpinBox*>(ui->products->cellWidget(r, 3));
+                if (spinBox) {
+                    int currentQty = spinBox->value();
+                    if (currentQty + 1 > stock) {
+                        QMessageBox::warning(this, "Vượt tồn kho",
+                                             QString("Chỉ còn %1 sản phẩm trong kho.").arg(stock));
+                        return;
+                    }
+                    spinBox->setValue(currentQty + 1);
+                    updateTotals();
+                    ui->search->clear();
+                    return;
+                }
+            }
+        }
+
 
         int row = ui->products->rowCount();
         ui->products->insertRow(row);
@@ -165,7 +193,7 @@ void SalesWindow::selectedBooks(QAction *action)
         // Thêm QSpinBox để chỉnh số lượng
         QSpinBox *spinBox = new QSpinBox(this);
         spinBox->setMinimum(1);
-        spinBox->setMaximum(9999);
+        spinBox->setMaximum(stock);
         spinBox->setValue(1);
         ui->products->setCellWidget(row, 3, spinBox);
 
@@ -274,7 +302,7 @@ void SalesWindow::moneyReturn(const QString &text)
 }
 
 void SalesWindow::cancelBill(){
-     showMinimized();// thu nhỏ không đóng
+    showMinimized();// thu nhỏ không đóng
 }
 
 void SalesWindow::autoCreateBillNum(){
@@ -426,13 +454,52 @@ int SalesWindow::getInvoiceId(const QString &numBill)
     }
 }
 
-void SalesWindow::removeProductFromBill(int row)
+void SalesWindow::removeProductFromBill()
 {
-    if(row<0 || row > ui->products->rowCount()) {
-        return ;
+    int currentRow = ui->products->currentRow();
+    if (currentRow >= 0) {
+        ui->products->removeRow(currentRow);
+        updateTotals(); // Cập nhật lại tổng sau khi xóa
+    } else {
+        QMessageBox::warning(this, "Chưa chọn sản phẩm", "Vui lòng chọn sản phẩm muốn xóa khỏi hóa đơn.");
     }
-    ui->products->removeRow(row);
-    updateTotals();
 }
+
+
+void SalesWindow::loadStock(int row, int col){
+    int stock;
+    if(col == 0 || col == 1) {
+        stock = getStock(row);
+        if (stock>=0) {
+            ui->stock->setText(QString::number(stock));
+        }
+        else {
+            ui->stock->setText("N/A");
+        }
+    }
+    return;
+}
+
+int SalesWindow::getStock(int row){
+    if(row<0)
+        return -1;
+    QString productId = ui->products->item(row,0)->text();
+    QSqlQuery query;
+    query.prepare("SELECT stock FROM Products WHERE id = ?");
+    query.addBindValue(productId);
+
+    if (!query.exec()) {
+        qWarning() << "Lỗi truy vấn lấy id:" << query.lastError().text();
+        return -1;
+    }
+
+    if (query.next()) {
+        return query.value(0).toInt();
+    } else {
+        qWarning() << "Không tìm thấy sản phẩm";
+        return -1;
+    }
+}
+
 
 
