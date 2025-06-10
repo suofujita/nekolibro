@@ -15,7 +15,10 @@ CategoriesWindow::CategoriesWindow(NekoLibro *parent)
 
     connect(ui->search,&QLineEdit::textChanged,this,&CategoriesWindow::searchByText);
     connect(ui->add_new_author, &QPushButton::clicked,this, &CategoriesWindow::addNewAuthor);
-     connect(ui->add_new_type, &QPushButton::clicked,this, &CategoriesWindow::addNewCategory);
+    connect(ui->add_new_type, &QPushButton::clicked,this, &CategoriesWindow::addNewCategory);
+
+    connect(ui->excel, &QPushButton::clicked, this, &CategoriesWindow::importFromExcel);
+
     /* Kết nối với cơ sở dữ liệu */
     if (QSqlDatabase::contains("qt_sql_default_connection")) {
         db = QSqlDatabase::database("qt_sql_default_connection");
@@ -406,5 +409,111 @@ void CategoriesWindow::loadComboBoxes() {
     }
 }
 
+void CategoriesWindow::importFromExcel() {
+    QString filePath = QFileDialog::getOpenFileName(this, "Chọn file Excel", "", "Excel (*.xlsx)");
+    if (filePath.isEmpty()) return;
 
+    QSqlDatabase db = QSqlDatabase::database();
+    QXlsx::Document xlsx(filePath);
+    if (!xlsx.load()) {
+        QMessageBox::warning(this, "Lỗi", "Không thể mở file Excel.");
+        return;
+    }
 
+    // Đếm số dòng thực tế
+    int totalRows = 0;
+    for (int r = 2; ; ++r) {
+        if (xlsx.read(r, 2).toString().trimmed().isEmpty())
+            break;
+        totalRows++;
+    }
+
+    QProgressDialog progress("Đang nhập dữ liệu từ Excel...", "Hủy", 0, totalRows, this);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setMinimumDuration(0);
+
+    int row = 2;
+    int processed = 0;
+
+    while (processed < totalRows) {
+        progress.setValue(processed);
+        if (progress.wasCanceled()) break;
+
+        QString isbn = xlsx.read(row, 2).toString().trimmed();
+        if (isbn.isEmpty()) break;
+
+        QString name = xlsx.read(row, 3).toString().trimmed();
+        QString authorName = xlsx.read(row, 4).toString().trimmed();
+        double sellingPrice = xlsx.read(row, 5).toDouble();
+        double purchasePrice = xlsx.read(row, 6).toDouble();
+        QString categoryName = xlsx.read(row, 7).toString().trimmed();
+
+        // Kiểm tra ISBN
+        QSqlQuery checkBook(db);
+        checkBook.prepare("SELECT id FROM Products WHERE isbn = ?");
+        checkBook.addBindValue(isbn);
+        checkBook.exec();
+        if (checkBook.next()) {
+            row++; processed++;
+            continue;
+        }
+
+        // Tác giả
+        int authorId = -1;
+        QSqlQuery checkAuthor(db);
+        checkAuthor.prepare("SELECT id FROM Authors WHERE name = ?");
+        checkAuthor.addBindValue(authorName);
+        checkAuthor.exec();
+        if (checkAuthor.next()) {
+            authorId = checkAuthor.value(0).toInt();
+        } else {
+            QSqlQuery insertAuthor(db);
+            insertAuthor.prepare("INSERT OR IGNORE INTO Authors (name) VALUES (?)"); // nếu đã tồn tại
+            insertAuthor.addBindValue(authorName);
+            if (insertAuthor.exec())
+                authorId = insertAuthor.lastInsertId().toInt();
+            else {
+                row++; processed++;
+                continue;
+            }
+        }
+
+        // Phân loại
+        int categoryId = -1;
+        QSqlQuery checkCategory(db);
+        checkCategory.prepare("SELECT id FROM Category WHERE name = ?");
+        checkCategory.addBindValue(categoryName);
+        checkCategory.exec();
+        if (checkCategory.next()) {
+            categoryId = checkCategory.value(0).toInt();
+        } else {
+            QSqlQuery insertCategory(db);
+            insertCategory.prepare("INSERT OR IGNORE INTO Category (name) VALUES (?)");  // nếu đã tồn tại
+            insertCategory.addBindValue(categoryName);
+            if (insertCategory.exec())
+                categoryId = insertCategory.lastInsertId().toInt();
+            else {
+                row++; processed++;
+                continue;
+            }
+        }
+
+        // Thêm sách
+        QSqlQuery insertBook(db);
+        insertBook.prepare("INSERT INTO Products (isbn, title, author_id, purchase_price, selling_price, category_id) "
+                           "VALUES (?, ?, ?, ?, ?, ?)");
+        insertBook.addBindValue(isbn);
+        insertBook.addBindValue(name);
+        insertBook.addBindValue(authorId);
+        insertBook.addBindValue(purchasePrice);
+        insertBook.addBindValue(sellingPrice);
+        insertBook.addBindValue(categoryId);
+        insertBook.exec();
+
+        row++;
+        processed++;
+    }
+
+    progress.setValue(totalRows);
+    QMessageBox::information(this, "Hoàn tất", "Đã hoàn tất nhập sách từ Excel.");
+}

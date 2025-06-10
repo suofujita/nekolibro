@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1137</width>
+    <width>1080</width>
     <height>729</height>
    </rect>
   </property>
@@ -14,50 +14,6 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="3" column="1" colspan="2">
-    <widget class="QLabel" name="label_2">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Thông tin nhân viên</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="5">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="9" colspan="2">
-    <widget class="QPushButton" name="pushButton_3">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>OK</string>
-     </property>
-     <property name="icon">
-      <iconset resource="galeries.qrc">
-       <normaloff>:/image/ok.png</normaloff>:/image/ok.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>30</width>
-       <height>30</height>
-      </size>
-     </property>
-    </widget>
-   </item>
    <item row="5" column="7">
     <widget class="QLabel" name="label_5">
      <property name="text">
@@ -65,86 +21,20 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QPushButton" name="pushButton_2">
+   <item row="5" column="5" colspan="2">
+    <widget class="QPushButton" name="pushButton">
      <property name="font">
       <font>
        <pointsize>12</pointsize>
       </font>
      </property>
      <property name="text">
-      <string>Xóa nhân viên</string>
-     </property>
-     <property name="icon">
-      <iconset resource="galeries.qrc">
-       <normaloff>:/image/remove.png</normaloff>:/image/remove.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>30</width>
-       <height>30</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="4">
-    <widget class="QTableWidget" name="tableWidget">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <column>
-      <property name="text">
-       <string>Username</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Họ và tên</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Doanh số</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Target</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Hoàn thành</string>
-      </property>
-     </column>
-    </widget>
-   </item>
-   <item row="5" column="3">
-    <widget class="QPushButton" name="pushButton_5">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Lưu chỉnh sửa</string>
-     </property>
-     <property name="icon">
-      <iconset resource="galeries.qrc">
-       <normaloff>:/image/save.png</normaloff>:/image/save.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>30</width>
-       <height>30</height>
-      </size>
+      <string>Tạm khóa</string>
      </property>
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="add_new_user">
      <property name="font">
       <font>
        <pointsize>12</pointsize>
@@ -165,19 +55,34 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="8">
-    <widget class="QPushButton" name="pushButton_4">
+   <item row="3" column="1" colspan="2">
+    <widget class="QLabel" name="label_2">
      <property name="font">
       <font>
        <pointsize>12</pointsize>
       </font>
      </property>
      <property name="text">
-      <string>Cancel</string>
+      <string>Thông tin nhân viên</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QPushButton" name="remove_user">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Xóa nhân viên</string>
      </property>
      <property name="icon">
       <iconset resource="galeries.qrc">
-       <normaloff>:/image/cancel.png</normaloff>:/image/cancel.png</iconset>
+       <normaloff>:/image/remove.png</normaloff>:/image/remove.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -187,96 +92,17 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="5" colspan="6">
-    <widget class="QLabel" name="label_3">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Doanh thu / nhân viên 6 tháng gần đây</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
    <item row="4" column="0" colspan="4">
-    <widget class="QTableWidget" name="tableWidget_3">
+    <widget class="QTableWidget" name="infor">
      <property name="font">
       <font>
        <pointsize>12</pointsize>
       </font>
      </property>
-     <column>
-      <property name="text">
-       <string>ID</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Username</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Họ và tên</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Ngày sinh</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Số điện thoại</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Email</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Quê quán</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Phân quyền</string>
-      </property>
-     </column>
-    </widget>
-   </item>
-   <item row="2" column="5" rowspan="3" colspan="6">
-    <widget class="QTableWidget" name="tableWidget_2">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <column>
-      <property name="text">
-       <string>ID</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Username</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Tổng doanh số</string>
-      </property>
-     </column>
     </widget>
    </item>
    <item row="5" column="2">
-    <widget class="QPushButton" name="pushButton_6">
+    <widget class="QPushButton" name="edit">
      <property name="font">
       <font>
        <pointsize>12</pointsize>
@@ -297,6 +123,15 @@
      </property>
     </widget>
    </item>
+   <item row="2" column="0" colspan="4">
+    <widget class="QTableWidget" name="this_month">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="1" colspan="2">
     <widget class="QLabel" name="label">
      <property name="font">
@@ -309,6 +144,103 @@
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="5">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5" colspan="8">
+    <widget class="QLabel" name="label_3">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Doanh thu / nhân viên 6 tháng gần đây</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="5" rowspan="3" colspan="7">
+    <widget class="QTableWidget" name="last6mon">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="3">
+    <widget class="QPushButton" name="save_edit">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Lưu chỉnh sửa</string>
+     </property>
+     <property name="icon">
+      <iconset resource="galeries.qrc">
+       <normaloff>:/image/save.png</normaloff>:/image/save.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="8">
+    <widget class="QPushButton" name="cancel">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+     <property name="icon">
+      <iconset resource="galeries.qrc">
+       <normaloff>:/image/cancel.png</normaloff>:/image/cancel.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="10" colspan="2">
+    <widget class="QPushButton" name="close_tab">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>OK</string>
+     </property>
+     <property name="icon">
+      <iconset resource="galeries.qrc">
+       <normaloff>:/image/ok.png</normaloff>:/image/ok.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
      </property>
     </widget>
    </item>

@@ -82,15 +82,19 @@ NekoLibro::~NekoLibro()
 }
 
 void NekoLibro::openSalesWindow(){
-    if (!pSaleWindow) {
-        pSaleWindow = new SalesWindow(this);
-        pSaleWindow->setWindowFlag(Qt::Window);
-        childWindows.append(pSaleWindow);  // Đưa vào danh sách để quản lý sau
-    }
+        if (!pSaleWindow) {
+            pSaleWindow = new SalesWindow(this);
+            pSaleWindow->setAttribute(Qt::WA_DeleteOnClose);
 
-    pSaleWindow->show();
-    pSaleWindow->raise();
-    pSaleWindow->activateWindow();
+            /* Xóa con trỏ khi đóng cửa sổ */
+            connect(pSaleWindow, &QObject::destroyed, [this]() {
+                pSaleWindow = nullptr;
+            });
+        }
+
+        pSaleWindow->show();
+        pSaleWindow->raise();
+        pSaleWindow->activateWindow();
 }
 
 void NekoLibro::openEmployeesWindow(){
@@ -108,15 +112,21 @@ void NekoLibro::openEmployeesWindow(){
 void NekoLibro::openCategoriesWindow() {
     if (!pCategoriesWindow) {
         pCategoriesWindow = new CategoriesWindow(this);
-        childWindows.append(pCategoriesWindow);
+        pCategoriesWindow->setAttribute(Qt::WA_DeleteOnClose);
+
         /* Đưa về trang chủ */
         pCategoriesWindow->toMainCategories();
+        /* Xóa con trỏ khi đóng cửa sổ */
+        connect(pCategoriesWindow, &QObject::destroyed, [this]() {
+            pCategoriesWindow = nullptr;
+        });
     }
 
     pCategoriesWindow->show();
     pCategoriesWindow->raise();
     pCategoriesWindow->activateWindow();
 }
+
 
 void NekoLibro::openReportWindow() {
     if (!pReportWindow) {

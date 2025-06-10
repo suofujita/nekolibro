@@ -164,7 +164,7 @@
     <rect>
      <x>30</x>
      <y>490</y>
-     <width>171</width>
+     <width>181</width>
      <height>51</height>
     </rect>
    </property>
@@ -190,9 +190,9 @@
   <widget class="QPushButton" name="save_edit">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>240</x>
      <y>490</y>
-     <width>191</width>
+     <width>181</width>
      <height>51</height>
     </rect>
    </property>
@@ -220,7 +220,7 @@
     <rect>
      <x>470</x>
      <y>490</y>
-     <width>181</width>
+     <width>201</width>
      <height>51</height>
     </rect>
    </property>
@@ -230,11 +230,11 @@
     </font>
    </property>
    <property name="text">
-    <string>Xuất file pdf</string>
+    <string>Xuất file excel</string>
    </property>
    <property name="icon">
     <iconset resource="galeries.qrc">
-     <normaloff>:/image/pdf.png</normaloff>:/image/pdf.png</iconset>
+     <normaloff>:/image/excel.png</normaloff>:/image/excel.png</iconset>
    </property>
    <property name="iconSize">
     <size>

@@ -4,9 +4,12 @@
 #include <QDialog>
 #include "nekolibro.h"
 #include "categorieswindow.h"
+
 namespace Ui {
 class SalesWindow;
 }
+
+class ProductDetails;
 
 class SalesWindow : public QDialog
 {
@@ -16,6 +19,7 @@ public:
     explicit SalesWindow(QWidget *parent = nullptr);
     ~SalesWindow();
     void setCompleter();
+
 private slots:
     void searchBooks(const QString &text);
     void selectedBooks(QAction *action);
@@ -23,9 +27,11 @@ private slots:
     void saveBill();
     void removeProductFromBill();
     void loadStock(int row, int col);
+    void addProductToTable(const QString &productId, const QString &name, const QString &author, double price, int stock);
+    void addClicked();
 private:
     Ui::SalesWindow *ui;
-
+    ProductDetails *productDetails;
     QTimer *time;
     int totalQuantity = 0;
     double totalPrice = 0.0;

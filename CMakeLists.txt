@@ -47,6 +47,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         reports.h reports.cpp reports.ui
         settings.h settings.cpp settings.ui
         accountswindow.h accountswindow.cpp accountswindow.ui
+        ProductDetails.h ProductDetails.cpp ProductDetails.ui
 
         ${SMTPCLIENT_SRC}
     )

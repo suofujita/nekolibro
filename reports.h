@@ -37,6 +37,12 @@ enum class RevenueRange {
     LastYear
 };
 
+enum class ProductReportType {
+    Top5BestSellers,      // 5 sản phẩm bán chạy nhất
+    UpcomingSoldOut,      // Sắp hết hàng
+    Overstocked           // Tồn kho quá nhiều
+};
+
 
 namespace Ui {
 class reports;
@@ -60,18 +66,30 @@ private slots:
     /* doanh thu tổng hợp*/
     void createRevenueChart(RevenueRange range);
     void RevenueChartByCustomRange();
+
+    void showAllProducts();
+    void sortByStock();
+    void loadDataForStocks(ProductReportType type);
 private:
     Ui::reports *ui;
     QSqlDatabase db;
     ViewInvoicesDetails *pViewInvoicesDetails = nullptr;
-
+    bool isIncreasing = false;
 
     void loadDataForDailyReports();
     void loadDataForEmployees();
-    void loadDataForStocks();
+
 
     void RetailInvoiceDetails(int row);  // xem chi tiết đơn hàng
     void insertDataIntoBillsTable(QString startDate, QString endDate, QString seller);
+
+    void loadSellerCombox();
+    void stockUI();
+    void convertToProductReportType();
+
+    void loadtop5bestseller();
+    void loadUpcomingSoldout();
+    void loadOverStocked();
 };
 
 #endif // REPORTS_H

@@ -25,7 +25,7 @@
       <bool>false</bool>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="daily_reports">
       <attribute name="title">
@@ -734,10 +734,10 @@
         </widget>
        </item>
        <item row="5" column="1" colspan="2">
-        <widget class="QComboBox" name="comboBox_3">
+        <widget class="QComboBox" name="select_stock">
          <item>
           <property name="text">
-           <string>Top 10 sản phẩm đang bán chạy</string>
+           <string>Top 5 sản phẩm đang bán chạy</string>
           </property>
          </item>
          <item>

@@ -29,6 +29,8 @@ reports::reports(QWidget *parent)
     connect(ui->excel_bill,&QPushButton::clicked,this,&reports::exportBillsToExcel);
     connect(ui->view_bills,&QTableWidget::cellPressed, this, &reports::clickedRetailBillNum);
     connect(ui->png_sum,&QPushButton::clicked,this,&reports::saveChartAsPNG);
+    connect(ui->all_stocks, &QPushButton::clicked,this,&reports::showAllProducts);
+    connect(ui->sort, &QPushButton::clicked, this, &reports::sortByStock);
 
     /* cần ánh xạ chuỗi thành Kiểu TimeRange */
     connect(ui->select_time_bill, &QComboBox::currentTextChanged, this, [=](const QString &text) {
@@ -60,6 +62,7 @@ reports::reports(QWidget *parent)
         loadBillsByRange(range);
     });
 
+
     /* cần ánh xạ chuỗi thành Kiểu RevenueRange */
     connect(ui->select_time_for_sum, &QComboBox::currentTextChanged, this, [=](const QString &text) {
         RevenueRange range;
@@ -86,6 +89,8 @@ reports::reports(QWidget *parent)
         createRevenueChart(range);
     });
 
+    convertToProductReportType();
+
     /* Hiện thị dữ liệu */
     ui->view_bills->setColumnCount(5);
     ui->view_bills->setHorizontalHeaderLabels({"Ngày lập", "Mã hóa đơn","Số lượng", "Tổng hóa đơn", "Người bán"});
@@ -102,7 +107,7 @@ reports::reports(QWidget *parent)
     ui->view_bills->setColumnWidth(3, 200); // tổng hóa đơn
     ui->view_bills->setColumnWidth(4, 300); // người bán
     ui->view_bills->horizontalHeader()->setStretchLastSection(false);
-
+    stockUI();
     loadDataForDailyReports();
     createRevenueChart(RevenueRange::Last7Days);
     loadBillsByRange(TimeRange::Today);
@@ -110,6 +115,9 @@ reports::reports(QWidget *parent)
     ui->end_date_bill->setDate(QDate::currentDate());
     ui->start_date_sum->setDate(QDate::currentDate());
     ui->end_date_sum->setDate(QDate::currentDate());
+
+    loadDataForStocks(ProductReportType::Top5BestSellers); // cho combobox
+
 }
 
 reports::~reports()
@@ -128,7 +136,7 @@ void reports::onTabChanged(int currIndex){
         case 3:
             loadDataForEmployees(); break;
         case 4:
-            loadDataForStocks(); break;
+            loadDataForStocks(ProductReportType::Top5BestSellers); break;
     }
 }
 
@@ -214,8 +222,16 @@ void reports::loadDataForEmployees(){
 
 }
 
-void reports::loadDataForStocks(){
+void reports::loadDataForStocks(ProductReportType type){
 
+    switch(type) {
+    case ProductReportType::Top5BestSellers:
+        loadtop5bestseller(); break;
+    case ProductReportType::UpcomingSoldOut:
+        loadUpcomingSoldout(); break;
+    case ProductReportType::Overstocked:
+        loadOverStocked(); break;
+    }
 }
 
 void reports::saveChartAsPNG() {
@@ -282,7 +298,7 @@ void reports::loadBillsByRange(TimeRange range) {
         endDate = QDate(today.year() - 1, 12, 31).toString("yyyy-MM-dd");
         break;
     }
-
+    loadSellerCombox();
     QString seller = ui->seller_1->currentText();
 
     insertDataIntoBillsTable(startDate,endDate,seller);
@@ -298,6 +314,7 @@ void reports::searchBillsByCustomRange(){
         return;
     }
 
+    loadSellerCombox();
     QString seller = ui->seller_2->currentText();
 
     insertDataIntoBillsTable(startDate,endDate,seller);
@@ -631,3 +648,215 @@ void reports::RevenueChartByCustomRange() {
     ui->custom_sum->setText("Tổng doanh thu: " + QLocale().toString(totalRevenue, 'f', 0) + " đ");
 }
 
+void reports::loadSellerCombox(){
+
+}
+
+void reports::showAllProducts(){
+    QSqlQuery query;
+    query.prepare(R"(
+        SELECT  P.id,
+                P.title,
+                A.name,
+                P.stock,
+                COALESCE(SUM(R.quantity), 0) AS total_sold
+        FROM Products P
+        JOIN Authors A ON P.author_id = A.id
+        LEFT JOIN RetailInvoicesItems R ON R.product_id = P.id
+        GROUP BY P.id, P.title, A.name, P.stock
+        ORDER BY P.stock DESC)");
+    if (!query.exec()) {
+        qDebug() << "Query failed:" << query.lastError();
+        return;
+    }
+
+    ui->view_stocks->setRowCount(0); // Xóa dữ liệu cũ nếu có
+    int row = 0;
+    /* sử dụng vòng lặp while mới lấy được hết các dòng */
+    while (query.next()) {
+        ui->view_stocks->insertRow(row); // Thêm dòng mới
+
+        for (int col = 0; col < 5; ++col) {
+            QTableWidgetItem *item = new QTableWidgetItem(query.value(col).toString());
+            ui->view_stocks->setItem(row, col, item);
+        }
+
+        row++;
+    }
+}
+
+void reports::sortByStock(){
+    isIncreasing = !isIncreasing;
+
+    if(isIncreasing) {
+        QSqlQuery query;
+        query.prepare(R"(
+        SELECT  P.id,
+                P.title,
+                A.name,
+                P.stock,
+                COALESCE(SUM(R.quantity), 0) AS total_sold
+        FROM Products P
+        JOIN Authors A ON P.author_id = A.id
+        LEFT JOIN RetailInvoicesItems R ON R.product_id = P.id
+        GROUP BY P.id, P.title, A.name, P.stock
+        ORDER BY P.stock ASC)");
+
+        if (!query.exec()) {
+            qDebug() << "Query failed:" << query.lastError();
+            return;
+        }
+
+        ui->view_stocks->setRowCount(0); // Xóa dữ liệu cũ nếu có
+        int row = 0;
+        /* sử dụng vòng lặp while mới lấy được hết các dòng */
+        while (query.next()) {
+            ui->view_stocks->insertRow(row); // Thêm dòng mới
+
+            for (int col = 0; col < 5; ++col) {
+                QTableWidgetItem *item = new QTableWidgetItem(query.value(col).toString());
+                ui->view_stocks->setItem(row, col, item);
+            }
+
+            row++;
+        }
+    }
+    else {
+        showAllProducts();
+    }
+}
+
+void reports::stockUI(){
+    ui->view_stocks->setColumnCount(5);
+    ui->view_stocks->setHorizontalHeaderLabels({"ID", "Tên sách","Tên tác giả", "Tồn kho","Đã bán"});
+    ui->view_stocks->horizontalHeader()->setStretchLastSection(true);   // truy cập phần tiêu đề, cột cuối cùng tự động giãn để lấp đầy khoảng trống
+    QHeaderView *headerInfor = ui->view_stocks->horizontalHeader();
+    for(int col=0; col< 5 ;col++){
+        headerInfor->setSectionResizeMode(col, QHeaderView::ResizeToContents);  // kích thước ô tự động giãn theo nội dung
+    }
+    ui->view_stocks->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->view_stocks->horizontalHeader()->setStretchLastSection(false);
+}
+
+void reports::convertToProductReportType(){
+    connect(ui->select_stock, &QComboBox::currentTextChanged, this, [=](const QString &text) {
+        ProductReportType type;
+
+        if (text == "Top 5 sản phẩm đang bán chạy")
+            type = ProductReportType::Top5BestSellers;
+        else if (text == "Sản phẩm sắp hết hàng")
+            type = ProductReportType::UpcomingSoldOut;
+        else if (text == "Sản phẩm tồn kho nhiều")
+             type = ProductReportType::Overstocked;
+        else
+            return; // không làm gì nếu không khớp
+
+        loadDataForStocks(type);
+    });
+}
+
+void reports::loadtop5bestseller() {
+    /*  Truy vấn:
+        - Cộng dồn số lượng bán (R.quantity) theo từng cuốn sách
+        - Sắp xếp giảm dần theo tổng số đã bán
+        - Giới hạn 5 kết quả đầu tiên
+    */
+    QSqlQuery query;
+    query.prepare(R"(
+        SELECT  P.id,
+                P.title,
+                A.name,
+                P.stock,
+                COALESCE(SUM(R.quantity), 0) AS total_sold
+        FROM Products P
+        JOIN Authors A ON P.author_id = A.id
+        LEFT JOIN RetailInvoicesItems R ON R.product_id = P.id
+        GROUP BY P.id, P.title, A.name, P.stock
+        ORDER BY total_sold DESC
+        LIMIT 5
+    )");
+
+    if (!query.exec()) {
+        qDebug() << "Best-seller query failed:" << query.lastError();
+        return;
+    }
+
+    ui->view_stocks->setRowCount(0);          // xoá dữ liệu cũ
+    int row = 0;
+    while (query.next()) {
+        ui->view_stocks->insertRow(row);
+
+        for (int col = 0; col < 5; ++col) {
+            auto *item = new QTableWidgetItem(query.value(col).toString());
+            ui->view_stocks->setItem(row, col, item);
+        }
+        ++row;
+    }
+}
+void reports::loadUpcomingSoldout() {
+     /* stock < 5 */
+    QSqlQuery query;
+
+     query.prepare(R"(
+        SELECT  P.id,
+                P.title,
+                A.name,
+                P.stock,
+                COALESCE(SUM(R.quantity), 0) AS total_sold
+        FROM Products P
+        JOIN Authors A ON P.author_id = A.id
+        LEFT JOIN RetailInvoicesItems R ON R.product_id = P.id
+        WHERE P.stock < 5
+        GROUP BY P.id, P.title, A.name, P.stock
+        ORDER BY P.stock DESC
+    )");
+     if (!query.exec()) {
+         qDebug() << "Best-seller query failed:" << query.lastError();
+         return;
+     }
+
+    ui->view_stocks->setRowCount(0);          // xoá dữ liệu cũ
+    int row = 0;
+    while (query.next()) {
+         ui->view_stocks->insertRow(row);
+
+         for (int col = 0; col < 5; ++col) {
+             auto *item = new QTableWidgetItem(query.value(col).toString());
+             ui->view_stocks->setItem(row, col, item);
+         }
+         ++row;
+     }
+}
+void reports::loadOverStocked() {
+     /* stock > 20 */
+    QSqlQuery query;
+     query.prepare(R"(
+        SELECT  P.id,
+                P.title,
+                A.name,
+                P.stock,
+                COALESCE(SUM(R.quantity), 0) AS total_sold
+        FROM Products P
+        JOIN Authors A ON P.author_id = A.id
+        LEFT JOIN RetailInvoicesItems R ON R.product_id = P.id
+        WHERE P.stock > 20
+        GROUP BY P.id, P.title, A.name, P.stock
+        ORDER BY P.stock DESC
+    )");
+    if (!query.exec()) {
+        qDebug() << "Best-seller query failed:" << query.lastError();
+        return;
+    }
+
+        ui->view_stocks->setRowCount(0);          // xoá dữ liệu cũ
+        int row = 0;
+        while (query.next()) {
+            ui->view_stocks->insertRow(row);
+
+            for (int col = 0; col < 5; ++col) {
+                auto *item = new QTableWidgetItem(query.value(col).toString());
+                ui->view_stocks->setItem(row, col, item);
+            }
+            ++row;
+        }
+}

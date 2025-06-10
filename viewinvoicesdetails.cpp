@@ -26,6 +26,8 @@ ViewInvoicesDetails::ViewInvoicesDetails(const QString &invoiceId, InvoiceType t
 
     /* signals & slots*/
     connect(ui->close_tab, &QPushButton::clicked,this,&ViewInvoicesDetails::closeTab);
+    connect(ui->edit,&QPushButton::clicked,this,&ViewInvoicesDetails::editInvoice);
+    connect(ui->save_edit,&QPushButton::clicked,this, &ViewInvoicesDetails::saveEditInvoice);
 
     /* Bảng chứa lịch sử xuất hàng */
     ui->products->setColumnCount(3);
@@ -184,3 +186,141 @@ void ViewInvoicesDetails::loadInvoiceDetails() {
         }
     }
 }
+
+void ViewInvoicesDetails::editInvoice(){
+    if(NekoLibro::currentUser == "admin"){
+        ui->products->setEditTriggers(QAbstractItemView::AllEditTriggers);
+        return;
+    }
+    else {
+        QMessageBox::warning(this, "Lỗi", "Bạn không có quyền truy cập chức năng này!");
+        return;
+    }
+}
+
+void ViewInvoicesDetails::saveEditInvoice() {
+    if (NekoLibro::currentUser != "admin") {
+        QMessageBox::warning(this, "Lỗi", "Bạn không có quyền truy cập chức năng này!");
+        return;
+    }
+
+    QSqlQuery query;
+
+    // 1. Xóa tất cả sản phẩm cũ
+    if (InvoiceTypeCurrent == Export) {
+        query.prepare("DELETE FROM ExportInvoicesItems WHERE invoice_id = ?");
+        query.addBindValue(invoiceIdCurrent);
+        if (!query.exec()) {
+            QMessageBox::warning(this, "Lỗi", "Không thể xóa dữ liệu cũ:\n" + query.lastError().text());
+            return;
+        }
+
+        // 2. Thêm sản phẩm mới
+        int totalQuantity = 0;
+        for (int row = 0; row < ui->products->rowCount(); ++row) {
+            QString productId = ui->products->item(row, 0)->text();
+            int quantity = ui->products->item(row, 2)->text().toInt();
+            totalQuantity += quantity;
+
+            query.prepare("INSERT INTO ExportInvoicesItems (invoice_id, product_id, quantity) VALUES (?, ?, ?)");
+            query.addBindValue(invoiceIdCurrent);
+            query.addBindValue(productId);
+            query.addBindValue(quantity);
+            if (!query.exec()) {
+                QMessageBox::warning(this, "Lỗi", "Không thể thêm sản phẩm:\n" + query.lastError().text());
+                return;
+            }
+        }
+
+        // 3. Cập nhật lại tổng số lượng
+        query.prepare("UPDATE ExportInvoices SET total_products = ? WHERE id = ?");
+        query.addBindValue(totalQuantity);
+        query.addBindValue(invoiceIdCurrent);
+        if (!query.exec()) {
+            QMessageBox::warning(this, "Lỗi", "Không thể cập nhật tổng số lượng:\n" + query.lastError().text());
+            return;
+        }
+
+        QMessageBox::information(this, "Thành công", "Cập nhật hóa đơn thành công!");
+        ui->products->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        ui->total_quantities->setText(QString::number(totalQuantity));
+    }
+
+    if (InvoiceTypeCurrent == Import) {
+        query.prepare("DELETE FROM ImportInvoicesItems WHERE invoice_id = ?");
+        query.addBindValue(invoiceIdCurrent);
+        if (!query.exec()) {
+            QMessageBox::warning(this, "Lỗi", "Không thể xóa dữ liệu cũ:\n" + query.lastError().text());
+            return;
+        }
+
+        // 2. Thêm sản phẩm mới
+        int totalQuantity = 0;
+        for (int row = 0; row < ui->products->rowCount(); ++row) {
+            QString productId = ui->products->item(row, 0)->text();
+            int quantity = ui->products->item(row, 2)->text().toInt();
+            totalQuantity += quantity;
+
+            query.prepare("INSERT INTO ImportInvoicesItems (invoice_id, product_id, quantity) VALUES (?, ?, ?)");
+            query.addBindValue(invoiceIdCurrent);
+            query.addBindValue(productId);
+            query.addBindValue(quantity);
+            if (!query.exec()) {
+                QMessageBox::warning(this, "Lỗi", "Không thể thêm sản phẩm:\n" + query.lastError().text());
+                return;
+            }
+        }
+
+        // 3. Cập nhật lại tổng số lượng
+        query.prepare("UPDATE ImportInvoices SET total_products = ? WHERE id = ?");
+        query.addBindValue(totalQuantity);
+        query.addBindValue(invoiceIdCurrent);
+        if (!query.exec()) {
+            QMessageBox::warning(this, "Lỗi", "Không thể cập nhật tổng số lượng:\n" + query.lastError().text());
+            return;
+        }
+
+        QMessageBox::information(this, "Thành công", "Cập nhật hóa đơn thành công!");
+        ui->products->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        ui->total_quantities->setText(QString::number(totalQuantity));
+    }
+    if (InvoiceTypeCurrent == Retail) {
+        query.prepare("DELETE FROM RetailInvoicesItems WHERE invoice_id = ?");
+        query.addBindValue(invoiceIdCurrent);
+        if (!query.exec()) {
+            QMessageBox::warning(this, "Lỗi", "Không thể xóa dữ liệu cũ:\n" + query.lastError().text());
+            return;
+        }
+
+        // 2. Thêm sản phẩm mới
+        int totalQuantity = 0;
+        for (int row = 0; row < ui->products->rowCount(); ++row) {
+            QString productId = ui->products->item(row, 0)->text();
+            int quantity = ui->products->item(row, 2)->text().toInt();
+            totalQuantity += quantity;
+
+            query.prepare("INSERT INTO RetailInvoicesItems (invoice_id, product_id, quantity) VALUES (?, ?, ?)");
+            query.addBindValue(invoiceIdCurrent);
+            query.addBindValue(productId);
+            query.addBindValue(quantity);
+            if (!query.exec()) {
+                QMessageBox::warning(this, "Lỗi", "Không thể thêm sản phẩm:\n" + query.lastError().text());
+                return;
+            }
+        }
+
+        // 3. Cập nhật lại tổng số lượng
+        query.prepare("UPDATE RetailInvoices SET total_quanties = ? WHERE id = ?");
+        query.addBindValue(totalQuantity);
+        query.addBindValue(invoiceIdCurrent);
+        if (!query.exec()) {
+            QMessageBox::warning(this, "Lỗi", "Không thể cập nhật tổng số lượng:\n" + query.lastError().text());
+            return;
+        }
+
+        QMessageBox::information(this, "Thành công", "Cập nhật hóa đơn thành công!");
+        ui->products->setEditTriggers(QAbstractItemView::NoEditTriggers);
+       ui->total_quantities->setText(QString::number(totalQuantity));
+    }
+}
+

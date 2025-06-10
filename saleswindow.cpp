@@ -1,6 +1,7 @@
 #include "saleswindow.h"
 #include "ui_saleswindow.h"
 #include "nekolibro.h"
+#include "productdetails.h"
 
 SalesWindow::SalesWindow(QWidget *parent)
     : QDialog(parent)
@@ -82,6 +83,7 @@ SalesWindow::SalesWindow(QWidget *parent)
     connect(ui->save_bill, &QPushButton::clicked,this,&SalesWindow::saveBill);
     connect(ui->remove, &QPushButton::clicked,this, &SalesWindow::removeProductFromBill);
     connect(ui->products, &QTableWidget::cellPressed,this, &SalesWindow::loadStock);
+    connect(ui->add,&QPushButton::clicked,this,&SalesWindow::addClicked);
     autoCreateBillNum();
 }
 SalesWindow::~SalesWindow()
@@ -141,81 +143,21 @@ void SalesWindow::selectedBooks(QAction *action)
     query.addBindValue(productId);
 
     if (query.exec() && query.next()) {
-        QString name = query.value(1).toString();
+        QString title = query.value(1).toString();
         QString author = query.value(2).toString();
-        QString price = query.value(3).toString();
+        double price = query.value(3).toDouble();
         int stock = query.value(4).toInt();
 
-        if (stock <= 0) {
-            QMessageBox::warning(this, "Hết hàng", "Sản phẩm này đã hết hàng.");
-            return;
-        }
-
-        // Kiểm tra nếu sản phẩm đã có trong bảng
-        for (int r = 0; r < ui->products->rowCount(); ++r) {
-            QTableWidgetItem *item = ui->products->item(r, 0);
-            if (item && item->text() == productId) {
-                QSpinBox *spinBox = qobject_cast<QSpinBox*>(ui->products->cellWidget(r, 3));
-                if (spinBox) {
-                    int currentQty = spinBox->value();
-                    if (currentQty + 1 > stock) {
-                        QMessageBox::warning(this, "Vượt tồn kho",
-                                             QString("Chỉ còn %1 sản phẩm trong kho.").arg(stock));
-                        return;
-                    }
-                    spinBox->setValue(currentQty + 1);
-                    updateTotals();
-                    ui->search->clear();
-                    return;
-                }
-            }
-        }
-
-
-        int row = ui->products->rowCount();
-        ui->products->insertRow(row);
-
-        // Kết hợp "Tên sản phẩm" và "Tên tác giả" thành một chuỗi
-        QString nameWithAuthor = name + " - " + author;
-
-        // Thêm dữ liệu vào bảng
-        QLocale locale(QLocale::Vietnamese);
-        double priceValue = price.toDouble();
-        QString formattedPrice = locale.toString(priceValue, 'f', 0);
-
-        ui->products->setItem(row, 0, new QTableWidgetItem(productId));
-        ui->products->setItem(row, 1, new QTableWidgetItem(nameWithAuthor)); // Sử dụng nameWithAuthor
-        QTableWidgetItem *priceItem = new QTableWidgetItem(formattedPrice);
-        priceItem->setData(Qt::UserRole, priceValue); // Lưu giá trị thật dưới dạng double
-        ui->products->setItem(row, 2, priceItem);
-
-
-        // Thêm QSpinBox để chỉnh số lượng
-        QSpinBox *spinBox = new QSpinBox(this);
-        spinBox->setMinimum(1);
-        spinBox->setMaximum(stock);
-        spinBox->setValue(1);
-        ui->products->setCellWidget(row, 3, spinBox);
-
-        // Cập nhật thành tiền
-        double totalAmount = priceValue * spinBox->value();  // Thành tiền = Giá bán * Số lượng
-        QString formattedTotal = locale.toString(totalAmount, 'f', 0); // 'f' cho dạng float, 0 số sau dấu thập phân
-        ui->products->setItem(row, 4, new QTableWidgetItem(formattedTotal));
-
-
-        // Khi người dùng thay đổi số lượng, tự động tính lại thành tiền
-        connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, row, priceValue](int newValue) {
-            double totalAmount = priceValue * newValue;
-            QLocale locale(QLocale::Vietnamese);
-            QString formattedTotal = locale.toString(totalAmount, 'f', 0);
-            ui->products->setItem(row, 4, new QTableWidgetItem(formattedTotal));
-            updateTotals();
-        });
-
+        // Gọi hàm đã tách riêng
+        addProductToTable(productId, title, author, price, stock);
+    } else {
+        QMessageBox::warning(this, "Lỗi", "Không thể lấy thông tin sản phẩm.");
     }
-    ui->search->clear(); // Clear sau khi chọn
+
+    ui->search->clear(); // Xoá sau khi chọn
     updateTotals();
 }
+
 
 void SalesWindow::updateTotals()
 {
@@ -380,6 +322,7 @@ void SalesWindow::saveBill()
     db.commit();  // lưu thành công
     QMessageBox::information(this, "Thành công", "Đã lưu hóa đơn!");
     accept();
+    this->close();
 }
 
 void SalesWindow::setCompleter()
@@ -500,6 +443,83 @@ int SalesWindow::getStock(int row){
         return -1;
     }
 }
+
+void SalesWindow::addProductToTable(const QString &productId, const QString &name, const QString &author, double price, int stock)
+{
+    if (stock <= 0) {
+        QMessageBox::warning(this, "Hết hàng", "Sản phẩm này đã hết hàng.");
+        return;
+    }
+    // Kiểm tra nếu sản phẩm đã có trong bảng
+    for (int r = 0; r < ui->products->rowCount(); ++r) {
+        QTableWidgetItem *item = ui->products->item(r, 0);
+        if (item && item->text() == productId) {
+            QSpinBox *spinBox = qobject_cast<QSpinBox*>(ui->products->cellWidget(r, 3));
+            if (spinBox) {
+                int currentQty = spinBox->value();
+                if (currentQty + 1 > stock) {
+                    QMessageBox::warning(this, "Vượt tồn kho",
+                                         QString("Chỉ còn %1 sản phẩm trong kho.").arg(stock));
+                    return;
+                }
+                spinBox->setValue(currentQty + 1);
+                updateTotals();
+                ui->search->clear();
+                return;
+            }
+        }
+    }
+
+    int row = ui->products->rowCount();
+    ui->products->insertRow(row);
+
+    // Kết hợp "Tên sản phẩm" và "Tên tác giả" thành một chuỗi
+    QString nameWithAuthor = name + " - " + author;
+
+    // Thêm dữ liệu vào bảng
+    QLocale locale(QLocale::Vietnamese);
+    double priceValue = price;
+    QString formattedPrice = locale.toString(priceValue, 'f', 0);
+
+    ui->products->setItem(row, 0, new QTableWidgetItem(productId));
+    ui->products->setItem(row, 1, new QTableWidgetItem(nameWithAuthor)); // Sử dụng nameWithAuthor
+    QTableWidgetItem *priceItem = new QTableWidgetItem(formattedPrice);
+    priceItem->setData(Qt::UserRole, priceValue); // Lưu giá trị thật dưới dạng double
+    ui->products->setItem(row, 2, priceItem);
+
+    // Thêm QSpinBox để chỉnh số lượng
+    QSpinBox *spinBox = new QSpinBox(this);
+    spinBox->setMinimum(1);
+    spinBox->setMaximum(stock);
+    spinBox->setValue(1);
+    ui->products->setCellWidget(row, 3, spinBox);
+
+    // Cập nhật thành tiền
+    double totalAmount = priceValue * spinBox->value();  // Thành tiền = Giá bán * Số lượng
+    QString formattedTotal = locale.toString(totalAmount, 'f', 0); // 'f' cho dạng float, 0 số sau dấu thập phân
+    ui->products->setItem(row, 4, new QTableWidgetItem(formattedTotal));
+
+    // Khi người dùng thay đổi số lượng, tự động tính lại thành tiền
+    connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, row, priceValue](int newValue) {
+        double totalAmount = priceValue * newValue;
+        QLocale locale(QLocale::Vietnamese);
+        QString formattedTotal = locale.toString(totalAmount, 'f', 0);
+        ui->products->setItem(row, 4, new QTableWidgetItem(formattedTotal));
+        updateTotals();
+    });
+    updateTotals();
+}
+
+void SalesWindow::addClicked(){
+    auto productDetails = new ProductDetails(this);
+
+    // Kết nối signal từ ProductDetailsWindow đến slot thêm sản phẩm
+    connect(productDetails, &ProductDetails::productSelected,
+            this, &SalesWindow::addProductToTable);
+
+    productDetails->show(); // Hiển thị cửa sổ chọn sản phẩm
+}
+
 
 
 

@@ -4,6 +4,9 @@
 #include <QDialog>
 #include "nekolibro.h"
 #include "saleswindow.h"
+#include "xlsxdocument.h" // cái này để tải file excel lên
+#include <QFile>
+#include <QProgressDialog>
 
 namespace Ui {
 class CategoriesWindow;
@@ -24,6 +27,7 @@ public slots:
     void searchByText();
     void addNewAuthor();
     void addNewCategory();
+    void importFromExcel();
 private:
     Ui::CategoriesWindow *ui;
     QSqlDatabase db;

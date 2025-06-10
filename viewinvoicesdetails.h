@@ -19,8 +19,8 @@ public:
     explicit ViewInvoicesDetails(const QString &invoiceId, InvoiceType type,QWidget *parent = nullptr);
     ~ViewInvoicesDetails();
 public slots:
-    //void editInvoice();
-    //void saveEditInvoice();
+    void editInvoice();
+    void saveEditInvoice();
     void closeTab();
 private:
     Ui::ViewInvoicesDetails *ui;
