@@ -15,6 +15,9 @@ public:
     explicit Settings(QWidget *parent = nullptr);
     ~Settings();
 
+private slots:
+    void closeTab();
+
 private:
     Ui::Settings *ui;
     QSqlDatabase db;

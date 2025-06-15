@@ -76,6 +76,8 @@ private slots:
     void showAllProducts();
     void sortByStock();
     void loadDataForStocks(ProductReportType type);
+
+    void exportInventoryToExcel();
 private:
     Ui::reports *ui;
     QSqlDatabase db;
@@ -95,6 +97,7 @@ private:
     void loadtop5bestseller();
     void loadUpcomingSoldout();
     void loadOverStocked();
+
 };
 
 #endif // REPORTS_H

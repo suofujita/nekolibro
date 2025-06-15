@@ -7,6 +7,9 @@ ProductDetails::ProductDetails(QWidget *parent)
 {
     ui->setupUi(this);
 
+    setWindowTitle("Danh mục sản phẩm - Neko Libro");
+    setWindowIcon(QIcon(":/image/cat.png"));
+
     connect(ui->search,&QLineEdit::textChanged,this,&ProductDetails::searchByText);
     showData();
 

@@ -121,7 +121,7 @@ void SalesWindow::searchBooks(const QString &text)
             QAction *action = new QAction(displayText, this);
             action->setData(id);
             connect(action, &QAction::triggered, [this, action]() {
-                selectedBooks(action);
+                    selectedBooks(action);
             });
         }
     } else {

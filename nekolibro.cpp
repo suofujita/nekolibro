@@ -191,6 +191,8 @@ void NekoLibro::openImExportWindow()
     pImExportWindow->show();
     pImExportWindow->raise();
     pImExportWindow->activateWindow();
+
+    pImExportWindow->toMainImExport();
 }
 
 void NekoLibro::openAccountsWindow()

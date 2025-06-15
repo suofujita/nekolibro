@@ -6,6 +6,10 @@ reports::reports(QWidget *parent)
     , ui(new Ui::reports)
 {
     ui->setupUi(this);
+
+    setWindowTitle("Báo cáo-Thống kê - Neko Libro");
+    setWindowIcon(QIcon(":/image/cat.png"));
+
     /* Mở csdl */
     if (QSqlDatabase::contains("qt_sql_default_connection")) {
         db = QSqlDatabase::database("qt_sql_default_connection");
@@ -34,6 +38,7 @@ reports::reports(QWidget *parent)
     connect(ui->all_stocks, &QPushButton::clicked,this,&reports::showAllProducts);
     connect(ui->sort, &QPushButton::clicked, this, &reports::sortByStock);
     connect(ui->search_employee,&QPushButton::clicked,this, &reports::loadDataForEmployees);
+    connect(ui->excel_category, &QPushButton::clicked, this, &reports::exportInventoryToExcel);
 
     /* cần ánh xạ chuỗi thành Kiểu TimeRange */
     connect(ui->select_time_bill, &QComboBox::currentTextChanged, this, [=](const QString &text) {
@@ -976,4 +981,44 @@ void reports::loadDataForEmployees() {
     }
 
     ui->view_employee->resizeColumnsToContents();
+}
+
+void reports::exportInventoryToExcel(){
+    QString filename = QFileDialog::getSaveFileName(this, "Xuất kiểm kê", "", "Excel Files (*.xlsx)");
+    if (filename.isEmpty()) return;
+
+    Document xlsx;
+
+    // Tiêu đề cột
+    xlsx.write("A1", "ISBN");
+    xlsx.write("B1", "Tên sách");
+    xlsx.write("C1", "Tác giả");
+    xlsx.write("D1", "Tồn kho");
+
+    QSqlQuery query;
+    query.prepare(R"(
+        SELECT P.isbn, P.title, A.name, P.stock
+        FROM Products P
+        JOIN Authors A ON P.author_id = A.id
+    )");
+
+    if (!query.exec()) {
+        QMessageBox::critical(this, "Lỗi", "Không thể truy vấn dữ liệu kiểm kê!\n" + query.lastError().text());
+        return;
+    }
+
+    int row = 2;
+    while (query.next()) {
+        xlsx.write(row, 1, query.value(0)); // ISBN
+        xlsx.write(row, 2, query.value(1)); // Title
+        xlsx.write(row, 3, query.value(2)); // Author
+        xlsx.write(row, 4, query.value(3)); // Stock
+
+        row++;
+    }
+
+    if (xlsx.saveAs(filename))
+        QMessageBox::information(this, "Thành công", "Xuất kiểm kê thành công!");
+    else
+        QMessageBox::warning(this, "Thất bại", "Không thể lưu file Excel!");
 }

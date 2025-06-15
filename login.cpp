@@ -68,6 +68,7 @@ void login::clickedTogglePassword()
 
 void login::clickedLogin()
 {
+
     QString username = ui->username_edit->text();
     QString plainPassword = ui->password_edit->text();
     QString hashedPassword = NekoLibro::hashPassword(plainPassword);
@@ -78,7 +79,7 @@ void login::clickedLogin()
     }
 
     QSqlQuery query;
-    query.prepare("SELECT * FROM AccountUsers WHERE username = ? AND password_hash = ?");
+    query.prepare("SELECT * FROM AccountUsers WHERE username = ? AND password_hash = ? AND active = 1");
     query.addBindValue(username);
     query.addBindValue(hashedPassword);
 
@@ -100,6 +101,23 @@ void login::clickedLogin()
         });
 
     } else {
+
+        // Kiểm tra xem tài khoản có tồn tại nhưng bị khóa không
+        QSqlQuery checkQuery;
+        checkQuery.prepare(R"(
+            SELECT active FROM AccountUsers
+            WHERE username = ? AND password_hash = ?
+        )");
+        checkQuery.addBindValue(username);
+        checkQuery.addBindValue(hashedPassword);
+        if (checkQuery.exec() && checkQuery.next()) {
+            int active = checkQuery.value(0).toInt();
+            if (active == 0) {
+                QMessageBox::warning(this, "Đăng nhập", "Tài khoản của bạn đã bị khóa!");
+                return;
+            }
+        }
+
         QMessageBox::warning(this, "Đăng nhập", "Tên người dùng hoặc mật khẩu không đúng!");
     }
 }

@@ -8,6 +8,10 @@ CategoriesWindow::CategoriesWindow(NekoLibro *parent)
     ui->setupUi(this);
     qDebug() << "success";
     //pNekoLibro = parent;
+
+    setWindowTitle("Danh mục sản phẩm - Neko Libro");
+    setWindowIcon(QIcon(":/image/cat.png"));
+
     connect(ui->to_add_book, &QPushButton::clicked,this, &CategoriesWindow::toAddBook);
     connect(ui->to_main_categories,&QPushButton::clicked,this,&CategoriesWindow::toMainCategories);
     connect(ui->save_book,&QPushButton::clicked,this,&CategoriesWindow::addBook);
@@ -262,7 +266,7 @@ void CategoriesWindow::showData() {
     ui->categories_table->resizeColumnToContents(1); // ID
 
     // Đặt cột "Tên sản phẩm" (index = 2) giãn hết phần còn lại
-    ui->categories_table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    ui->categories_table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
 
     // Các cột còn lại resize theo nội dung
     for (int col = 3; col < modelForData->columnCount(); ++col) {

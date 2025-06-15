@@ -7,6 +7,9 @@ createAccount::createAccount(QWidget *parent)
 {
     ui->setupUi(this);  /* phải ở trên đầu*/
 
+    setWindowTitle("Tạo tài khoản - Neko Libro");
+    setWindowIcon(QIcon(":/image/cat.png"));
+
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("nekolibro.db"); // Thay bằng đường dẫn đến file cơ sở dữ liệu
     if (!db.open()) {

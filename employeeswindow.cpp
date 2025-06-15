@@ -1,11 +1,16 @@
 #include "employeeswindow.h"
 #include "ui_employeeswindow.h"
 
+#include "createaccount.h"
+
 EmployeesWindow::EmployeesWindow(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::EmployeesWindow)
 {
     ui->setupUi(this);
+
+    setWindowTitle("Quản lý nhân viên - Neko Libro");
+    setWindowIcon(QIcon(":/image/cat.png"));
 
     /* Kết nối CSDL */
     if (QSqlDatabase::contains("qt_sql_default_connection")) {
@@ -22,6 +27,13 @@ EmployeesWindow::EmployeesWindow(QWidget *parent)
             qDebug() << "Mở cơ sở dữ liệu thành công!";
         }
     }
+
+    /* signals slots*/
+    connect(ui->close_tab,&QPushButton::clicked, this, &EmployeesWindow::closeTab);
+    connect(ui->remove_user,&QPushButton::clicked, this, &EmployeesWindow::removeUser);
+    connect(ui->add_new_user,&QPushButton::clicked, this, &EmployeesWindow::addNewUser);
+    connect(ui->lock_user,&QPushButton::clicked, this, &EmployeesWindow::updateStatusUser);
+
     allTablesUI();
     loadLast6MonthPerUser();
     loadThisMonthData();
@@ -35,11 +47,11 @@ EmployeesWindow::~EmployeesWindow()
 
 void EmployeesWindow::allTablesUI(){
     /* Thông tin */
-    ui->infor->setColumnCount(8);
-    ui->infor->setHorizontalHeaderLabels({"ID", "Username","Họ và tên", "Ngày sinh", "Số điện thoại","Email","Quê quán","Phân quyền"});
+    ui->infor->setColumnCount(9);
+    ui->infor->setHorizontalHeaderLabels({"ID", "Username","Họ và tên", "Ngày sinh", "Số điện thoại","Email","Quê quán","Phân quyền", "Trạng thái"});
     ui->infor->horizontalHeader()->setStretchLastSection(true);   // truy cập phần tiêu đề, cột cuối cùng tự động giãn để lấp đầy khoảng trống
     QHeaderView *headerInfor = ui->infor->horizontalHeader();
-    for(int col=0; col<8 ;col++){
+    for(int col=0; col<9 ;col++){
         headerInfor->setSectionResizeMode(col, QHeaderView::ResizeToContents);  // kích thước ô tự động giãn theo nội dung
     }
     ui->infor->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -71,7 +83,7 @@ void EmployeesWindow::allTablesUI(){
 
 void EmployeesWindow::loadUsersInfor() {
     QSqlQuery query;
-    query.prepare("SELECT id, username, fullname, date_of_birth, phone, email, hometown, role FROM AccountUsers");
+    query.prepare("SELECT id, username, fullname, date_of_birth, phone, email, hometown, role, active FROM AccountUsers");
 
     if (!query.exec()) {
         qDebug() << "Query failed:" << query.lastError();
@@ -84,7 +96,7 @@ void EmployeesWindow::loadUsersInfor() {
     while (query.next()) {
         ui->infor->insertRow(row); // Thêm dòng mới
 
-        for (int col = 0; col < 8; ++col) {
+        for (int col = 0; col < 9; ++col) {
             QTableWidgetItem *item = new QTableWidgetItem(query.value(col).toString());
             ui->infor->setItem(row, col, item);
         }
@@ -178,5 +190,87 @@ void EmployeesWindow::loadThisMonthData() {
         row++;
     }
 }
+
+void EmployeesWindow::closeTab(){
+    this->close();
+}
+
+void EmployeesWindow::removeUser() {
+    int row = ui->infor->currentRow();
+    if (row < 0) {
+        QMessageBox::warning(this, "Lỗi", "Vui lòng chọn một tài khoản!");
+        return;
+    }
+
+    QString username = ui->infor->item(row, 1)->text();
+
+    int confirm = QMessageBox::question(this, "Xác nhận", "Bạn có chắc muốn xóa tài khoản \"" + username + "\" không?", QMessageBox::Yes | QMessageBox::No);
+
+    if (confirm != QMessageBox::Yes)
+        return;
+
+    QSqlQuery query;
+    query.prepare("DELETE FROM AccountUsers WHERE username = ?");
+    query.addBindValue(username);
+
+    if (!query.exec()) {
+        QMessageBox::critical(this, "Lỗi", "Không thể xóa tài khoản!\n" + query.lastError().text());
+        return;
+    }
+
+    QMessageBox::information(this, "Thành công", "Đã xóa tài khoản thành công!");
+    loadUsersInfor();
+}
+
+
+void EmployeesWindow::addNewUser() {
+    if (!pCreateAccount) {
+        pCreateAccount = new createAccount(this);
+        pCreateAccount->setAttribute(Qt::WA_DeleteOnClose);  // Tự xóa khi đóng
+        connect(pCreateAccount, &createAccount::destroyed, this, [=]() {
+            pCreateAccount = nullptr;
+        });
+    }
+    pCreateAccount->show();
+    pCreateAccount->raise();  // Đưa cửa sổ lên trên
+    pCreateAccount->activateWindow(); // Lấy focus
+}
+
+
+void EmployeesWindow::updateStatusUser() {
+    int row = ui->infor->currentRow();
+    if (row < 0) {
+        QMessageBox::warning(this, "Lỗi", "Vui lòng chọn một tài khoản!");
+        return;
+    }
+
+    QString username = ui->infor->item(row, 1)->text();
+    QSqlQuery query;
+
+    // Lấy trạng thái hiện tại
+    query.prepare("SELECT active FROM AccountUsers WHERE username = ?");
+    query.addBindValue(username);
+    if (!query.exec() || !query.next()) {
+        QMessageBox::warning(this, "Lỗi", "Không thể lấy trạng thái tài khoản!");
+        return;
+    }
+
+    int currentStatus = query.value(0).toInt();
+    int newStatus = (currentStatus == 1) ? 0 : 1;
+
+    // Cập nhật trạng thái mới
+    query.prepare("UPDATE AccountUsers SET active = ? WHERE username = ?");
+    query.addBindValue(newStatus);
+    query.addBindValue(username);
+
+    if (!query.exec()) {
+        QMessageBox::critical(this, "Lỗi", "Không thể cập nhật trạng thái!\n" + query.lastError().text());
+        return;
+    }
+
+    QMessageBox::information(this, "Thành công", "Cập nhật trạng thái thành công!");
+    loadUsersInfor();
+}
+
 
 

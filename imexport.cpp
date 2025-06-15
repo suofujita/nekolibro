@@ -6,6 +6,7 @@ ImExport::ImExport(QWidget *parent)
     , ui(new Ui::ImExport)
 {
     ui->setupUi(this);
+
     setWindowIcon(QIcon(":/image/cat.png"));
     setWindowTitle("Xuất/Nhập Hàng - Neko Libro");
     ui->logo_im_export->setFixedSize(135,135);
@@ -134,12 +135,20 @@ ImExport::~ImExport()
 }
 
 void ImExport::gotoExportInvoice(){
+    if(NekoLibro::role != "admin"){
+        QMessageBox::information(this,"Lỗi", "Bạn không có quyền thực hiện chức năng này!");
+        return;
+    }
     ui->stackedWidget->setCurrentIndex(2);
     showTime();
     autoCreateExportBillNum();
 }
 
 void ImExport::gotoImportInvoice(){
+    if(NekoLibro::role != "admin"){
+        QMessageBox::information(this,"Lỗi", "Bạn không có quyền thực hiện chức năng này!");
+        return;
+    }
     ui->stackedWidget->setCurrentIndex(1);
     showTime();
     autoCreateImportBillNum();
@@ -263,7 +272,7 @@ void ImExport::selectedBooksForImport(QAction *action){
 
     QSqlQuery query;
     query.prepare(R"(
-        SELECT Products.id, Products.title, Authors.name
+        SELECT Products.id, Products.title, Authors.name, Products.stock
         FROM Products
         JOIN Authors ON Products.author_id = Authors.id
         WHERE Products.id = ?
@@ -271,34 +280,19 @@ void ImExport::selectedBooksForImport(QAction *action){
     query.addBindValue(productId);
 
     if (query.exec() && query.next()) {
-        QString name = query.value(1).toString();
+        QString title = query.value(1).toString();
         QString author = query.value(2).toString();
 
-        int row = ui->import_books->rowCount();
-        ui->import_books->insertRow(row);
-
-        // Kết hợp "Tên sản phẩm" và "Tên tác giả" thành một chuỗi
-        QString nameWithAuthor = name + " - " + author;
-
-        // Thêm dữ liệu vào bảng
-        ui->import_books->setItem(row, 0, new QTableWidgetItem(productId));
-        ui->import_books->setItem(row, 1, new QTableWidgetItem(nameWithAuthor)); // Sử dụng nameWithAuthor
-
-        // Thêm QSpinBox để chỉnh số lượng
-        QSpinBox *spinBox = new QSpinBox(this);
-        spinBox->setMinimum(1);
-        spinBox->setMaximum(9999);
-        spinBox->setValue(1);
-        ui->import_books->setCellWidget(row, 2, spinBox);
-
-        // Khi người dùng thay đổi số lượng
-        connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=]() {
-            updateTotals();
-        });
+        // Gọi hàm đã tách riêng
+        addProductForImport(productId, title, author);
+    } else {
+        QMessageBox::warning(this, "Lỗi", "Không thể lấy thông tin sản phẩm.");
     }
-    ui->search_product_import->clear(); // Clear sau khi chọn
-    updateTotals();
+
+    ui->search_product_import->clear(); // Xoá sau khi chọn
 }
+
+
 
 void ImExport::setCompleterForImport()
 {
@@ -464,12 +458,14 @@ void ImExport::searchBooksForImport(const QString &text)
     }
 }
 
-void ImExport::removeBooksFromImportTable(int row){
-    if(row<0 || row > ui->import_books->rowCount()) {
-        return ;
+void ImExport::removeBooksFromImportTable(){
+    int currentRow = ui->import_books->currentRow();
+    if (currentRow >= 0) {
+        ui->import_books->removeRow(currentRow);
+        updateTotals(); // Cập nhật lại tổng sau khi xóa
+    } else {
+        QMessageBox::warning(this, "Chưa chọn sản phẩm", "Vui lòng chọn sản phẩm muốn xóa khỏi hóa đơn.");
     }
-    ui->import_books->removeRow(row);
-    updateTotals();
 }
 
 void ImExport::saveImportInvoices()
@@ -528,7 +524,7 @@ void ImExport::saveImportInvoices()
     updatedStockDueImport();
     db.commit();  // lưu thành công
     QMessageBox::information(this, "Thành công", "Đã lưu hóa đơn!");
-    this->close();
+    resetImportInvoiceForm();
 }
 
 int ImExport::getImportInvoiceId(const QString &numBill){
@@ -719,7 +715,7 @@ void ImExport::selectedBooksForExport(QAction *action){
 
     QSqlQuery query;
     query.prepare(R"(
-        SELECT Products.id, Products.title, Authors.name
+        SELECT Products.id, Products.title, Authors.name, Products.stock
         FROM Products
         JOIN Authors ON Products.author_id = Authors.id
         WHERE Products.id = ?
@@ -727,41 +723,27 @@ void ImExport::selectedBooksForExport(QAction *action){
     query.addBindValue(productId);
 
     if (query.exec() && query.next()) {
-        QString name = query.value(1).toString();
+        QString title = query.value(1).toString();
         QString author = query.value(2).toString();
+        int stock = query.value(3).toInt();
 
-        int row = ui->export_books->rowCount();
-        ui->export_books->insertRow(row);
-
-        // Kết hợp "Tên sản phẩm" và "Tên tác giả" thành một chuỗi
-        QString nameWithAuthor = name + " - " + author;
-
-        // Thêm dữ liệu vào bảng
-        ui->export_books->setItem(row, 0, new QTableWidgetItem(productId));
-        ui->export_books->setItem(row, 1, new QTableWidgetItem(nameWithAuthor)); // Sử dụng nameWithAuthor
-
-        // Thêm QSpinBox để chỉnh số lượng
-        QSpinBox *spinBox = new QSpinBox(this);
-        spinBox->setMinimum(1);
-        spinBox->setMaximum(9999);
-        spinBox->setValue(1);
-        ui->export_books->setCellWidget(row, 2, spinBox);
-
-        // Khi người dùng thay đổi số lượng
-        connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=]() {
-            updateTotals();
-        });
+        // Gọi hàm đã tách riêng
+        addProductForExport(productId, title, author, stock);
+    } else {
+        QMessageBox::warning(this, "Lỗi", "Không thể lấy thông tin sản phẩm.");
     }
-    ui->search_product_export->clear(); // Clear sau khi chọn
-    updateTotals();
+
+    ui->search_product_export->clear(); // Xoá sau khi chọn
 }
 
-void ImExport::removeBooksFromExportTable(int row){
-    if(row<0 || row > ui->export_books->rowCount()) {
-        return ;
+void ImExport::removeBooksFromExportTable(){
+    int currentRow = ui->export_books->currentRow();
+    if (currentRow >= 0) {
+        ui->export_books->removeRow(currentRow);
+        updateTotals(); // Cập nhật lại tổng sau khi xóa
+    } else {
+        QMessageBox::warning(this, "Chưa chọn sản phẩm", "Vui lòng chọn sản phẩm muốn xóa khỏi hóa đơn.");
     }
-    ui->export_books->removeRow(row);
-    updateTotals();
 }
 
 void ImExport::searchBooksForExport(const QString &text)
@@ -860,6 +842,7 @@ void ImExport::saveExportInvoice()
     db.commit();  // lưu thành công
     QMessageBox::information(this, "Thành công", "Đã lưu hóa đơn!");
     this->close();
+    resetExportInvoiceForm();
 }
 
 void ImExport::clickedImportBillNum(int row, int col){
@@ -908,3 +891,109 @@ void ImExport::ExportInvoiceDetails(int row)
     pViewInvoicesDetails = nullptr;
 }
 
+void ImExport::addProductForImport(const QString &productId, const QString &name, const QString &author) {
+    // Kiểm tra nếu sản phẩm đã có trong bảng
+    for (int r = 0; r < ui->import_books->rowCount(); ++r) {
+        QTableWidgetItem *item = ui->import_books->item(r, 0);
+        if (item && item->text() == productId) {
+            QSpinBox *spinBox = qobject_cast<QSpinBox*>(ui->import_books->cellWidget(r, 2));
+            if (spinBox) {
+                spinBox->setValue(spinBox->value() + 1);
+                updateTotals();
+                ui->search_product_import->clear();
+                return;
+            }
+        }
+    }
+
+    int row = ui->import_books->rowCount();
+    ui->import_books->insertRow(row);
+
+    // Ghép tên sản phẩm với tên tác giả
+    QString nameWithAuthor = name + " - " + author;
+
+    // Cột 0: Mã sản phẩm
+    ui->import_books->setItem(row, 0, new QTableWidgetItem(productId));
+
+    // Cột 1: Tên sách + tác giả
+    ui->import_books->setItem(row, 1, new QTableWidgetItem(nameWithAuthor));
+
+    // Cột 2: QSpinBox số lượng nhập
+    QSpinBox *spinBox = new QSpinBox(this);
+    spinBox->setMinimum(1);           // Không giới hạn tối đa
+    spinBox->setMaximum(1000000);     // Giá trị lớn đủ để không bị giới hạn
+    spinBox->setValue(1);
+    ui->import_books->setCellWidget(row, 2, spinBox);
+
+    // Khi thay đổi số lượng
+    connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=]() {
+        updateTotals();
+    });
+    updateTotals();
+}
+
+void ImExport::addProductForExport(const QString &productId, const QString &name, const QString &author, int stock){
+    if (stock <= 0) {
+        QMessageBox::warning(this, "Hết hàng", "Sản phẩm này đã hết hàng.");
+        return;
+    }
+    // Kiểm tra nếu sản phẩm đã có trong bảng
+    for (int r = 0; r < ui->export_books->rowCount(); ++r) {
+        QTableWidgetItem *item = ui->export_books->item(r, 0);
+        if (item && item->text() == productId) {
+            QSpinBox *spinBox = qobject_cast<QSpinBox*>(ui->export_books->cellWidget(r, 2));
+            if (spinBox) {
+                int currentQty = spinBox->value();
+                if (currentQty + 1 > stock) {
+                    QMessageBox::warning(this, "Vượt tồn kho",
+                                         QString("Chỉ còn %1 sản phẩm trong kho.").arg(stock));
+                    return;
+                }
+                spinBox->setValue(currentQty + 1);
+                updateTotals();
+                ui->search_product_export->clear();
+                return;
+            }
+        }
+    }
+
+    int row = ui->export_books->rowCount();
+    ui->export_books->insertRow(row);
+
+    // Kết hợp "Tên sản phẩm" và "Tên tác giả" thành một chuỗi
+    QString nameWithAuthor = name + " - " + author;
+
+    // Thêm dữ liệu vào bảng
+
+    ui->export_books->setItem(row, 0, new QTableWidgetItem(productId));
+    ui->export_books->setItem(row, 1, new QTableWidgetItem(nameWithAuthor)); // Sử dụng nameWithAuthor
+
+    // Thêm QSpinBox để chỉnh số lượng
+    QSpinBox *spinBox = new QSpinBox(this);
+    spinBox->setMinimum(1);
+    spinBox->setMaximum(stock);
+    spinBox->setValue(1);
+    ui->export_books->setCellWidget(row, 2, spinBox);
+
+    // Khi người dùng thay đổi số lượng
+    connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=]() {
+        updateTotals();
+    });
+    updateTotals();
+}
+
+void ImExport::resetImportInvoiceForm(){
+    autoCreateImportBillNum();
+
+    // Xóa dữ liệu bảng
+    ui->import_books->setRowCount(0);
+
+    // Reset tổng số lượng
+    totalQuantityImport = 0;
+}
+
+void ImExport::resetExportInvoiceForm(){
+    autoCreateExportBillNum();
+    ui->export_books->setRowCount(0);
+    totalQuantityExport = 0;
+}

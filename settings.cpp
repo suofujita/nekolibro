@@ -7,6 +7,9 @@ Settings::Settings(QWidget *parent)
 {
     ui->setupUi(this);
 
+    setWindowTitle("Cài đặt - Neko Libro");
+    setWindowIcon(QIcon(":/image/cat.png"));
+
     /* Kết nối Database */
     if (QSqlDatabase::contains("qt_sql_default_connection")) {
         db = QSqlDatabase::database("qt_sql_default_connection");
@@ -23,7 +26,10 @@ Settings::Settings(QWidget *parent)
         }
     }
 
+    connect(ui->close_tab, &QPushButton::clicked, this, &Settings::closeTab);
     loadUserInfor();
+
+
 
 }
 
@@ -54,4 +60,8 @@ void Settings::loadUserInfor() {
         ui->phone->setText(query.value(4).toString());
         ui->role->setText(query.value(5).toString());
     }
+}
+
+void Settings::closeTab(){
+    this->close();
 }

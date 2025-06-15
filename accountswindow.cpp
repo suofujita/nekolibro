@@ -42,7 +42,7 @@ AccountsWindow::AccountsWindow(QWidget *parent)
     ui->hometown_tag->setFixedSize(50,50);
     ui->email_tag->setFixedSize(50,50);
 
-    fillEmail();
+
 }
 
 AccountsWindow::~AccountsWindow()
@@ -58,6 +58,7 @@ void AccountsWindow::tabUpdateUserProfile(){
     ui->stackedWidget->setCurrentIndex(1);
     ui->dob->setDate(QDate::currentDate());
     loadHometownList();
+    fillInfor();
 }
 
 void AccountsWindow::tabMinimized(){
@@ -210,10 +211,10 @@ void AccountsWindow::visibleVeryfiedNewPassword(){
     }
 }
 
-void AccountsWindow::fillEmail(){
+void AccountsWindow::fillInfor(){
     QSqlQuery query;
     /* điền trước email cho người dùng đỡ phải điền nếu không thay đổi */
-    query.prepare("SELECT email FROM AccountUsers WHERE username = ?");
+    query.prepare("SELECT fullname, email, date_of_birth, hometown, phone FROM AccountUsers WHERE username = ?");
     query.addBindValue(NekoLibro::currentUser);
 
     if(!query.exec()) {
@@ -226,6 +227,9 @@ void AccountsWindow::fillEmail(){
         return;
     }
 
-    QString currentEmail = query.value(0).toString();
-    ui->email->setText(currentEmail);
+    ui->fullname->setText(query.value(0).toString());
+    ui->email->setText(query.value(1).toString());
+    ui->dob->setDate(query.value(2).toDate());
+    ui->hometown->setCurrentText(query.value(3).toString());
+    ui->phone->setText(query.value(4).toString());
 }

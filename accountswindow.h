@@ -31,7 +31,7 @@ private:
     QSqlDatabase db;
     bool passwordVisible = false;
     void loadHometownList();
-    void fillEmail();
+    void fillInfor();
 
 };
 

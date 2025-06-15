@@ -48,5 +48,6 @@
         <file>email.png</file>
         <file>update.png</file>
         <file>dob.png</file>
+        <file>lock.png</file>
     </qresource>
 </RCC>

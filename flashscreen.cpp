@@ -7,6 +7,7 @@ FlashScreen::FlashScreen(QWidget *parent)
 {
     ui->setupUi(this);
 
+    setWindowIcon(QIcon(":/image/cat.png"));
     /* Ẩn thanh tiêu đề và làm trong suốt background*/
     setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);

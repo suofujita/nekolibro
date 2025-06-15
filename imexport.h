@@ -22,6 +22,7 @@ public slots:
     void gotoExportInvoice();
     void gotoImportLogs();
     void gotoExportLogs();
+
 private slots:
     void saveImportInvoices();
     void viewImportLogs();
@@ -29,12 +30,12 @@ private slots:
     void delayTab();
     void closeTab();
     void searchBooksForImport(const QString &text);
-    void removeBooksFromImportTable(int row);
+    void removeBooksFromImportTable();
 
     void viewExportLogs();
     void saveExportInvoice();
     void searchBooksForExport(const QString &text);
-    void removeBooksFromExportTable(int row);
+    void removeBooksFromExportTable();
 
     /* Xem lại lịch sử nhập hàng*/
     void resultsImportLogs();
@@ -45,6 +46,10 @@ private slots:
     /* xem chi tiết đơn hàng */
     void clickedImportBillNum(int row, int col);
     void clickedExportBillNum(int row, int col);
+
+    /* thêm sản phẩm để xuất-nhập tách ra để xử lý trùng lặp khi thêm sản phẩm*/
+    void addProductForImport(const QString &productId, const QString &name, const QString &author);
+    void addProductForExport(const QString &productId, const QString &name, const QString &author, int stock);
 private:
     Ui::ImExport *ui;
     CategoriesWindow *pCategoriesWindow = nullptr;
@@ -68,6 +73,8 @@ private:
     void ImportInvoiceDetails(int row);
     void ExportInvoiceDetails(int row);
 
+    void resetImportInvoiceForm();
+    void resetExportInvoiceForm();
 };
 
 #endif // IMEXPORT_H
