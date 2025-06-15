@@ -1,6 +1,8 @@
 #include "viewinvoicesdetails.h"
 #include "ui_viewinvoicesdetails.h"
 
+#include "reports.h"
+
 ViewInvoicesDetails::ViewInvoicesDetails(const QString &invoiceId, InvoiceType type, QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::ViewInvoicesDetails), invoiceIdCurrent(invoiceId), InvoiceTypeCurrent(type)
@@ -28,6 +30,7 @@ ViewInvoicesDetails::ViewInvoicesDetails(const QString &invoiceId, InvoiceType t
     connect(ui->close_tab, &QPushButton::clicked,this,&ViewInvoicesDetails::closeTab);
     connect(ui->edit,&QPushButton::clicked,this,&ViewInvoicesDetails::editInvoice);
     connect(ui->save_edit,&QPushButton::clicked,this, &ViewInvoicesDetails::saveEditInvoice);
+    connect(ui->excel,&QPushButton::clicked, this, &ViewInvoicesDetails::exportLogsExcel);
 
     /* Bảng chứa lịch sử xuất hàng */
     ui->products->setColumnCount(3);
@@ -188,7 +191,7 @@ void ViewInvoicesDetails::loadInvoiceDetails() {
 }
 
 void ViewInvoicesDetails::editInvoice(){
-    if(NekoLibro::currentUser == "admin"){
+    if(NekoLibro::role == "admin"){
         ui->products->setEditTriggers(QAbstractItemView::AllEditTriggers);
         return;
     }
@@ -199,7 +202,7 @@ void ViewInvoicesDetails::editInvoice(){
 }
 
 void ViewInvoicesDetails::saveEditInvoice() {
-    if (NekoLibro::currentUser != "admin") {
+    if (NekoLibro::role != "admin") {
         QMessageBox::warning(this, "Lỗi", "Bạn không có quyền truy cập chức năng này!");
         return;
     }
@@ -324,3 +327,99 @@ void ViewInvoicesDetails::saveEditInvoice() {
     }
 }
 
+
+void ViewInvoicesDetails::exportLogsExcel() {
+    QString filePath = QFileDialog::getSaveFileName(this, "Xuất ra Excel", "", "Excel File (*.xlsx)");
+    if (filePath.isEmpty()) return;
+
+    QXlsx::Document excelFile;
+
+    QString invoiceTable, itemTable;  // cần truy vấn đến 1 trong 3 bảng
+    bool hasUser = false;
+
+    if (InvoiceTypeCurrent == InvoiceType::Retail) {
+        invoiceTable = "RetailInvoices";
+        itemTable = "RetailInvoicesItems";
+        hasUser = true;
+    } else if (InvoiceTypeCurrent == InvoiceType::Import) {
+        invoiceTable = "ImportInvoices";
+        itemTable = "ImportInvoicesItems";
+    } else if (InvoiceTypeCurrent == InvoiceType::Export) {
+        invoiceTable = "ExportInvoices";
+        itemTable = "ExportInvoicesItems";
+    }
+
+    QSqlQuery query;
+    QString queryString;
+
+    /* nếu là bảng bán lẻ thì có thêm cột người bán */
+    if (hasUser) {
+        excelFile.write("A1", "Ngày lập");
+        excelFile.write("B1", "Mã hóa đơn");
+        excelFile.write("C1", "Tên sản phẩm");
+        excelFile.write("D1", "Số lượng");
+        excelFile.write("E1", "Người bán hàng");
+
+        queryString = QString(R"(
+            SELECT %1.date,
+                   %1.bill_num,
+                   Products.title,
+                   %2.quantity,
+                   AccountUsers.fullname
+            FROM %1
+            JOIN %2 ON %2.invoice_id = %1.id
+            JOIN Products ON %2.product_id = Products.id
+            LEFT JOIN AccountUsers ON %1.user_id = AccountUsers.id
+            WHERE %1.id = ?
+        )").arg(invoiceTable, itemTable);
+    } else {
+        excelFile.write("A1", "Ngày lập");
+        excelFile.write("B1", "Mã hóa đơn");
+        excelFile.write("C1", "Tên sản phẩm");
+        excelFile.write("D1", "Số lượng");
+
+        queryString = QString(R"(
+            SELECT %1.date,
+                   %1.bill_num,
+                   Products.title,
+                   %2.quantity
+            FROM %1
+            JOIN %2 ON %2.invoice_id = %1.id
+            JOIN Products ON %2.product_id = Products.id
+            WHERE %1.id = ?
+        )").arg(invoiceTable, itemTable);
+    }
+
+    query.prepare(queryString);
+    query.addBindValue(invoiceIdCurrent);
+    if (!query.exec()) {
+        QMessageBox::critical(this, "Lỗi", "Không thể truy vấn dữ liệu:\n" + query.lastError().text());
+        return;
+    }
+
+    int row = 2;
+    int count = 0;
+
+    while (query.next()) {
+        count++;
+        excelFile.write(row, 1, query.value(0).toString()); // Ngày lập
+        excelFile.write(row, 2, query.value(1).toString()); // Mã hóa đơn
+        excelFile.write(row, 3, query.value(2).toString()); // Tên sản phẩm
+        excelFile.write(row, 4, query.value(3).toInt());    // Số lượng
+        if (hasUser) {
+            excelFile.write(row, 5, query.value(4).toString()); // Người bán
+        }
+        ++row;
+    }
+
+    if (count == 0) {
+        QMessageBox::warning(this, "Không có dữ liệu", "Không tìm thấy chi tiết hóa đơn để xuất.");
+        return;
+    }
+
+    if (excelFile.saveAs(filePath)) {
+        QMessageBox::information(this, "Thành công", "Đã xuất dữ liệu ra file Excel thành công.");
+    } else {
+        QMessageBox::warning(this, "Thất bại", "Không thể lưu file Excel.");
+    }
+}

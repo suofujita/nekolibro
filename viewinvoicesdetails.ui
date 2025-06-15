@@ -215,7 +215,7 @@
     </size>
    </property>
   </widget>
-  <widget class="QPushButton" name="pdf">
+  <widget class="QPushButton" name="excel">
    <property name="geometry">
     <rect>
      <x>470</x>

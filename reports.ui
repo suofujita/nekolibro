@@ -25,7 +25,7 @@
       <bool>false</bool>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="daily_reports">
       <attribute name="title">
@@ -277,26 +277,6 @@
            <pointsize>12</pointsize>
           </font>
          </property>
-         <item>
-          <property name="text">
-           <string>Tất cả</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>admin</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>hoa.vuthinhu</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>duy</string>
-          </property>
-         </item>
         </widget>
        </item>
        <item row="3" column="10">
@@ -412,26 +392,6 @@
            <pointsize>12</pointsize>
           </font>
          </property>
-         <item>
-          <property name="text">
-           <string>Tất cả</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>admin</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>hoa.vuthinhu</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>duy</string>
-          </property>
-         </item>
         </widget>
        </item>
        <item row="3" column="3">
@@ -588,43 +548,25 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="7">
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>Giảm/Tăng dần</string>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="6">
         <widget class="QPushButton" name="search_employee">
          <property name="text">
           <string>Tìm kiếm</string>
          </property>
+         <property name="icon">
+          <iconset resource="galeries.qrc">
+           <normaloff>:/image/search.png</normaloff>:/image/search.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
         </widget>
        </item>
        <item row="3" column="4" colspan="2">
-        <widget class="QComboBox" name="select_employee">
-         <item>
-          <property name="text">
-           <string>Tất cả</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>admin</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>hoa.vuthinhu</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>duy</string>
-          </property>
-         </item>
-        </widget>
+        <widget class="QComboBox" name="select_employee"/>
        </item>
        <item row="3" column="3">
         <widget class="QLabel" name="label_19">
@@ -637,12 +579,7 @@
         </widget>
        </item>
        <item row="3" column="1" colspan="2">
-        <widget class="QComboBox" name="select_time_employee">
-         <item>
-          <property name="text">
-           <string>Tất cả</string>
-          </property>
-         </item>
+        <widget class="QComboBox" name="range_time">
          <item>
           <property name="text">
            <string>Theo ngày</string>

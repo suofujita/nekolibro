@@ -22,6 +22,8 @@ reports::reports(QWidget *parent)
         }
     }
 
+    ui->tabWidget->setCurrentIndex(0);
+
     connect(ui->tabWidget, &QTabWidget::currentChanged,this,&reports::onTabChanged);
     connect(ui->png_daily, &QPushButton::clicked,this,&reports::saveChartAsPNG);
     connect(ui->search_bill, &QPushButton::clicked,this, &reports::searchBillsByCustomRange);  // tìm hóa đơn thời gian tùy chỉnh
@@ -31,6 +33,7 @@ reports::reports(QWidget *parent)
     connect(ui->png_sum,&QPushButton::clicked,this,&reports::saveChartAsPNG);
     connect(ui->all_stocks, &QPushButton::clicked,this,&reports::showAllProducts);
     connect(ui->sort, &QPushButton::clicked, this, &reports::sortByStock);
+    connect(ui->search_employee,&QPushButton::clicked,this, &reports::loadDataForEmployees);
 
     /* cần ánh xạ chuỗi thành Kiểu TimeRange */
     connect(ui->select_time_bill, &QComboBox::currentTextChanged, this, [=](const QString &text) {
@@ -117,7 +120,7 @@ reports::reports(QWidget *parent)
     ui->end_date_sum->setDate(QDate::currentDate());
 
     loadDataForStocks(ProductReportType::Top5BestSellers); // cho combobox
-
+    loadSellerCombox();
 }
 
 reports::~reports()
@@ -218,10 +221,6 @@ void reports::loadDataForDailyReports() {
     ui->view_daily_report->setRenderHint(QPainter::Antialiasing);
 }
 
-void reports::loadDataForEmployees(){
-
-}
-
 void reports::loadDataForStocks(ProductReportType type){
 
     switch(type) {
@@ -298,7 +297,7 @@ void reports::loadBillsByRange(TimeRange range) {
         endDate = QDate(today.year() - 1, 12, 31).toString("yyyy-MM-dd");
         break;
     }
-    loadSellerCombox();
+
     QString seller = ui->seller_1->currentText();
 
     insertDataIntoBillsTable(startDate,endDate,seller);
@@ -314,7 +313,6 @@ void reports::searchBillsByCustomRange(){
         return;
     }
 
-    loadSellerCombox();
     QString seller = ui->seller_2->currentText();
 
     insertDataIntoBillsTable(startDate,endDate,seller);
@@ -516,6 +514,7 @@ void reports::createRevenueChart(RevenueRange range) {
 
     QMap<QString, double> revenues;
 
+    double totalRevenue = 0;
     QSqlQuery query;
     query.prepare(QString(R"(
         SELECT strftime('%1', date) AS time_group, SUM(total_bill)
@@ -537,6 +536,7 @@ void reports::createRevenueChart(RevenueRange range) {
         QString time = query.value(0).toString();
         double sum = query.value(1).toDouble();
         revenues[time] = sum;
+        totalRevenue += sum;
     }
 
     // Chuẩn bị biểu đồ
@@ -578,6 +578,7 @@ void reports::createRevenueChart(RevenueRange range) {
 
     ui->view_sum_report->setChart(chart);
     ui->view_sum_report->setRenderHint(QPainter::Antialiasing);
+    ui->custom_sum->setText("Tổng doanh thu: " + QLocale().toString(totalRevenue, 'f', 0) + " đ");
 }
 
 void reports::RevenueChartByCustomRange() {
@@ -649,7 +650,28 @@ void reports::RevenueChartByCustomRange() {
 }
 
 void reports::loadSellerCombox(){
+    QSqlQuery query;
+    query.prepare("SELECT username FROM AccountUsers");
 
+    if (!query.exec()) {
+        QMessageBox::warning(this, "Lỗi", "Không thể tải danh sách người bán.");
+        return;
+    }
+
+    ui->seller_1->clear();
+    ui->seller_2->clear();
+    ui->select_employee->clear();
+
+    ui->seller_1->addItem("Tất cả");
+    ui->seller_2->addItem("Tất cả");
+    ui->select_employee->addItem("Tất cả");
+
+    while (query.next()) {
+        QString username = query.value(0).toString();
+            ui->seller_1->addItem(username);
+            ui->seller_2->addItem(username);
+            ui->select_employee->addItem(username);
+    }
 }
 
 void reports::showAllProducts(){
@@ -859,4 +881,99 @@ void reports::loadOverStocked() {
             }
             ++row;
         }
+}
+
+void reports::loadDataForEmployees() {
+    // Xác định loại báo cáo
+    ReportRange type;
+    QString text = ui->range_time->currentText();
+
+    if (text == "Theo ngày")
+        type = ReportRange::Daily;
+    else if (text == "Theo tháng")
+        type = ReportRange::Monthly;
+    else if (text == "Theo quý")
+        type = ReportRange::Quarterly;
+    else if (text == "Theo năm")
+        type = ReportRange::Yearly;
+    else
+        return;
+
+    QString seller = ui->select_employee->currentText();
+
+    // Tính khoảng thời gian
+    QDate startDate, endDate;
+    QDate current = QDate::currentDate();
+
+    switch (type) {
+    case ReportRange::Daily:
+        startDate = current;
+        endDate = current;
+        break;
+    case ReportRange::Monthly:
+        startDate = QDate(current.year(), current.month(), 1);
+        endDate = startDate.addMonths(1).addDays(-1);
+        break;
+    case ReportRange::Quarterly: {
+        int quarter = (current.month() - 1) / 3 + 1;
+        startDate = QDate(current.year(), (quarter - 1) * 3 + 1, 1);
+        endDate = startDate.addMonths(3).addDays(-1);
+        break;
+    }
+    case ReportRange::Yearly:
+        startDate = QDate(current.year(), 1, 1);
+        endDate = QDate(current.year(), 12, 31);
+        break;
+    }
+
+    // Viết truy vấn SQL linh hoạt
+    QString sql = R"(
+    SELECT A.username, A.fullname, COALESCE(SUM(I.total_bill), 0) AS total
+    FROM AccountUsers A
+    LEFT JOIN RetailInvoices I ON I.user_id = A.id
+    WHERE A.role IN ('admin', 'user')
+      AND I.date BETWEEN ? AND ?
+    )";
+
+    if (seller != "Tất cả") {
+        sql += " AND A.username = ?";
+    }
+
+    sql += " GROUP BY A.username, A.fullname ORDER BY total DESC";
+
+    QSqlQuery query;
+    query.prepare(sql);
+    query.addBindValue(startDate.toString("yyyy-MM-dd"));
+    query.addBindValue(endDate.toString("yyyy-MM-dd"));
+    if (seller != "Tất cả") {
+        query.addBindValue(seller);
+    }
+
+
+    if (!query.exec()) {
+        QMessageBox::warning(this, "Lỗi", "Không thể truy vấn dữ liệu:\n" + query.lastError().text());
+        return;
+    }
+
+    // Cập nhật bảng
+    ui->view_employee->clearContents();
+    ui->view_employee->setRowCount(0);
+    ui->view_employee->setColumnCount(3);
+    ui->view_employee->setHorizontalHeaderLabels({"Tên người dùng", "Họ và tên", "Doanh thu"});
+
+    int row = 0;
+    while (query.next()) {
+        QString username = query.value(0).toString();
+        QString fullName = query.value(1).toString();
+        double revenue = query.value(2).toDouble();
+
+        ui->view_employee->insertRow(row);
+        ui->view_employee->setItem(row, 0, new QTableWidgetItem(username));
+        ui->view_employee->setItem(row, 1, new QTableWidgetItem(fullName));
+        ui->view_employee->setItem(row, 2, new QTableWidgetItem(QLocale().toString(revenue, 'f', 0)));
+
+        ++row;
+    }
+
+    ui->view_employee->resizeColumnsToContents();
 }

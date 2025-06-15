@@ -54,6 +54,10 @@ CategoriesWindow::~CategoriesWindow()
 
 void CategoriesWindow::toAddBook()
 {
+    if(NekoLibro::role != "admin"){
+        QMessageBox::information(this,"Lỗi", "Bạn không có quyền thực hiện chức năng này!");
+        return;
+    }
     if (!ui) {
         qDebug() << "ERROR: ui is NULL!";
         return;
@@ -137,6 +141,12 @@ void CategoriesWindow::addBook(){
 }
 
 void CategoriesWindow::removeBook() {
+
+    if(NekoLibro::role != "admin"){
+        QMessageBox::information(this,"Lỗi", "Bạn không có quyền thực hiện chức năng này!");
+        return;
+    }
+
     bool found = false;
     QSqlDatabase::database().transaction();
     QSqlQuery query;

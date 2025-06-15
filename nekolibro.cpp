@@ -12,6 +12,7 @@
 /* Phải khởi tạo biến stactic không chương trinh sẽ bị lỗi undefined */
 QString NekoLibro::currentUser = "";
 QString NekoLibro::currentFullName = "";
+QString NekoLibro::role = "";
 
 NekoLibro::NekoLibro(QWidget *parent)
     : QMainWindow(parent)
@@ -98,10 +99,21 @@ void NekoLibro::openSalesWindow(){
 }
 
 void NekoLibro::openEmployeesWindow(){
+
+    if(NekoLibro::role != "admin"){
+        QMessageBox::information(this,"Lỗi", "Bạn không có quyền thực hiện chức năng này!");
+        return;
+    }
+
     if (!pEmployeesWindow) {
         pEmployeesWindow = new EmployeesWindow(this);
         pEmployeesWindow->setWindowFlag(Qt::Window);
-        childWindows.append(pEmployeesWindow);  // Đưa vào danh sách để quản lý sau
+        pEmployeesWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+        /* Xóa con trỏ khi đóng cửa sổ */
+        connect(pEmployeesWindow, &QObject::destroyed, [this]() {
+            pEmployeesWindow = nullptr;
+        });
     }
 
     pEmployeesWindow->show();
@@ -130,21 +142,32 @@ void NekoLibro::openCategoriesWindow() {
 
 void NekoLibro::openReportWindow() {
     if (!pReportWindow) {
-        pReportWindow = new reports(this);
+        pReportWindow = new reports();
         pReportWindow->setWindowFlag(Qt::Window);
-        childWindows.append(pReportWindow);  // Đưa vào danh sách để quản lý sau
+        pReportWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+        /* Xóa con trỏ khi đóng cửa sổ */
+        connect(pReportWindow, &QObject::destroyed, [this]() {
+           pReportWindow = nullptr;
+      });
     }
 
     pReportWindow->show();
     pReportWindow->raise();
     pReportWindow->activateWindow();
+
 }
 
 void NekoLibro::openSettingsWindow(){
     if (!pSettingWindow) {
         pSettingWindow = new Settings(this);
         pSettingWindow->setWindowFlag(Qt::Window);
-        childWindows.append(pSettingWindow);  // Đưa vào danh sách để quản lý sau
+        pSettingWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+        /* Xóa con trỏ khi đóng cửa sổ */
+        connect(pSettingWindow, &QObject::destroyed, [this]() {
+            pSettingWindow = nullptr;
+        });
     }
 
     pSettingWindow->show();
@@ -155,11 +178,14 @@ void NekoLibro::openSettingsWindow(){
 void NekoLibro::openImExportWindow()
 {
     if (!pImExportWindow) {
-        pImExportWindow = new ImExport();
-        pImExportWindow->setWindowFlag(Qt::Window);  // Cửa sổ riêng biệt
-        childWindows.append(pImExportWindow);   // đưa vào danh sách cửa sổ con của NekoLibro
-        /* Đưa về trang chủ */
-        pImExportWindow->toMainImExport();
+        pImExportWindow = new ImExport(this);
+        pImExportWindow->setWindowFlag(Qt::Window);
+        pImExportWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+        /* Xóa con trỏ khi đóng cửa sổ */
+        connect(pImExportWindow, &QObject::destroyed, [this]() {
+            pImExportWindow = nullptr;
+        });
     }
 
     pImExportWindow->show();
@@ -170,9 +196,14 @@ void NekoLibro::openImExportWindow()
 void NekoLibro::openAccountsWindow()
 {
     if (!pAccountsWindow) {
-        pAccountsWindow = new AccountsWindow();
-        pAccountsWindow->setWindowFlag(Qt::Window);  // Cửa sổ riêng biệt
-        childWindows.append(pAccountsWindow);   // đưa vào danh sách cửa sổ con của NekoLibro
+        pAccountsWindow = new AccountsWindow(this);
+        pAccountsWindow->setWindowFlag(Qt::Window);
+        pAccountsWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+        /* Xóa con trỏ khi đóng cửa sổ */
+        connect(pAccountsWindow, &QObject::destroyed, [this]() {
+            pAccountsWindow = nullptr;
+        });
     }
 
     pAccountsWindow->show();
@@ -190,6 +221,11 @@ QStringList NekoLibro::getCategoriesList(){
 }
 
 void NekoLibro::gotoAddBook() {
+    if(role != "admin"){
+        QMessageBox::information(this,"Lỗi", "Bạn không có quyền thực hiện chức năng này!");
+        return;
+    }
+
     if (!pCategoriesWindow) {
         pCategoriesWindow = new CategoriesWindow(this);
 
@@ -223,7 +259,19 @@ void NekoLibro::showTime() {
 
 void NekoLibro::setCurrentUser(QString username) {
     currentUser = username;
+
+    QSqlQuery query;
+    query.prepare("SELECT role FROM AccountUsers WHERE username = ?");
+    query.addBindValue(currentUser);
+
+    if (!query.exec() || !query.next()) {
+        qWarning() << "Không thể truy vấn vai trò người dùng cho:" << currentUser;
+        return;
+    }
+
+    role = query.value(0).toString();
 }
+
 
 QString NekoLibro::getCurrentUser(){
     return currentUser;
@@ -417,27 +465,8 @@ void NekoLibro::gotoExportLogs(){
     }
 }
 
-void NekoLibro::clearChildWindows() {
-    for (QWidget *w : childWindows) {
-        if (w) {
-            w->close();    // Đảm bảo cửa sổ đóng
-            delete w;      // Giải phóng bộ nhớ
-        }
-    }
-    childWindows.clear();   // Xóa danh sách sau khi đã xóa tất cả
-
-    // Đặt lại con trỏ thành nullptr
-    pSaleWindow = nullptr;
-    pEmployeesWindow = nullptr;
-    pCategoriesWindow = nullptr;
-    pImExportWindow = nullptr;
-    pReportWindow = nullptr;
-    pSettingWindow = nullptr;
-    pAccountsWindow = nullptr;
-}
 
 void NekoLibro::clickedLogOut() {
-    clearChildWindows();  // Xóa tất cả cửa sổ con
 
     if (!pLogin) {
         pLogin = new login();  // không truyền con trỏ this vì ....

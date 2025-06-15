@@ -50,7 +50,7 @@ public:
     NekoLibro(QWidget *parent = nullptr);
     ~NekoLibro();
     QStringList getCategoriesList();
-    static QString currentUser, currentFullName;
+    static QString currentUser, currentFullName, role;
     void setCurrentUser(QString username);
     void showUserName();
     void showFullName();
@@ -90,8 +90,7 @@ private:
     reports *pReportWindow = nullptr;
     Settings *pSettingWindow = nullptr;
     AccountsWindow *pAccountsWindow = nullptr;
-    QList<QWidget*> childWindows;  // lưu tất cả các cửa sổ con của trang chủ để thuận lợi
-                                   // cho việc giải phóng vùng nhớ đăng xuất
+
     QSqlDatabase db;
     QMenu *menuCategories = nullptr;
     QMenu *menuImExport = nullptr;
@@ -99,7 +98,6 @@ private:
     QTimer *time;
 
     void updateStock();
-    void clearChildWindows();  // Xóa các cửa sổ con
 
 };
 #endif // NEKOLIBRO_H

@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include "nekolibro.h"
+
+class Reports;
 namespace Ui {
 class ViewInvoicesDetails;
 }
@@ -22,6 +24,7 @@ public slots:
     void editInvoice();
     void saveEditInvoice();
     void closeTab();
+    void exportLogsExcel();
 private:
     Ui::ViewInvoicesDetails *ui;
     QSqlDatabase db;

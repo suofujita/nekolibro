@@ -272,6 +272,24 @@ void SalesWindow::autoCreateBillNum(){
 
 void SalesWindow::saveBill()
 {
+    /* Khách đưa đủ tiền chưa */
+    QString cleaned = ui->money_customer->text();
+    cleaned.remove('.').remove(',').remove(' ').remove(QChar(160));  // bỏ dấu ngăn cách, khoảng trắng
+    bool ok = false;
+    double paid = QLocale::c().toDouble(cleaned, &ok);
+
+    if (!ok) {
+        QMessageBox::warning(this, "Lỗi", "Số tiền khách đưa không hợp lệ!");
+        return;
+    }
+
+    double money_return = paid - totalPrice;
+
+    if (money_return < 0) {
+        QMessageBox::warning(this, "Thiếu tiền", "Khách đưa thiếu tiền! Không thể lưu hóa đơn.");
+        return;
+    }
+
     QSqlDatabase db = QSqlDatabase::database();
     if (!db.open()) {
         QMessageBox::critical(this, "Lỗi", "Không thể mở cơ sở dữ liệu!");

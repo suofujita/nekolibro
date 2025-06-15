@@ -2,7 +2,7 @@
 #define SETTINGS_H
 
 #include <QWidget>
-
+#include "nekolibro.h"
 namespace Ui {
 class Settings;
 }
@@ -17,6 +17,8 @@ public:
 
 private:
     Ui::Settings *ui;
+    QSqlDatabase db;
+    void loadUserInfor();
 };
 
 #endif // SETTINGS_H

@@ -43,6 +43,12 @@ enum class ProductReportType {
     Overstocked           // Tồn kho quá nhiều
 };
 
+enum class ReportRange {
+    Daily,
+    Monthly,
+    Quarterly,
+    Yearly
+};
 
 namespace Ui {
 class reports;
@@ -78,7 +84,6 @@ private:
 
     void loadDataForDailyReports();
     void loadDataForEmployees();
-
 
     void RetailInvoiceDetails(int row);  // xem chi tiết đơn hàng
     void insertDataIntoBillsTable(QString startDate, QString endDate, QString seller);
